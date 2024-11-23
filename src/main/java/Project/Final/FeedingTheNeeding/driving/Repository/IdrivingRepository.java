@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
-import Project.Final.FeedingTheNeeding.user.Model.NeederContactDTO;
 
 @Repository
 public interface IdrivingRepository {

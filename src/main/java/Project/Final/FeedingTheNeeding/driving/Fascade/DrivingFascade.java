@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
 import Project.Final.FeedingTheNeeding.driving.Repository.IdrivingRepository;
-import Project.Final.FeedingTheNeeding.user.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 
 @Service
 public class DrivingFascade {
