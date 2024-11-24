@@ -8,7 +8,7 @@ import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepos
 import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
-import Project.Final.FeedingTheNeeding.user.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 import jakarta.transaction.Transactional;
 import Project.Final.FeedingTheNeeding.driving.Model.*;
 import org.apache.logging.log4j.LogManager;

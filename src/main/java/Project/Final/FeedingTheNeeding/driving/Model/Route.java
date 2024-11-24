@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import Project.Final.FeedingTheNeeding.user.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

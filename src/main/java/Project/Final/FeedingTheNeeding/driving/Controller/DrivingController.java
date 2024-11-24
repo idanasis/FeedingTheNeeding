@@ -3,7 +3,7 @@ package Project.Final.FeedingTheNeeding.driving.Controller;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
-import Project.Final.FeedingTheNeeding.user.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
