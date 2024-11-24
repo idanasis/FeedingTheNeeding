@@ -4,17 +4,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.UserDTO;
+import Project.Final.FeedingTheNeeding.User.Model.UserDTO;
 
 public class Route {
     private Integer routeId;
     private String driverId;
     private LocalDate date;
     private int startHour;
-    private List<NeederContactDTO> addresses;
+    private List<UserDTO> addresses;
     private boolean isSubmitted;
 
-    public Route(String driverId, LocalDate date,int startHour, List<NeederContactDTO> addresses) {
+    public Route(String driverId, LocalDate date,int startHour, List<UserDTO> addresses) {
         this.driverId = driverId;
         this.date = date;
         this.startHour = startHour;
@@ -47,16 +48,16 @@ public class Route {
     public void setStartHour(int startHour) {
         this.startHour = startHour;
     }
-    public List<NeederContactDTO> getAddresses() {
+    public List<UserDTO> getAddresses() {
         return addresses;
     }
-    public void addAddresses(NeederContactDTO address) {
+    public void addAddresses(UserDTO address) {
         this.addresses.add(address);
     }
-    public void removeAddresses(NeederContactDTO address) {
+    public void removeAddresses(UserDTO address) {
         this.addresses.remove(address);
     }
-    public void setAddresses(List<NeederContactDTO> addresses) {
+    public void setAddresses(List<UserDTO> addresses) {
         this.addresses = addresses;
     }
     public boolean isSubmitted() {

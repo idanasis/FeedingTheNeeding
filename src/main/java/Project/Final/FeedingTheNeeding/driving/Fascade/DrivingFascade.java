@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
 import Project.Final.FeedingTheNeeding.driving.Repository.IdrivingRepository;
-import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
+import Project.Final.FeedingTheNeeding.User.Model.UserDTO;
 
 @Service
 public class DrivingFascade {
@@ -35,10 +35,10 @@ public class DrivingFascade {
     public void sumbitAllRoutes(LocalDate date){
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public void addAddressToRoute(NeederContactDTO address){
+    public void addAddressToRoute(UserDTO address){
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    public void removeAddressFromRoute(NeederContactDTO address){
+    public void removeAddressFromRoute(UserDTO address){
         throw new UnsupportedOperationException("Not supported yet.");
     }
     public Route getRoute(String routeId){
