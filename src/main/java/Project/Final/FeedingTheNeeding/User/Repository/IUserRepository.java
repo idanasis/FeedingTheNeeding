@@ -9,23 +9,23 @@ import java.util.Optional;
 
 public interface IUserRepository {
 
-    BaseUser save(BaseUser user);
+//    BaseUser save(BaseUser user);
     Optional<BaseUser> findByEmail(String email);
-    Optional<BaseUser> findById(String id);
+//    Optional<BaseUser> findById(String id);
     boolean existsByEmail(String email);
-    boolean existsById(String id);
-    List<BaseUser> findAll();
-    Void delete(BaseUser user);
-    void deleteByEmail(String email);
+//    boolean existsById(String id);
+//    List<BaseUser> findAll();
+//    Void delete(BaseUser user);
+//    void deleteByEmail(String email);
     List<BaseUser> findByStatus(UserStatus status);
 
-    boolean isLoggedIn(String email);
-    void setLoggIn(String email, boolean loggedIn);
-    void logout(String email);
-    void setFirstName(String email, String firstName);
-    void setLastName(String email, String lastName);
-    void setPhoneNumber(String email, String phoneNumber);
-    void setAddress(String email, String address);
-    void setEmail(String id, String email); // maybe
+//    boolean isLoggedIn(String email);
+//    void setLoggIn(String email, boolean loggedIn);
+//    void logout(String email);
+//    void setFirstName(String email, String firstName);
+//    void setLastName(String email, String lastName);
+//    void setPhoneNumber(String email, String phoneNumber);
+//    void setAddress(String email, String address);
+//    void setEmail(String id, String email); // maybe
 
 }

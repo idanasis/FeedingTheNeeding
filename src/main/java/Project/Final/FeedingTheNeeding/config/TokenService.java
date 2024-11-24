@@ -32,10 +32,10 @@ public class TokenService {
         key = Keys.hmacShaKeyFor(secret.getBytes());
     }
 
-    public String generateToken(String username) {
-        logger.info("start-generateToken. args: " + username);
+    public String generateToken(String email) {
+        logger.info("start-generateToken. args: " + email);
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(key)
@@ -53,7 +53,7 @@ public class TokenService {
         }
     }
 
-    public String extractUsername(String token) {
+    public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 

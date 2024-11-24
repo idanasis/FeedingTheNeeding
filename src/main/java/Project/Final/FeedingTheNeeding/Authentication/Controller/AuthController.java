@@ -3,11 +3,9 @@ package Project.Final.FeedingTheNeeding.Authentication.Controller;
 import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
 import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
 import Project.Final.FeedingTheNeeding.User.Model.LoginRequest;
+import Project.Final.FeedingTheNeeding.User.Model.LoginResponse;
 import Project.Final.FeedingTheNeeding.User.Model.RegistrationRequest;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,7 +22,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public BaseUserDTO login(@RequestBody LoginRequest loginRequest) {
-        return authFacade.
+    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+        return authFacade.login(loginRequest);
+    }
+
+    @PostMapping("/logout")
+    public void logout(@RequestHeader("Authorization") String token) {
+        authFacade.logout(token);
     }
 }
