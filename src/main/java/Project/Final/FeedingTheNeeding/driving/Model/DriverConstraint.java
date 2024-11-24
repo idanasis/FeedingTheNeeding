@@ -2,15 +2,25 @@ package Project.Final.FeedingTheNeeding.driving.Model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import lombok.Data;
+
+@Data
+@Entity
+@IdClass(DriverConstraintId.class) 
 public class DriverConstraint {
-    private String driverId;
+    @Id
+    private long driverId;
+    @Id
     private LocalDate date;
     private int startHour;
     private int endHour;
     private String startLocation;
     private String requests;
     
-    public DriverConstraint(String driverId, LocalDate date, int startHour, int endHour, String startLocation, String requests){
+    public DriverConstraint(long driverId, LocalDate date, int startHour, int endHour, String startLocation, String requests){
         this.driverId = driverId;
         this.date = date;
         this.startHour = startHour;
@@ -18,7 +28,7 @@ public class DriverConstraint {
         this.startLocation = startLocation;
         this.requests = requests;
     }
-    public String getDriverId(){
+    public long getDriverId(){
         return driverId;
     }
     public LocalDate getDate(){
@@ -36,7 +46,7 @@ public class DriverConstraint {
     public String getRequests(){
         return requests;
     }
-    public void setDriverId(String driverId){
+    public void setDriverId(long driverId){
         this.driverId = driverId;
     }
     public void setDate(LocalDate date){
