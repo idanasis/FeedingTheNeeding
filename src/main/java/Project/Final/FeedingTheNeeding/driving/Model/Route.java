@@ -5,9 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 public class Route {
-    private Integer routeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long routeId;
     private String driverId;
     private LocalDate date;
     private int startHour;
@@ -26,7 +31,11 @@ public class Route {
         this.startHour = startHour;
         this.addresses = new ArrayList<>();
     }
-    public Integer getRouteId() {
+    public Route(LocalDate date) {
+        this.date = date;
+        this.addresses = new ArrayList<>();
+    }
+    public long getRouteId() {
         return routeId;
     }
     public String getDriverId() {
