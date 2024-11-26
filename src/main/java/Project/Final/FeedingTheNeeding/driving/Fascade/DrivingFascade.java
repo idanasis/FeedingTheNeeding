@@ -8,7 +8,6 @@ import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepos
 import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
-import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 import jakarta.transaction.Transactional;
 import Project.Final.FeedingTheNeeding.driving.Model.*;
 import org.apache.logging.log4j.LogManager;
@@ -104,14 +103,14 @@ public class DrivingFascade {
         logger.info("submitAllRoutes with date {} done", date);
     }
 
-    public void addAddressToRoute(long routeId,NeederContactDTO address) {
+    public void addAddressToRoute(long routeId,String address) {
         logger.info("addAddressToRoute with route id={} and address {}", routeId, address);
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
         route.addAddresses(address);
         routeRepository.save(route);
         logger.info("addAddressToRoute with route id={} and address {} done", routeId, address);
     }
-    public void removeAddressFromRoute(long routeId,NeederContactDTO address){
+    public void removeAddressFromRoute(long routeId,String address){
         logger.info("removeAddressFromRoute with route id={} and address {}", routeId, address);
        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
        route.removeAddresses(address);
