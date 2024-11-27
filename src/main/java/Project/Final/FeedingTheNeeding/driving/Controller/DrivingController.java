@@ -3,7 +3,6 @@ package Project.Final.FeedingTheNeeding.driving.Controller;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
-import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -129,7 +128,7 @@ public class DrivingController {
     }
 
     @PostMapping("/routes/{routeId}/address")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody NeederContactDTO address) {
+    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody String address) {
         try {
             drivingService.addAddressToRoute(routeId, address);
             return ResponseEntity.ok().build();
@@ -139,7 +138,7 @@ public class DrivingController {
     }
 
     @DeleteMapping("/routes/{routeId}/address")
-    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody NeederContactDTO address) {
+    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody String address) {
         try {
             drivingService.removeAddressFromRoute(routeId, address);
             return ResponseEntity.ok().build();

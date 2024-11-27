@@ -4,22 +4,34 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import Project.Final.FeedingTheNeeding.User.Model.NeederContactDTO;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import lombok.Data;
 
+@Data
+@Entity
 public class Route {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "routeId")
     private long routeId;
     private String driverId;
     private LocalDate date;
     private int startHour;
-    private List<NeederContactDTO> addresses;
+
+    @ElementCollection
+    @CollectionTable(name="route_visits", joinColumns=@JoinColumn(name="routeId"))
+    @Column(name="visited")
+    private List<String> addresses;
     private boolean isSubmitted;
 
-    public Route(String driverId, LocalDate date,int startHour, List<NeederContactDTO> addresses) {
+    public Route(String driverId, LocalDate date,int startHour, List<String> addresses) {
         this.driverId = driverId;
         this.date = date;
         this.startHour = startHour;
@@ -56,16 +68,16 @@ public class Route {
     public void setStartHour(int startHour) {
         this.startHour = startHour;
     }
-    public List<NeederContactDTO> getAddresses() {
+    public List<String> getAddresses() {
         return addresses;
     }
-    public void addAddresses(NeederContactDTO address) {
+    public void addAddresses(String address) {
         this.addresses.add(address);
     }
-    public void removeAddresses(NeederContactDTO address) {
+    public void removeAddresses(String address) {
         this.addresses.remove(address);
     }
-    public void setAddresses(List<NeederContactDTO> addresses) {
+    public void setAddresses(List<String> addresses) {
         this.addresses = addresses;
     }
     public boolean isSubmitted() {

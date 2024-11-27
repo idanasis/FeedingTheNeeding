@@ -1,32 +1,37 @@
 package Project.Final.FeedingTheNeeding.Social.controller;
-
-
 import Project.Final.FeedingTheNeeding.social.controller.NeederTrackingController;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(NeederTrackingController.class)
+@ActiveProfiles("test")
+@TestPropertySource(locations = "classpath:application-test.properties")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class NeederTrackingControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private NeederTrackingService neederTrackingService;
+    @MockBean
+    private NeederTrackingService neederTrackingService; // Use @MockBean instead of @Mock
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -40,6 +40,7 @@ class NeederTrackingServiceTest {
 
         assertNotNull(result);
         assertEquals("John Doe", result.getName());
+        assertEquals(1L, result.getId());
     }
 
     @Test
