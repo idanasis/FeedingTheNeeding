@@ -22,11 +22,11 @@ jobs:
       postgres:
         image: postgres:latest
         ports:
-          - 5432:5432
+          - 5433:5433
         env:
-          POSTGRES_USER: FeedingTheNeeding
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: admin
-          POSTGRES_DB: testdb
+          POSTGRES_DB: FeedingTheNeedingTests
         options: >-
           --health-cmd "pg_isready -U test"
           --health-interval 10s
