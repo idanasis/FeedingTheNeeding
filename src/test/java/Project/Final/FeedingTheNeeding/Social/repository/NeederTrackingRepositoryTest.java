@@ -1,15 +1,20 @@
 package Project.Final.FeedingTheNeeding.Social.repository;
 
-
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ActiveProfiles("test")
 @DataJpaTest
+@TestPropertySource(locations = "classpath:application-test.properties")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class NeederTrackingRepositoryTest {
 
     @Autowired
