@@ -1,9 +1,7 @@
 package Project.Final.FeedingTheNeeding.User.Model;
 
-public enum UserStatus {
+public enum RegistrationStatus {
 
     PENDING,
-    ACTIVE,
-    INACTIVE,
     AVAILABLE
 }

@@ -1,7 +1,7 @@
 package Project.Final.FeedingTheNeeding.User.Repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
-import Project.Final.FeedingTheNeeding.User.Model.UserStatus;
+import Project.Final.FeedingTheNeeding.User.Model.RegistrationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +18,6 @@ public interface JpaUserRepository extends JpaRepository<BaseUser, String>, IUse
     boolean existsByEmail(String email);
 
     @Override
-    List<BaseUser> findByStatus(UserStatus status);
+    List<BaseUser> findByStatus(RegistrationStatus status);
 
 }

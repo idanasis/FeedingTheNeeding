@@ -1,8 +1,7 @@
 package Project.Final.FeedingTheNeeding.User.Repository;
 
-import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
-import Project.Final.FeedingTheNeeding.User.Model.UserStatus;
+import Project.Final.FeedingTheNeeding.User.Model.RegistrationStatus;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +16,7 @@ public interface IUserRepository {
 //    List<BaseUser> findAll();
 //    Void delete(BaseUser user);
 //    void deleteByEmail(String email);
-    List<BaseUser> findByStatus(UserStatus status);
+    List<BaseUser> findByStatus(RegistrationStatus status);
 
 //    boolean isLoggedIn(String email);
 //    void setLoggIn(String email, boolean loggedIn);

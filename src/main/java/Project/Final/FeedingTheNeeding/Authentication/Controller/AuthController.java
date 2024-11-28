@@ -2,8 +2,6 @@ package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
 import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
-import Project.Final.FeedingTheNeeding.User.Model.LoginRequest;
-import Project.Final.FeedingTheNeeding.User.Model.LoginResponse;
 import Project.Final.FeedingTheNeeding.User.Model.RegistrationRequest;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,10 +19,10 @@ public class AuthController {
         return authFacade.registerUser(registrationRequest);
     }
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return authFacade.login(loginRequest);
-    }
+//    @PostMapping("/login")
+//    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+//        return authFacade.login(loginRequest);
+//    }
 
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String token) {
