@@ -19,25 +19,26 @@ public class AuthFacade {
     }
 
     public BaseUserDTO registerUser(RegistrationRequest registrationRequest) {
-        if(userService.existByEmail(registrationRequest.getEmail()))
-            throw new UserAlreadyExistsException("Email already registered to the system.");
-
-        // TODO: check if the email and the password are correct according to the criteria
-        // TODO: check if password == confirm password
-        // TODO: encode the password
-
-        BaseUser user = BaseUser.builder()
-                .firstName(registrationRequest.getFirstName())
-                .lastName(registrationRequest.getLastName())
-                .phoneNumber(registrationRequest.getPhoneNumber())
-                .address(registrationRequest.getAddress())
-                .city(registrationRequest.getCity())
-                .build();
-
-        user = userService.saveUser(user);
-        // TODO: sending a verification email
-
-        return new BaseUserDTO(user);
+//        if(userService.existByEmail(registrationRequest.getEmail()))
+//            throw new UserAlreadyExistsException("Email already registered to the system.");
+//
+//        // TODO: check if the email and the password are correct according to the criteria
+//        // TODO: check if password == confirm password
+//        // TODO: encode the password
+//
+//        BaseUser user = BaseUser.builder()
+//                .firstName(registrationRequest.getFirstName())
+//                .lastName(registrationRequest.getLastName())
+//                .phoneNumber(registrationRequest.getPhoneNumber())
+//                .address(registrationRequest.getAddress())
+//                .city(registrationRequest.getCity())
+//                .build();
+//
+//        user = userService.saveUser(user);
+//        // TODO: sending a verification email
+//
+//        return new BaseUserDTO(user);
+        return null;
     }
 
 //    public LoginResponse login(LoginRequest loginRequest) {

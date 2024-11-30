@@ -20,8 +20,4 @@ public class Donator extends BaseUser{
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private RegistrationStatus status;
-
-    public Donator(Donator donator) {
-
-    }
 }

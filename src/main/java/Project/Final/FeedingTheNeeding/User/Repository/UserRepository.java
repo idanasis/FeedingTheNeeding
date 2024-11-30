@@ -9,15 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface JpaUserRepository extends JpaRepository<BaseUser, String>, IUserRepository {
+public interface UserRepository extends JpaRepository<BaseUser, Long> {
 
-    @Override
-    Optional<BaseUser> findByEmail(String email);
-
-    @Override
-    boolean existsByEmail(String email);
-
-    @Override
     List<BaseUser> findByStatus(RegistrationStatus status);
-
+    List<BaseUser> findByCity(String city);
 }
