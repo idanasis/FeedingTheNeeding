@@ -15,6 +15,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,28 +39,55 @@ public class NeederTrackingControllerTest {
 
     @Test
     public void testGetAllNeeders() throws Exception {
-        NeederTracking needer = new NeederTracking();
-        needer.setId(1L);
-        needer.setName("John Doe");
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setStatusForWeek("pending");
+        mockNeederTracking.setFamilySize(4);
 
-        Mockito.when(neederTrackingService.getAllNeeders()).thenReturn(Arrays.asList(needer));
+        Mockito.when(neederTrackingService.getAllNeedersTrackings())
+                .thenReturn(Arrays.asList(mockNeederTracking));
 
-        mockMvc.perform(get("/social"))
+        // Act & Assert
+        mockMvc.perform(get("/social")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("John Doe"));
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].statusForWeek").value("pending"))
+                .andExpect(jsonPath("$[0].familySize").value(4));
+    }
+
+    @Test
+    public void testGetAllNeeders_EmptyList() throws Exception {
+        // Arrange
+        Mockito.when(neederTrackingService.getAllNeedersTrackings())
+                .thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        mockMvc.perform(get("/social")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
     public void testAddNeeder() throws Exception {
-        NeederTracking needer = new NeederTracking();
-        needer.setName("Jane Doe");
+        // Arrange
+        NeederTracking newNeederTracking = new NeederTracking();
+        newNeederTracking.setId(1L);
+        newNeederTracking.setStatusForWeek("completed");
+        newNeederTracking.setFamilySize(3);
 
-        Mockito.when(neederTrackingService.addNeeder(Mockito.any(NeederTracking.class))).thenReturn(needer);
+        Mockito.when(neederTrackingService.addNeederTracking(Mockito.any(NeederTracking.class)))
+                .thenReturn(newNeederTracking);
 
+        // Act & Assert
         mockMvc.perform(post("/social")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(needer)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Jane Doe"));
+                        .content(objectMapper.writeValueAsString(newNeederTracking)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.statusForWeek").value("completed"))
+                .andExpect(jsonPath("$.familySize").value(3));
     }
 }

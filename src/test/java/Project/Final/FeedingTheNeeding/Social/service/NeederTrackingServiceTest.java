@@ -30,36 +30,45 @@ class NeederTrackingServiceTest {
 
     @Test
     void testGetNeederById_Success() {
-        NeederTracking needer = new NeederTracking();
-        needer.setId(1L);
-        needer.setName("John Doe");
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setStatusForWeek("pending");
+        when(neederTrackingRepository.findById(1L)).thenReturn(Optional.of(mockNeederTracking));
 
-        when(neederTrackingRepository.findById(1L)).thenReturn(Optional.of(needer));
+        // Act
+        NeederTracking result = neederTrackingService.getNeederTrackById(1L);
 
-        NeederTracking result = neederTrackingService.getNeederById(1L);
-
+        // Assert
         assertNotNull(result);
-        assertEquals("John Doe", result.getName());
         assertEquals(1L, result.getId());
+        assertEquals("pending", result.getStatusForWeek());
+        verify(neederTrackingRepository, times(1)).findById(1L);
     }
 
     @Test
     void testGetNeederById_NotFound() {
+        // Arrange
         when(neederTrackingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(NeederTrackingNotFoundException.class, () -> neederTrackingService.getNeederById(1L));
+        // Act & Assert
+        assertThrows(NeederTrackingNotFoundException.class, () -> neederTrackingService.getNeederTrackById(1L));
+        verify(neederTrackingRepository, times(1)).findById(1L);
     }
 
     @Test
     void testAddNeeder() {
-        NeederTracking needer = new NeederTracking();
-        needer.setName("Jane Doe");
+        // Arrange
+        NeederTracking newNeederTracking = new NeederTracking();
+        newNeederTracking.setStatusForWeek("completed");
+        when(neederTrackingRepository.save(any(NeederTracking.class))).thenReturn(newNeederTracking);
 
-        when(neederTrackingRepository.save(needer)).thenReturn(needer);
+        // Act
+        NeederTracking result = neederTrackingService.addNeederTracking(newNeederTracking);
 
-        NeederTracking result = neederTrackingService.addNeeder(needer);
-
+        // Assert
         assertNotNull(result);
-        assertEquals("Jane Doe", result.getName());
+        assertEquals("completed", result.getStatusForWeek());
+        verify(neederTrackingRepository, times(1)).save(newNeederTracking);
     }
 }

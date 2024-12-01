@@ -1,6 +1,5 @@
 package Project.Final.FeedingTheNeeding.social.service;
 
-
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
@@ -17,34 +16,42 @@ public class NeederTrackingService {
         this.neederTrackingRepository = neederTrackingRepository;
     }
 
-    public List<NeederTracking> getAllNeeders() {
-        return neederTrackingRepository.findAll();
+    // Fetch all NeederTracking records, including Needy details
+    public List<NeederTracking> getAllNeedersTrackings() {
+        return neederTrackingRepository.findAll(); // Uses @EntityGraph to fetch Needy
     }
 
-    public NeederTracking getNeederById(Long id) {
+    // Fetch a single NeederTracking record by ID, including Needy details
+    public NeederTracking getNeederTrackById(Long id) {
         return neederTrackingRepository.findById(id)
-                .orElseThrow(() -> new NeederTrackingNotFoundException("Needer not found with ID: " + id));
+                .orElseThrow(() -> new NeederTrackingNotFoundException("NeederTracking with ID " + id + " not found"));
     }
 
-    public NeederTracking addNeeder(NeederTracking neederTracking) {
-        return neederTrackingRepository.save(neederTracking);
+    // Add a new NeederTracking record
+    public NeederTracking addNeederTracking(NeederTracking neederTracking) {
+        return neederTrackingRepository.save(neederTracking); // Save the new entity
     }
 
-    public NeederTracking updateNeeder(Long id, NeederTracking updatedNeeder) {
-        NeederTracking neederTracking = getNeederById(id);
+    // Update an existing NeederTracking record
+    public NeederTracking updateNeederTrack(Long id, NeederTracking updatedNeeder) {
+        NeederTracking existingNeederTracking = neederTrackingRepository.findById(id)
+                .orElseThrow(() -> new NeederTrackingNotFoundException("NeederTracking with ID " + id + " not found"));
 
-        neederTracking.setName(updatedNeeder.getName());
-        neederTracking.setAddress(updatedNeeder.getAddress());
-        neederTracking.setPhone(updatedNeeder.getPhone());
-        neederTracking.setStatusForWeek(updatedNeeder.getStatusForWeek());
-        neederTracking.setFamilySize(updatedNeeder.getFamilySize());
-        neederTracking.setDietaryPreferences(updatedNeeder.getDietaryPreferences());
-        neederTracking.setAdditionalNotes(updatedNeeder.getAdditionalNotes());
+        // Update fields
+        existingNeederTracking.setNeedy(updatedNeeder.getNeedy());
+        existingNeederTracking.setStatusForWeek(updatedNeeder.getStatusForWeek());
+        existingNeederTracking.setFamilySize(updatedNeeder.getFamilySize());
+        existingNeederTracking.setDietaryPreferences(updatedNeeder.getDietaryPreferences());
+        existingNeederTracking.setAdditionalNotes(updatedNeeder.getAdditionalNotes());
 
-        return neederTrackingRepository.save(neederTracking);
+        return neederTrackingRepository.save(existingNeederTracking);
     }
 
-    public void deleteNeeder(Long id) {
+    // Delete a NeederTracking record
+    public void deleteNeederTrack(Long id) {
+        if (!neederTrackingRepository.existsById(id)) {
+            throw new NeederTrackingNotFoundException("NeederTracking with ID " + id + " not found");
+        }
         neederTrackingRepository.deleteById(id);
     }
 }
