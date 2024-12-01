@@ -18,7 +18,7 @@ public class Needy extends BaseUser {
 
     private NeedyStatus statusForWeek; // e.g., "pending", "completed", etc.
     private int familySize;
-  //  private Preference[] dietaryPreferences;
+    private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
 
     @Column(length = 1000)
     private String additionalNotes;

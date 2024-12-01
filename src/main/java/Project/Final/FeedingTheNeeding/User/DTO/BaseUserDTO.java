@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BaseUserDTO {
     private Long ID;
-    private String email;
     private String firstName;
     private String lastName;
     private String phoneNumber;
@@ -21,7 +20,7 @@ public class BaseUserDTO {
 
     public BaseUserDTO(BaseUser user) {
         this.ID = user.getId();
-        this.email = user.getEmail();
+
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
         this.phoneNumber = user.getPhoneNumber();

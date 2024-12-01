@@ -22,4 +22,6 @@ public class NeederTracking {
 
     @Column(length = 1000)
     private String additionalNotes;
+
+
 }

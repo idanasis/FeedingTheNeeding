@@ -12,13 +12,13 @@ public class UserService {
 
     private IUserRepository userRepository;
 
-    public boolean existByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
+//    public boolean existByEmail(String email) {
+//        return userRepository.existsByEmail(email);
+//    }
 
-    public Optional<BaseUser> findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
+//    public Optional<BaseUser> findByEmail(String email) {
+//        return userRepository.findByEmail(email);
+//    }
 
     public BaseUser saveUser(BaseUser baseUser) {
         return userRepository.save(baseUser);

@@ -16,15 +16,15 @@ public class AuthController {
         this.authFacade = authFacade;
     }
 
-    @PostMapping("/register")
-    public BaseUserDTO register(@RequestBody RegistrationRequest registrationRequest) {
-        return authFacade.registerUser(registrationRequest);
-    }
+//    @PostMapping("/register")
+//    public BaseUserDTO register(@RequestBody RegistrationRequest registrationRequest) {
+//        return authFacade.registerUser(registrationRequest);
+//    }
 
-    @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-        return authFacade.login(loginRequest);
-    }
+//    @PostMapping("/login")
+//    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
+//        return authFacade.login(loginRequest);
+//    }
 
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String token) {

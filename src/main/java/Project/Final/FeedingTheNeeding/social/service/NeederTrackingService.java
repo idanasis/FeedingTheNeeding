@@ -54,4 +54,9 @@ public class NeederTrackingService {
         }
         neederTrackingRepository.deleteById(id);
     }
+
+//    public List<NeederTracking> getAllWaitingNeeders() {
+//        // i need all the needers who they status fields is waiting
+//        return neederTrackingRepository.getAllWaitingNeeders();
+//    }
 }

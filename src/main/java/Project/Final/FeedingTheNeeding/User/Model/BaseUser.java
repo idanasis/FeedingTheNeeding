@@ -14,8 +14,6 @@ public class BaseUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true) // have to be unique in the table
-    private String email;
 
     private String firstName;
     private String lastName;

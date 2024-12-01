@@ -53,4 +53,10 @@ public class NeederTrackingController {
         neederTrackingService.deleteNeederTrack(id);
         return ResponseEntity.noContent().build();
     }
+
+//    @GetMapping
+//    public ResponseEntity<List<NeederTracking>> getAllWaitingNeeders() {
+//        List<NeederTracking> neederTrackings = neederTrackingService.getAllWaitingNeeders();
+//        return ResponseEntity.ok(neederTrackings);
+//    }
 }
