@@ -21,7 +21,7 @@ public class NeederController {
     //get all needers with needy status pending enum
     @GetMapping("/pending")
     public void getPendingNeedy() {
-        neederRepository.findByNeedyStatus(NeedyStatus.PENDING);
+        neederRepository.findByConfirmStatus(NeedyStatus.PENDING);
     }
 
 }

@@ -13,5 +13,5 @@ import java.util.Optional;
 @Repository
 public interface NeederRepository extends JpaRepository<Needy, Long> {
         //find needy by needyStatus
-        List<Needy> findByNeedyStatus(NeedyStatus needyStatus);
+        List<Needy> findByConfirmStatus(NeedyStatus needyStatus);
 }

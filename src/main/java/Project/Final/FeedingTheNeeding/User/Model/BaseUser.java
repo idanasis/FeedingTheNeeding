@@ -3,8 +3,7 @@ package Project.Final.FeedingTheNeeding.User.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Entity
-@Table(name = "users")
+@MappedSuperclass
 @Data // automatically created getters, setters, toString and etc..
 @Builder
 @NoArgsConstructor // create constructor without a parameters
