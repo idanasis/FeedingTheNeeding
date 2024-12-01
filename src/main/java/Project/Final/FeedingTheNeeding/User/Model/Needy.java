@@ -16,9 +16,10 @@ public class Needy extends BaseUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private NeedyStatus statusForWeek; // e.g., "pending", "completed", etc.
+    private String statusForWeek; // e.g., "pending", "completed", etc.
     private int familySize;
     private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
+    private NeedyStatus confirmStatus;
 
     @Column(length = 1000)
     private String additionalNotes;
