@@ -11,13 +11,13 @@ import java.util.Optional;
 @Repository
 public interface JpaUserRepository extends JpaRepository<BaseUser, String>, IUserRepository {
 
-    @Override
-    Optional<BaseUser> findByEmail(String email);
+  //  @Override
+   // Optional<BaseUser> findByEmail(String email);
 
-    @Override
-    boolean existsByEmail(String email);
+  //  @Override
+  //  boolean existsByEmail(String email);
 
-    @Override
-    List<BaseUser> findByStatus(UserStatus status);
+//    @Override
+//    List<BaseUser> findByStatus(UserStatus status);
 
 }

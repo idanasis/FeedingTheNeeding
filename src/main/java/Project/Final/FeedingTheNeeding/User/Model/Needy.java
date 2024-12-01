@@ -1,27 +1,26 @@
-package Project.Final.FeedingTheNeeding.social.model;
+package Project.Final.FeedingTheNeeding.User.Model;
 
-import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+import java.util.List;
+
 @Entity
-public class NeederTracking {
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Needy extends BaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Eagerly fetch the related Needy entity
-    @JoinColumn(name = "needy_id", referencedColumnName = "id", nullable = false)
-    private Needy needy;
-
     private String statusForWeek; // e.g., "pending", "completed", etc.
     private int familySize;
     private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
+    private NeedyStatus confirmStatus;
 
     @Column(length = 1000)
     private String additionalNotes;
-
-
 }

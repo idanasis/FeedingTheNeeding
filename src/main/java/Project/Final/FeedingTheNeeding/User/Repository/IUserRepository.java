@@ -10,14 +10,14 @@ import java.util.Optional;
 public interface IUserRepository {
 
     BaseUser save(BaseUser user);
-    Optional<BaseUser> findByEmail(String email);
+   // Optional<BaseUser> findByEmail(String email);
     //    Optional<BaseUser> findById(String id);
-    boolean existsByEmail(String email);
+   // boolean existsByEmail(String email);
     //    boolean existsById(String id);
 //    List<BaseUser> findAll();
 //    Void delete(BaseUser user);
 //    void deleteByEmail(String email);
-    List<BaseUser> findByStatus(UserStatus status);
+ //   List<BaseUser> findByStatus(UserStatus status);
 
 //    boolean isLoggedIn(String email);
 //    void setLoggIn(String email, boolean loggedIn);
