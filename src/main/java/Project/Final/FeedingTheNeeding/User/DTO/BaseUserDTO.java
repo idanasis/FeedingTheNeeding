@@ -27,6 +27,5 @@ public class BaseUserDTO {
         this.phoneNumber = user.getPhoneNumber();
         this.address = user.getAddress();
         this.city = user.getCity();
-        this.status = user.getStatus();
     }
 }

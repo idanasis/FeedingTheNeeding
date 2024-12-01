@@ -17,13 +17,11 @@ public class BaseUser {
     @Column(unique = true) // have to be unique in the table
     private String email;
 
-    private String password;
     private String firstName;
     private String lastName;
     private String phoneNumber;
     private String address;
     private String city;
 
-    @Enumerated(EnumType.STRING)
-    private UserStatus status;
+
 }

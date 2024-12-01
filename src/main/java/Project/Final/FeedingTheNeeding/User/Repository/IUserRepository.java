@@ -17,7 +17,7 @@ public interface IUserRepository {
 //    List<BaseUser> findAll();
 //    Void delete(BaseUser user);
 //    void deleteByEmail(String email);
-    List<BaseUser> findByStatus(UserStatus status);
+ //   List<BaseUser> findByStatus(UserStatus status);
 
 //    boolean isLoggedIn(String email);
 //    void setLoggIn(String email, boolean loggedIn);

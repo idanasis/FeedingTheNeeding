@@ -17,7 +17,7 @@ public interface JpaUserRepository extends JpaRepository<BaseUser, String>, IUse
     @Override
     boolean existsByEmail(String email);
 
-    @Override
-    List<BaseUser> findByStatus(UserStatus status);
+//    @Override
+//    List<BaseUser> findByStatus(UserStatus status);
 
 }

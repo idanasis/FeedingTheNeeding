@@ -28,13 +28,12 @@ public class AuthFacade {
 
         BaseUser user = BaseUser.builder()
                 .email(registrationRequest.getEmail())
-                .password(registrationRequest.getPassword())
+
                 .firstName(registrationRequest.getFirstName())
                 .lastName(registrationRequest.getLastName())
                 .phoneNumber(registrationRequest.getPhoneNumber())
                 .address(registrationRequest.getAddress())
                 .city(registrationRequest.getCity())
-                .status(UserStatus.PENDING)
                 .build();
 
         user = userService.saveUser(user);
@@ -47,11 +46,11 @@ public class AuthFacade {
         BaseUser user = userService.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new InvalidCredentialException("Invalid email."));
 
-        if(!user.getPassword().equals(loginRequest.getPassword())) // TODO: decode the password and check
-            throw new InvalidCredentialException("Invalid password.");
-
-        if(user.getStatus() == UserStatus.ACTIVE)
-            throw new UserAlreadyLoggedInException("User already logged in to the system");
+//        if(!user.getPassword().equals(loginRequest.getPassword())) // TODO: decode the password and check
+//            throw new InvalidCredentialException("Invalid password.");
+//
+//        if(user.getStatus() == UserStatus.ACTIVE)
+//            throw new UserAlreadyLoggedInException("User already logged in to the system");
 
         String token = tokenService.generateToken(user.getEmail());
 
