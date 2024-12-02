@@ -23,23 +23,35 @@ public class NeederController {
     // Create or Update a Needy user
     @PostMapping
     public ResponseEntity<Needy> createOrUpdateNeedy(@RequestBody Needy needy) {
-        Needy savedNeedy = neederService.saveOrUpdateNeedy(needy);
-        return ResponseEntity.ok(savedNeedy);
+        try {
+            Needy savedNeedy = neederService.saveOrUpdateNeedy(needy);
+            return ResponseEntity.ok(savedNeedy);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // Get all Needy users
     @GetMapping
     public ResponseEntity<List<Needy>> getAllNeedies() {
-        List<Needy> needyUsers = neederService.getAllNeedyUsers();
-        return ResponseEntity.ok(needyUsers);
+        try {
+            List<Needy> needyUsers = neederService.getAllNeedyUsers();
+            return ResponseEntity.ok(needyUsers);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // Get a specific Needy user by ID
     @GetMapping("/{id}")
     public ResponseEntity<Needy> getNeedyById(@PathVariable Long id) {
-        return neederService.getNeedyById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        try {
+            return neederService.getNeedyById(id)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
     // Delete a Needy user by ID
@@ -50,13 +62,19 @@ public class NeederController {
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
         }
     }
 
     @GetMapping("/pending")
     public ResponseEntity<List<Needy>> getPendingNeedies() {
-        List<Needy> pendingNeedies = neederService.getPendingNeedy();
-        return ResponseEntity.ok(pendingNeedies);
+        try {
+            List<Needy> pendingNeedies = neederService.getPendingNeedy();
+            return ResponseEntity.ok(pendingNeedies);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 
 }
