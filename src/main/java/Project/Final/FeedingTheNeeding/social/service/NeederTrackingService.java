@@ -39,8 +39,7 @@ public class NeederTrackingService {
 
         // Update fields
         existingNeederTracking.setNeedy(updatedNeeder.getNeedy());
-        existingNeederTracking.setStatusForWeek(updatedNeeder.getStatusForWeek());
-        existingNeederTracking.setFamilySize(updatedNeeder.getFamilySize());
+        existingNeederTracking.setWeekStatus(updatedNeeder.getWeekStatus());
         existingNeederTracking.setDietaryPreferences(updatedNeeder.getDietaryPreferences());
         existingNeederTracking.setAdditionalNotes(updatedNeeder.getAdditionalNotes());
 
@@ -55,8 +54,5 @@ public class NeederTrackingService {
         neederTrackingRepository.deleteById(id);
     }
 
-//    public List<NeederTracking> getAllWaitingNeeders() {
-//        // i need all the needers who they status fields is waiting
-//        return neederTrackingRepository.getAllWaitingNeeders();
-//    }
+
 }

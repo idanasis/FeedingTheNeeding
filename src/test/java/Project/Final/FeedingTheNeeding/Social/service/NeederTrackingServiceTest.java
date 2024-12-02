@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.Social.service;
 
+import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
@@ -31,9 +32,20 @@ class NeederTrackingServiceTest {
     @Test
     void testGetNeederById_Success() {
         // Arrange
+        Needy needy=new Needy();
+        needy.setId(1L);
+        needy.setFamilySize(4);
+        needy.setFirstName("John");
+        needy.setLastName("Doe");
+        needy.setPhoneNumber("123456789");
+
         NeederTracking mockNeederTracking = new NeederTracking();
         mockNeederTracking.setId(1L);
-        mockNeederTracking.setStatusForWeek("pending");
+        mockNeederTracking.setNeedy(needy);
+        mockNeederTracking.setDietaryPreferences("Vegetarian");
+        mockNeederTracking.setAdditionalNotes("Requires delivery before noon");
+
+
         when(neederTrackingRepository.findById(1L)).thenReturn(Optional.of(mockNeederTracking));
 
         // Act
@@ -42,7 +54,12 @@ class NeederTrackingServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(1L, result.getId());
-        assertEquals("pending", result.getStatusForWeek());
+        assertEquals("Vegetarian", result.getDietaryPreferences());
+        assertEquals("Requires delivery before noon", result.getAdditionalNotes());
+        assertEquals(4, result.getNeedy().getFamilySize());
+        assertEquals("John", result.getNeedy().getFirstName());
+        assertEquals("Doe", result.getNeedy().getLastName());
+        assertEquals("123456789", result.getNeedy().getPhoneNumber());
         verify(neederTrackingRepository, times(1)).findById(1L);
     }
 
@@ -60,7 +77,6 @@ class NeederTrackingServiceTest {
     void testAddNeeder() {
         // Arrange
         NeederTracking newNeederTracking = new NeederTracking();
-        newNeederTracking.setStatusForWeek("completed");
         when(neederTrackingRepository.save(any(NeederTracking.class))).thenReturn(newNeederTracking);
 
         // Act
@@ -68,7 +84,6 @@ class NeederTrackingServiceTest {
 
         // Assert
         assertNotNull(result);
-        assertEquals("completed", result.getStatusForWeek());
         verify(neederTrackingRepository, times(1)).save(newNeederTracking);
     }
 }
