@@ -12,12 +12,11 @@ public class NeederTracking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER) // Eagerly fetch the related Needy entity
-    @JoinColumn(name = "needy_id", referencedColumnName = "id", nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "needy_id", nullable = false)
     private Needy needy;
 
-    private String statusForWeek; // e.g., "pending", "completed", etc.
-    private int familySize;
+    private WeekStatus weekStatus;
     private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
 
     @Column(length = 1000)
