@@ -19,7 +19,8 @@ public class BaseUser {
     @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
+
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
 
     @Column(nullable = false)
