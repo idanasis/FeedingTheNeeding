@@ -36,14 +36,12 @@ public class NeederTrackingRepositoryTest {
         user.setPhoneNumber("123456789");
         user.setAddress("123 Street");
         user.setCity("City");
-        user.setDietaryPreferences("Vegetarian, No Sugar");
+        user.setFamilySize(4);
         NeederRepository.save(user);
 
          //Arrange
         NeederTracking neederTracking = new NeederTracking();
         neederTracking.setNeedy(user);
-        neederTracking.setStatusForWeek("pending");
-        neederTracking.setFamilySize(4);
         neederTracking.setDietaryPreferences("Vegetarian, No Sugar");
         neederTracking.setAdditionalNotes("Requires delivery before noon");
 
@@ -52,8 +50,6 @@ public class NeederTrackingRepositoryTest {
 
         // Assert: Validate the saved entity
         assertNotNull(savedNeederTracking.getId());
-        assertEquals("pending", savedNeederTracking.getStatusForWeek());
-        assertEquals(4, savedNeederTracking.getFamilySize());
         assertEquals("Vegetarian, No Sugar", savedNeederTracking.getDietaryPreferences());
         assertEquals("Requires delivery before noon", savedNeederTracking.getAdditionalNotes());
 
@@ -64,8 +60,13 @@ public class NeederTrackingRepositoryTest {
         assertTrue(retrievedNeederTracking.isPresent());
         NeederTracking foundNeederTracking = retrievedNeederTracking.get();
         assertEquals(savedNeederTracking.getId(), foundNeederTracking.getId());
-        assertEquals("pending", foundNeederTracking.getStatusForWeek());
-        assertEquals(4, foundNeederTracking.getFamilySize());
+        assertEquals(user.getId(), foundNeederTracking.getNeedy().getId());
+        assertEquals("John", foundNeederTracking.getNeedy().getFirstName());
+        assertEquals("Doe", foundNeederTracking.getNeedy().getLastName());
+        assertEquals("123456789", foundNeederTracking.getNeedy().getPhoneNumber());
+        assertEquals("123 Street", foundNeederTracking.getNeedy().getAddress());
+        assertEquals("City", foundNeederTracking.getNeedy().getCity());
+        assertEquals(4, foundNeederTracking.getNeedy().getFamilySize());
         assertEquals("Vegetarian, No Sugar", foundNeederTracking.getDietaryPreferences());
         assertEquals("Requires delivery before noon", foundNeederTracking.getAdditionalNotes());
     }
