@@ -14,16 +14,14 @@ public class NeedyMapperImpl implements NeedyMapper {
         needy.setPhoneNumber(needyDTO.baseUserDTO().phoneNumber());
         needy.setAddress(needyDTO.baseUserDTO().address());
         needy.setCity(needyDTO.baseUserDTO().city());
-        needy.setStatusForWeek(needyDTO.statusForWeek());
+        needy.setConfirmStatus(needyDTO.confirmStatus());
         needy.setFamilySize(needyDTO.familySize());
-        needy.setDietaryPreferences(needyDTO.dietaryPreferences());
-        needy.setAdditionalNotes(needyDTO.additionalNotes());
         return needy;
     }
 
     @Override
     public NeedyDTO toDTO(Needy needy) {
         BaseUserDTO baseUserDTO = new BaseUserDTO(needy.getId(), needy.getFirstName(), needy.getLastName(), needy.getPhoneNumber(), needy.getAddress(), needy.getCity());
-        return new NeedyDTO(baseUserDTO, needy.getStatusForWeek(), needy.getFamilySize(), needy.getDietaryPreferences(), needy.getAdditionalNotes());
+        return new NeedyDTO(baseUserDTO, needy.getConfirmStatus(), needy.getFamilySize());
     }
 }

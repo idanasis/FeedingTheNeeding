@@ -17,6 +17,7 @@ public class DonatorMapperImpl implements DonatorMapper {
         donator.setCity(donatorDTO.baseUserDTO().city());
         donator.setEmail(donatorDTO.email());
         donator.setPassword(donatorDTO.password());
+        donator.setTimeOfDonation(donatorDTO.timeOfDonation());
         donator.setStatus(donatorDTO.registrationStatus());
         return donator;
     }
@@ -24,6 +25,6 @@ public class DonatorMapperImpl implements DonatorMapper {
     @Override
     public DonatorDTO toDTO(Donator donator) {
         BaseUserDTO baseUserDTO = new BaseUserDTO(donator.getId(), donator.getFirstName(), donator.getLastName(), donator.getPhoneNumber(), donator.getAddress(), donator.getCity());
-        return new DonatorDTO(baseUserDTO, donator.getEmail(), donator.getPassword(), donator.getStatus());
+        return new DonatorDTO(baseUserDTO, donator.getEmail(), donator.getPassword(), donator.getTimeOfDonation(), donator.getStatus());
     }
 }
