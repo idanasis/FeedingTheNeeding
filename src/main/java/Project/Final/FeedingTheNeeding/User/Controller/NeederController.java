@@ -77,4 +77,16 @@ public class NeederController {
         }
     }
 
+    @GetMapping("/phone/{phoneNumber}")
+    public ResponseEntity<Needy> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
+        try {
+            return neederService.getNeedyByPhoneNumber(phoneNumber)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+
 }
