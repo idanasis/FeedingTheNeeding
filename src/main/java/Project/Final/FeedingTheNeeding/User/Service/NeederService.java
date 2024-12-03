@@ -4,6 +4,7 @@ import Project.Final.FeedingTheNeeding.User.Controller.NeederController;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
+import aj.org.objectweb.asm.commons.Remapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,4 +50,7 @@ public class NeederService {
     }
 
 
+    public Optional<Needy> getNeedyByPhoneNumber(String phoneNumber) {
+        return neederRepository.findByPhoneNumber(phoneNumber);
+    }
 }
