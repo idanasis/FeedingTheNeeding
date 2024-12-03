@@ -13,4 +13,5 @@ public interface UserRepository extends JpaRepository<BaseUser, Long> {
 
     List<BaseUser> findByStatus(RegistrationStatus status);
     List<BaseUser> findByCity(String city);
+
 }
