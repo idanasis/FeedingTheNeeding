@@ -16,6 +16,7 @@ public class Donator extends BaseUser{
     @Column(unique = true) // have to be unique in the table
     private String email;
     private String password;
+    private double timeOfDonation;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

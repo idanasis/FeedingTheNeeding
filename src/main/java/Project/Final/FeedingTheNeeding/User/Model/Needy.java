@@ -14,10 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Needy extends BaseUser {
-    private NeedyStatus statusForWeek; // e.g., "pending", "completed", etc.
     private int familySize;
-    private Preference[] dietaryPreferences;
-
-    @Column(length = 1000)
-    private String additionalNotes;
+    private NeedyStatus confirmStatus;
 }
