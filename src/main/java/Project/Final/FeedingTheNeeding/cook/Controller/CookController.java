@@ -13,16 +13,16 @@ import org.springframework.http.ResponseEntity;
 @RestController
 @RequestMapping("/cooking")
 public class CookController {
-//    private final CookingService cs;
-//
-//    public CookController(CookingService cs) {this.cs = cs;}
-//
-//    @PostMapping("/constraints")
-//    public ResponseEntity<?> submitConstraints(@RequestBody CookConstraints constraints){
-//        try{
-//            return ResponseEntity.ok(cs.submitConstraints(constraints));
-//        } catch (Exception e){
-//            return ResponseEntity.badRequest().body(e.getMessage());
-//        }
-//    }
+    private final CookingService cs;
+
+    public CookController(CookingService cs) {this.cs = cs;}
+
+    @PostMapping("/constraints")
+    public ResponseEntity<?> submitConstraints(@RequestBody CookConstraints constraints){
+        try{
+            return ResponseEntity.ok(cs.submitConstraints(constraints));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
