@@ -53,3 +53,9 @@ jobs:
         with:
           name: jacoco-report
           path: target/site/jacoco/
+      - name: Generate Coverage Summary
+        run: |
+            java -jar jacoco-parser.jar target/site/jacoco/jacoco.xml > coverage-summary.md
+      - name: Display Coverage in Workflow
+        run: cat coverage-summary.md
+        
