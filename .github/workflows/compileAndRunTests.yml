@@ -66,12 +66,4 @@ jobs:
         with:
            generate-branches-badge: true
            generate-summary: true
-      # - name: log coverage to output
-      #   run: |
-      #     echo "Coverage: $(cat target/site/jacoco/index.html | grep -oP 'span class="ctr[^>]+>\K[^<]+')"
-      - name: Generate Coverage Summary
-        run: |
-          java -jar jacoco-parser.jar target/site/jacoco/jacoco.xml > coverage-summary.md
-
-      - name: Display Coverage in Workflow
-        run: cat coverage-summary.md
+           generate-coverage-badge: true
