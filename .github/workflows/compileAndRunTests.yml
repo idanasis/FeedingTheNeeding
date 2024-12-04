@@ -60,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
          name: jacoco-report
-         path: target/site/jacoco/index.html
+         path: target/site/jacoco/
       - name: Display Coverage Summaries
         run: |
            echo "Coverage Reports for Modules:"
