@@ -21,37 +21,46 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class NeederTrackingRepositoryTest {
 
+    private static final String FIRST_NAME = "John";
+    private static final String LAST_NAME = "Doe";
+    private static final String PHONE_NUMBER = "123456789";
+    private static final String ADDRESS = "123 Street";
+    private static final String CITY = "City";
+    private static final int FAMILY_SIZE = 4;
+    private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
+    private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+
     @Autowired
     private NeederTrackingRepository repository;
 
     @Autowired
-    NeederRepository NeederRepository;
+    private NeederRepository neederRepository;
 
     @Test
     public void testSaveAndFindNeeder() {
+        // Arrange: Create and save a Needy entity
+        Needy user = new Needy();
+        user.setFirstName(FIRST_NAME);
+        user.setLastName(LAST_NAME);
+        user.setPhoneNumber(PHONE_NUMBER);
+        user.setAddress(ADDRESS);
+        user.setCity(CITY);
+        user.setFamilySize(FAMILY_SIZE);
+        neederRepository.save(user);
 
-        Needy user =new Needy();
-        user.setFirstName("John");
-        user.setLastName("Doe");
-        user.setPhoneNumber("123456789");
-        user.setAddress("123 Street");
-        user.setCity("City");
-        user.setFamilySize(4);
-        NeederRepository.save(user);
-
-         //Arrange
+        // Arrange: Create a NeederTracking entity
         NeederTracking neederTracking = new NeederTracking();
         neederTracking.setNeedy(user);
-        neederTracking.setDietaryPreferences("Vegetarian, No Sugar");
-        neederTracking.setAdditionalNotes("Requires delivery before noon");
+        neederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
+        neederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
 
         // Act: Save the entity
         NeederTracking savedNeederTracking = repository.save(neederTracking);
 
         // Assert: Validate the saved entity
         assertNotNull(savedNeederTracking.getId());
-        assertEquals("Vegetarian, No Sugar", savedNeederTracking.getDietaryPreferences());
-        assertEquals("Requires delivery before noon", savedNeederTracking.getAdditionalNotes());
+        assertEquals(DIETARY_PREFERENCES, savedNeederTracking.getDietaryPreferences());
+        assertEquals(ADDITIONAL_NOTES, savedNeederTracking.getAdditionalNotes());
 
         // Act: Retrieve the entity by ID
         Optional<NeederTracking> retrievedNeederTracking = repository.findById(savedNeederTracking.getId());
@@ -61,13 +70,13 @@ public class NeederTrackingRepositoryTest {
         NeederTracking foundNeederTracking = retrievedNeederTracking.get();
         assertEquals(savedNeederTracking.getId(), foundNeederTracking.getId());
         assertEquals(user.getId(), foundNeederTracking.getNeedy().getId());
-        assertEquals("John", foundNeederTracking.getNeedy().getFirstName());
-        assertEquals("Doe", foundNeederTracking.getNeedy().getLastName());
-        assertEquals("123456789", foundNeederTracking.getNeedy().getPhoneNumber());
-        assertEquals("123 Street", foundNeederTracking.getNeedy().getAddress());
-        assertEquals("City", foundNeederTracking.getNeedy().getCity());
-        assertEquals(4, foundNeederTracking.getNeedy().getFamilySize());
-        assertEquals("Vegetarian, No Sugar", foundNeederTracking.getDietaryPreferences());
-        assertEquals("Requires delivery before noon", foundNeederTracking.getAdditionalNotes());
+        assertEquals(FIRST_NAME, foundNeederTracking.getNeedy().getFirstName());
+        assertEquals(LAST_NAME, foundNeederTracking.getNeedy().getLastName());
+        assertEquals(PHONE_NUMBER, foundNeederTracking.getNeedy().getPhoneNumber());
+        assertEquals(ADDRESS, foundNeederTracking.getNeedy().getAddress());
+        assertEquals(CITY, foundNeederTracking.getNeedy().getCity());
+        assertEquals(FAMILY_SIZE, foundNeederTracking.getNeedy().getFamilySize());
+        assertEquals(DIETARY_PREFERENCES, foundNeederTracking.getDietaryPreferences());
+        assertEquals(ADDITIONAL_NOTES, foundNeederTracking.getAdditionalNotes());
     }
 }
