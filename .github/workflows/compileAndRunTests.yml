@@ -61,13 +61,18 @@ jobs:
         with:
          name: jacoco-report
          path: target/site/jacoco/
-      - name: Display Coverage Summaries
+      - name: Generate JaCoCo Badge
+        uses: cicirello/jacoco-badge-generator@v2.11.0
+        with:
+           generate-branches-badge: true
+           generate-summary: true
+      # - name: log coverage to output
+      #   run: |
+      #     echo "Coverage: $(cat target/site/jacoco/index.html | grep -oP 'span class="ctr[^>]+>\K[^<]+')"
+      - name: Generate Coverage Summary
         run: |
-           echo "Coverage Reports for Modules:"
-           for report in $(ls target/site/jacoco/*-coverage.xml); do
-             echo "Processing $report..."
-             java -jar jacoco-parser.jar $report >> coverage-summary.md
-           done
-           cat coverage-summary.md
+          wget https://path-to-jacoco-parser.jar -O jacoco-parser.jar
+          java -jar jacoco-parser.jar target/site/jacoco/jacoco.xml > coverage-summary.md
 
-
+      - name: Display Coverage in Workflow
+        run: cat coverage-summary.md
