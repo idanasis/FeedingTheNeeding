@@ -13,9 +13,9 @@ import java.util.Optional;
 @Repository
 public interface CookConstraintsRepository extends JpaRepository<CookConstraints,Long> {
 
-    public Optional<DriverConstraint> findByCookIdAndDate(long driverId, LocalDate date);
+    public Optional<CookConstraints> findByCookIdAndDate(long cookId, LocalDate date);
 
-    public List<DriverConstraint> findConstraintsByDate(LocalDate date);
+    public List<CookConstraints> findConstraintsByDate(LocalDate date);
 
-    public List<DriverConstraint> findConstraintsByDriverId(long driverId);
+    // public List<DriverConstraint> findConstraintsByDriverId(long driverId);
 }
