@@ -71,7 +71,6 @@ jobs:
       #     echo "Coverage: $(cat target/site/jacoco/index.html | grep -oP 'span class="ctr[^>]+>\K[^<]+')"
       - name: Generate Coverage Summary
         run: |
-          wget https://path-to-jacoco-parser.jar -O jacoco-parser.jar
           java -jar jacoco-parser.jar target/site/jacoco/jacoco.xml > coverage-summary.md
 
       - name: Display Coverage in Workflow
