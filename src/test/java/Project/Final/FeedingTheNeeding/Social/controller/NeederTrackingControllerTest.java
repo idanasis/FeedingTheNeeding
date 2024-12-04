@@ -1,12 +1,11 @@
 package Project.Final.FeedingTheNeeding.Social.controller;
+
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.social.controller.NeederTrackingController;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
-import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.checkerframework.checker.units.qual.N;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +31,34 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class NeederTrackingControllerTest {
 
+    private static final Long NEEDY_ID = 1L;
+    private static final int FAMILY_SIZE = 4;
+    private static final String DIETARY_PREFERENCES = "Vegetarian";
+    private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+    private static final String UPDATED_DIETARY_PREFERENCES = "Vegetarian, No Sugar";
+
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private NeederTrackingService neederTrackingService; // Use @MockBean instead of @Mock
+    private NeederTrackingService neederTrackingService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
     public void testGetAllNeeders() throws Exception {
-        Needy needy=new Needy();
-        needy.setId(1L);
-        needy.setConfirmStatus(NeedyStatus.PENDING);
-        needy.setFamilySize(4);
-
         // Arrange
-        NeederTracking mockNeederTracking = new NeederTracking();
-        mockNeederTracking.setId(1L);
-        mockNeederTracking.setNeedy(needy);
-        mockNeederTracking.setDietaryPreferences("Vegetarian");
-        mockNeederTracking.setAdditionalNotes("Requires delivery before noon");
+        Needy needy = new Needy();
+        needy.setId(NEEDY_ID);
+        needy.setConfirmStatus(NeedyStatus.PENDING);
+        needy.setFamilySize(FAMILY_SIZE);
 
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(NEEDY_ID);
+        mockNeederTracking.setNeedy(needy);
+        mockNeederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
+        mockNeederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
 
         Mockito.when(neederTrackingService.getAllNeedersTrackings())
                 .thenReturn(Arrays.asList(mockNeederTracking));
@@ -63,11 +67,11 @@ public class NeederTrackingControllerTest {
         mockMvc.perform(get("/social")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[0].dietaryPreferences").value("Vegetarian"))
-                .andExpect(jsonPath("$[0].additionalNotes").value("Requires delivery before noon"))
-                .andExpect(jsonPath("$[0].needy.id").value(1L))
-                .andExpect(jsonPath("$[0].needy.familySize").value(4));
+                .andExpect(jsonPath("$[0].id").value(NEEDY_ID))
+                .andExpect(jsonPath("$[0].dietaryPreferences").value(DIETARY_PREFERENCES))
+                .andExpect(jsonPath("$[0].additionalNotes").value(ADDITIONAL_NOTES))
+                .andExpect(jsonPath("$[0].needy.id").value(NEEDY_ID))
+                .andExpect(jsonPath("$[0].needy.familySize").value(FAMILY_SIZE));
     }
 
     @Test
@@ -86,16 +90,16 @@ public class NeederTrackingControllerTest {
     @Test
     public void testAddNeeder() throws Exception {
         // Arrange
-        Needy needy=new Needy();
-        needy.setId(1L);
+        Needy needy = new Needy();
+        needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
-        needy.setFamilySize(4);
+        needy.setFamilySize(FAMILY_SIZE);
 
         NeederTracking newNeederTracking = new NeederTracking();
         newNeederTracking.setNeedy(needy);
-        newNeederTracking.setId(1L);
-        newNeederTracking.setDietaryPreferences("Vegetarian, No Sugar");
-        newNeederTracking.setAdditionalNotes("Requires delivery before noon");
+        newNeederTracking.setId(NEEDY_ID);
+        newNeederTracking.setDietaryPreferences(UPDATED_DIETARY_PREFERENCES);
+        newNeederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
 
         Mockito.when(neederTrackingService.addNeederTracking(Mockito.any(NeederTracking.class)))
                 .thenReturn(newNeederTracking);
@@ -105,11 +109,10 @@ public class NeederTrackingControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(newNeederTracking)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.dietaryPreferences").value("Vegetarian, No Sugar"))
-                .andExpect(jsonPath("$.additionalNotes").value("Requires delivery before noon"))
-                .andExpect(jsonPath("$.needy.id").value(1L))
-                .andExpect(jsonPath("$.needy.familySize").value(4));
-
+                .andExpect(jsonPath("$.id").value(NEEDY_ID))
+                .andExpect(jsonPath("$.dietaryPreferences").value(UPDATED_DIETARY_PREFERENCES))
+                .andExpect(jsonPath("$.additionalNotes").value(ADDITIONAL_NOTES))
+                .andExpect(jsonPath("$.needy.id").value(NEEDY_ID))
+                .andExpect(jsonPath("$.needy.familySize").value(FAMILY_SIZE));
     }
 }
