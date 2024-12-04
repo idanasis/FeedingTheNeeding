@@ -48,14 +48,28 @@ jobs:
           done
       - name: Run Tests with Maven
         run: mvn clean verify
-      - name: Upload coverage report
+      - name: Generate Coverage Reports
+        run: |
+          for module in $(ls -d */ | grep -v target); do
+            if [ -d "$module/target/site/jacoco/" ]; then
+              echo "Generating report for $module..."
+              mv $module/target/site/jacoco/jacoco.xml $module-coverage.xml
+              echo "$module coverage saved as $module-coverage.xml"
+            fi
+          done
+
+      - name: Upload Per-Module Coverage Reports
         uses: actions/upload-artifact@v4
         with:
-          name: jacoco-report
-          path: target/site/jacoco/
-      - name: Generate Coverage Summary
+          name: per-module-jacoco-reports
+          path: ./*-coverage.xml
+
+      - name: Display Coverage Summaries
         run: |
-            java -jar jacoco-parser.jar target/site/jacoco/jacoco.xml > coverage-summary.md
-      - name: Display Coverage in Workflow
-        run: cat coverage-summary.md
+          echo "Coverage Reports for Modules:"
+          for report in $(ls ./*-coverage.xml); do
+            echo "Processing $report..."
+            java -jar jacoco-parser.jar $report >> coverage-summary.md
+          done
+          cat coverage-summary.md
         
