@@ -92,8 +92,8 @@ public class DrivingFascade {
         List<Route> routes = routeRepository.findRoutesByDate(date);
         for(Route route : routes){
             route.setSubmitted(true);
-            routeRepository.save(route);
         }
+        routeRepository.saveAll(routes);
         logger.info("submitAllRoutes with date {} done", date);
     }
 

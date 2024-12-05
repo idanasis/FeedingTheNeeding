@@ -4,6 +4,8 @@ import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
+import Project.Final.FeedingTheNeeding.driving.Model.Visit;
+import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepository;
 import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
@@ -38,11 +40,14 @@ class DrivingFascadeTest {
     private DriverConstraint driverConstraint;
     private DriverConstraintId driverConstraintId;
     private Route route;
+    private Visit visit;
+    private List<Route> routes = new ArrayList<>();
 
     final LocalDate drivingDate = LocalDate.of(2023, 12, 1);
     final long driverId = 2L,routeId = 1L;
-    final int startHour = 9,endHour = 17;
-    final String location = "Downtown", request = "some description";
+    final int startHour = 9,endHour = 17,maxHour = 14;
+    final String location = "Downtown", request = "some description",note = "some Note",address = "Ringelbloom 24 Beer Sheva",
+    lastName = "Doe",firstName = "John",phoneNumber = "0541234567";
 
     @BeforeEach
     void setUp() {
@@ -56,8 +61,9 @@ class DrivingFascadeTest {
                 location,
                 request
         );
-
         route = new Route(driverId, drivingDate);
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route);
+        routes.add(route);
     }
 
     @Test
@@ -159,4 +165,51 @@ class DrivingFascadeTest {
                 () -> drivingFascade.setDriverIdToRoute(routeId, driverId)
         );
     }
+    @Test
+    void testRemoveRoute() {
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        drivingFascade.removeRoute(routeId);
+        verify(routeRepository, times(1)).delete(route);
+    }
+    @Test
+    void testRemoveRouteNotFound() {
+        when(routeRepository.findById(routeId)).thenReturn(Optional.empty());
+        assertThrows(RouteNotFoundException.class, () -> drivingFascade.removeRoute(routeId));
+    }
+    @Test
+    void testGetRoute() {
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        Route result = drivingFascade.getRoute(routeId);
+        assertEquals(route, result);
+    }
+    @Test
+    void testGetHistory() {
+        when(routeRepository.findAll()).thenReturn(routes);
+        List<Route> result = drivingFascade.viewHistory();
+        assertEquals(routes, result);
+    }
+    @Test
+    void testSubmitAllRoutes() {
+        when(routeRepository.findRoutesByDate(drivingDate)).thenReturn(routes);
+        for (Route r : routes) {
+            assertFalse(r.isSubmitted());
+        }
+        drivingFascade.submitAllRoutes(drivingDate);
+        for (Route r : routes) {
+            assertTrue(r.isSubmitted());
+        }
+        verify(routeRepository, times(1)).saveAll(routes);
+    }
+    @Test
+    void testSetDriverIdToRouteSoCanFindIt(){
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        when(driverConstraintsRepository.findByDriverIdAndDate(driverId, drivingDate))
+                .thenReturn(Optional.of(driverConstraint));
+        drivingFascade.setDriverIdToRoute(routeId, driverId);
+        drivingFascade.getRoute(drivingDate,routeId);
+        when(routeRepository.findRouteByDateAndDriverId(drivingDate, driverId)).thenReturn(Optional.of(route));
+        Route result = drivingFascade.getRoute(drivingDate, driverId);
+        assertEquals(route.getDate(), result.getDate());
+    }
+
 }
