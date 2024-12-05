@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.Driving.service;
 
+import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
@@ -10,6 +11,9 @@ import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepos
 import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
+import Project.Final.FeedingTheNeeding.driving.exception.VisitNotExistException;
+import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
+import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,6 +37,8 @@ class DrivingFascadeTest {
 
     @Mock
     private RouteRepository routeRepository;
+    @Mock
+    private NeederTrackingService neederTrackingService;
 
     @InjectMocks
     private DrivingFascade drivingFascade;
@@ -45,9 +51,11 @@ class DrivingFascadeTest {
 
     final LocalDate drivingDate = LocalDate.of(2023, 12, 1);
     final long driverId = 2L,routeId = 1L;
-    final int startHour = 9,endHour = 17,maxHour = 14;
+    final int startHour = 9,endHour = 17,maxHour = 14,visitId = 1;
     final String location = "Downtown", request = "some description",note = "some Note",address = "Ringelbloom 24 Beer Sheva",
     lastName = "Doe",firstName = "John",phoneNumber = "0541234567";
+    final Needy needy = new Needy();
+    final NeedySimpleDTO needySimpleDTO= new NeedySimpleDTO(needy,note);
 
     @BeforeEach
     void setUp() {
@@ -210,6 +218,34 @@ class DrivingFascadeTest {
         when(routeRepository.findRouteByDateAndDriverId(drivingDate, driverId)).thenReturn(Optional.of(route));
         Route result = drivingFascade.getRoute(drivingDate, driverId);
         assertEquals(route.getDate(), result.getDate());
+    }
+    @Test
+    void testAddVisitDe() {
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        when(neederTrackingService.getNeedyFromNeederTrackingId(anyLong())).thenReturn(needySimpleDTO);
+        when(routeRepository.save(any(Route.class))).thenReturn(route);
+        drivingFascade.addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+        assertEquals(1, route.getVisit().size());
+        assertEquals(note, route.getVisit().get(0).getNote());
+        verify(routeRepository, times(1)).save(route);
+    }
+    @Test
+    void testRemoveVisit(){
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        when(routeRepository.save(route)).thenReturn(route);
+        route.addVisit(visit);
+        drivingFascade.removeAddressFromRoute(routeId, route.getVisit().get(0).getVisitId());
+        assertEquals(0, route.getVisit().size());
+        verify(routeRepository, times(1)).save(route);
+    }
+    @Test
+    void testRemoveVisitNotFound(){
+        when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
+        route.addVisit(visit);
+        assertThrows(
+                VisitNotExistException.class,
+                () -> drivingFascade.removeAddressFromRoute(routeId, visitId)
+        );
     }
 
 }
