@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,9 +27,7 @@ public class Route {
     private long driverId;
     private LocalDate date;
 
-    @OneToMany
-    @ElementCollection
-    @CollectionTable(name="routes_visits", joinColumns=@JoinColumn(name="routeId"))
+    @OneToMany(mappedBy = "route", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Visit> visit;
     private boolean isSubmitted;
 
@@ -35,15 +35,18 @@ public class Route {
         this.driverId = driverId;
         this.date = date;
         this.visit = visits;
+        this.isSubmitted = false;
     }
     public Route(long driverId, LocalDate date) {
         this.driverId = driverId;
         this.date = date;
         this.visit = new ArrayList<>();
+        this.isSubmitted = false;
     }
     public Route(LocalDate date) {
         this.date = date;
         this.visit = new ArrayList<>();
+        this.isSubmitted = false;
     }
     public long getRouteId() {
         return routeId;

@@ -5,14 +5,22 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Entity
+@NoArgsConstructor
 public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long visitId;
+
+    @ManyToOne
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
     private String address;
     private String firstName;
     private String lastName;
@@ -22,7 +30,7 @@ public class Visit {
     @Column(length = 1000)
     private String note;
     
-    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note) {
+    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route) {
         this.address = address;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -30,6 +38,7 @@ public class Visit {
         this.maxHour = maxHour;
         this.status = status;
         this.note = note;
+        this.route = route;
     }
     public long getVisitId() {
         return visitId;
