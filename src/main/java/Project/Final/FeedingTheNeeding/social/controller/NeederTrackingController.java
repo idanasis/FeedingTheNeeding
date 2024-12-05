@@ -114,7 +114,6 @@ public class NeederTrackingController {
         }
     }
 
-    //get Needy from neederTrackingId
     @GetMapping("/getNeedy/{id}")
     public ResponseEntity<?> getNeedyFromNeederTrackingId(@PathVariable Long id) {
         try {
