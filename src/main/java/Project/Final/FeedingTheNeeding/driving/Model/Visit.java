@@ -9,10 +9,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @Entity
 @NoArgsConstructor
+@ToString(exclude = "route") // Exclude the field that causes the circular reference
 public class Visit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

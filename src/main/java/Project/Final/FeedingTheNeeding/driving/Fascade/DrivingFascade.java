@@ -9,6 +9,8 @@ import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
 import Project.Final.FeedingTheNeeding.driving.exception.VisitNotExistException;
+import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
+import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import jakarta.transaction.Transactional;
 import Project.Final.FeedingTheNeeding.driving.Model.*;
 import org.apache.logging.log4j.LogManager;
@@ -18,14 +20,16 @@ import org.apache.logging.log4j.Logger;
 public class DrivingFascade {
     
     private final DriverConstraintsRepository driverConstraintsRepository;
+    private final NeederTrackingService neederTrackingService;
 
     private final RouteRepository routeRepository;
     private static final Logger logger = LogManager.getLogger(DrivingFascade.class);
 
-    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository) {
+    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository, NeederTrackingService neederTrackingService) {
         logger.info("DrivingFascade create");
         this.driverConstraintsRepository = driverConstraintsRepository;
         this.routeRepository = routeRepository;
+        this.neederTrackingService = neederTrackingService;
         logger.info("DrivingFascade created");
     }
 
@@ -97,17 +101,19 @@ public class DrivingFascade {
         logger.info("submitAllRoutes with date {} done", date);
     }
 
-    public void addAddressToRoute(long routeId,long address,VisitStatus status){ 
-        logger.info("addAddressToRoute with route id={} and address {} and status", routeId, address,status);
+    public void addAddressToRoute(long routeId,long visitId,VisitStatus status){ 
+        logger.info("addAddressToRoute with route id={} and visitId= {} and status", routeId, visitId,status);
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
-        if(status==VisitStatus.Deliver){
-            //TODO: get address from cooking service
+        if(status==VisitStatus.Deliver){    
+            NeedySimpleDTO needySimpleDTO=neederTrackingService.getNeedyFromNeederTrackingId(visitId);
+            Visit visit = new Visit(needySimpleDTO.getAddress(), needySimpleDTO.getFirstName(), needySimpleDTO.getLastName(), needySimpleDTO.getPhoneNumber(), 0, status, needySimpleDTO.getAdditionalNotes(),route);
+            route.addVisit(visit);
         }
         else if(status==VisitStatus.Pickup){
-            //TODO: get address from social service
+            //TODO: get address from cooking service
         }
         routeRepository.save(route);
-        logger.info("addAddressToRoute with route id={} and address {} and status={} done", routeId, address,status);
+        logger.info("addAddressToRoute with route id={} and visitId= {} and status={} done", routeId, visitId,status);
     }
     public void removeAddressFromRoute(long routeId,long visitId){
         logger.info("removeAddressFromRoute with route id={} and visitId= {}", routeId, visitId);
