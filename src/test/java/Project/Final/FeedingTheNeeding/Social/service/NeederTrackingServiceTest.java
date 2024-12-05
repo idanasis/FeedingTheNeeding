@@ -3,6 +3,8 @@ package Project.Final.FeedingTheNeeding.Social.service;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
+import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -92,5 +96,116 @@ class NeederTrackingServiceTest {
         // Assert
         assertNotNull(result);
         verify(neederTrackingRepository, times(1)).save(newNeederTracking);
+    }
+    @Test
+    void testUpdateNeederTrack_Success() {
+        // Arrange
+        Long existingId = 1L;
+        Needy existingNeedy = new Needy();
+        existingNeedy.setId(existingId);
+        existingNeedy.setFirstName("Old Name");
+
+        NeederTracking existingTracking = new NeederTracking();
+        existingTracking.setId(existingId);
+        existingTracking.setNeedy(existingNeedy);
+        existingTracking.setDietaryPreferences("Old Preference");
+
+        Needy updatedNeedy = new Needy();
+        updatedNeedy.setId(existingId);
+        updatedNeedy.setFirstName("New Name");
+
+        NeederTracking updatedTracking = new NeederTracking();
+        updatedTracking.setNeedy(updatedNeedy);
+        updatedTracking.setDietaryPreferences("New Preference");
+        updatedTracking.setAdditionalNotes("Updated Notes");
+
+        when(neederTrackingRepository.findById(existingId)).thenReturn(Optional.of(existingTracking));
+        when(neederTrackingRepository.save(any(NeederTracking.class))).thenReturn(updatedTracking);
+
+        // Act
+        NeederTracking result = neederTrackingService.updateNeederTrack(existingId, updatedTracking);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals("New Name", result.getNeedy().getFirstName());
+        assertEquals("New Preference", result.getDietaryPreferences());
+        verify(neederTrackingRepository, times(1)).findById(existingId);
+        verify(neederTrackingRepository, times(1)).save(any(NeederTracking.class));
+    }
+
+    @Test
+    void testUpdateNeederTrack_NotFound() {
+        // Arrange
+        Long nonExistentId = 999L;
+        NeederTracking updatedTracking = new NeederTracking();
+
+        when(neederTrackingRepository.findById(nonExistentId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NeederTrackingNotFoundException.class,
+                () -> neederTrackingService.updateNeederTrack(nonExistentId, updatedTracking));
+    }
+
+    @Test
+    void testDeleteNeederTrack_Success() {
+        // Arrange
+        Long existingId = 1L;
+        when(neederTrackingRepository.existsById(existingId)).thenReturn(true);
+
+        // Act
+        neederTrackingService.deleteNeederTrack(existingId);
+
+        // Assert
+        verify(neederTrackingRepository, times(1)).deleteById(existingId);
+        verify(neederTrackingRepository, times(1)).existsById(existingId);
+
+    }
+
+    @Test
+    void testDeleteNeederTrack_NotFound() {
+        // Arrange
+        Long nonExistentId = 999L;
+        when(neederTrackingRepository.existsById(nonExistentId)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(NeederTrackingNotFoundException.class,
+                () -> neederTrackingService.deleteNeederTrack(nonExistentId));
+    }
+
+    @Test
+    void testGetAllNeedersTrackings() {
+        // Arrange
+        List<NeederTracking> mockTrackings = Arrays.asList(
+                new NeederTracking(),
+                new NeederTracking()
+        );
+        when(neederTrackingRepository.findAll()).thenReturn(mockTrackings);
+
+        // Act
+        List<NeederTracking> result = neederTrackingService.getAllNeedersTrackings();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(neederTrackingRepository, times(1)).findAll();
+    }
+
+    @Test
+    void testGetNeedersHere() {
+        // Arrange
+        List<NeederTrackingProjection> mockProjections = Arrays.asList(
+                mock(NeederTrackingProjection.class),
+                mock(NeederTrackingProjection.class)
+        );
+
+        when(neederTrackingRepository.findByWeekStatus(WeekStatus.Here)).thenReturn(mockProjections);
+
+        // Act
+        List<NeederTrackingProjection> result = neederTrackingService.getNeedersHere();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(neederTrackingRepository, times(1)).findByWeekStatus(WeekStatus.Here);
     }
 }

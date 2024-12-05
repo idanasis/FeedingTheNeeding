@@ -16,6 +16,7 @@ public class Needy extends BaseUser {
 
 
     private int familySize;
+    @Enumerated(EnumType.STRING)
     private NeedyStatus confirmStatus;
 
 

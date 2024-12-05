@@ -12,7 +12,7 @@ public class NeederTracking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "needy_id", nullable = false)
     private Needy needy;
 

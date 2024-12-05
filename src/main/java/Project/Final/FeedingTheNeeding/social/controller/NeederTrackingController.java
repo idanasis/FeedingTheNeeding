@@ -1,8 +1,11 @@
 package Project.Final.FeedingTheNeeding.social.controller;
 
 import Project.Final.FeedingTheNeeding.User.Controller.UserController;
+import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
+import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,5 +100,34 @@ public class NeederTrackingController {
         }
     }
 
+    //get needertacking if weekstatus is HERE
+    @GetMapping("/getNeedersHere")
+    public ResponseEntity<?> getNeedersHere() {
+        try {
+            logger.info("Fetching all NeederTracking records with weekStatus HERE");
+            List<NeederTrackingProjection> neederTrackings = neederTrackingService.getNeedersHere();
+            logger.info("Fetched all NeederTracking records with weekStatus HERE");
+            return ResponseEntity.ok(neederTrackings);
+        } catch (Exception e) {
+            logger.error("Failed to fetch all NeederTracking records with weekStatus HERE", e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getNeedy/{id}")
+    public ResponseEntity<?> getNeedyFromNeederTrackingId(@PathVariable Long id) {
+        try {
+            logger.info("Fetching Needy from NeederTracking record with ID: {}", id);
+            NeederTracking neederTracking = neederTrackingService.getNeederTrackById(id);
+            logger.info("Needy found from NeederTracking record with ID: {}", id);
+            return ResponseEntity.ok(new NeedySimpleDTO(neederTracking.getNeedy(),neederTracking.getAdditionalNotes()));
+        } catch (NeederTrackingNotFoundException e) {
+            logger.error("Needy not found from NeederTracking record with ID: {}", id);
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            logger.error("Failed to fetch Needy from NeederTracking record with ID: {}", id, e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }
