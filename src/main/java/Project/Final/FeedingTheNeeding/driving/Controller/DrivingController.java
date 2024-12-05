@@ -3,6 +3,7 @@ package Project.Final.FeedingTheNeeding.driving.Controller;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
+import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,28 +79,18 @@ public class DrivingController {
     }
 
     @PostMapping("/routes/create/driver")
-    public ResponseEntity<?> createRouteWithDriver(@RequestParam String driverId, @RequestParam LocalDate date, @RequestParam int startHour) {
+    public ResponseEntity<?> createRouteWithDriver(@RequestParam Long driverId, @RequestParam LocalDate date) {
         try {
-            return ResponseEntity.ok(drivingService.createRoute(driverId, date, startHour));
+            return ResponseEntity.ok(drivingService.createRoute(driverId, date));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
     @PutMapping("/routes/{routeId}/driver/{driverId}")
-    public ResponseEntity<?> setDriverIdToRoute(@PathVariable long routeId, @PathVariable String driverId) {
+    public ResponseEntity<?> setDriverIdToRoute(@PathVariable long routeId, @PathVariable long driverId) {
         try {
             drivingService.setDriverIdToRoute(routeId, driverId);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PutMapping("/routes/{routeId}/startHour")
-    public ResponseEntity<?> setStartHourToRoute(@PathVariable long routeId, @RequestParam int startHour) {
-        try {
-            drivingService.setStartHourToRoute(routeId, startHour);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -127,20 +118,20 @@ public class DrivingController {
         }
     }
 
-    @PostMapping("/routes/{routeId}/address")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody String address) {
+    @PatchMapping("/routes/addAddress/{routeId}")
+    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody long visited, @RequestParam String status) {
         try {
-            drivingService.addAddressToRoute(routeId, address);
+            drivingService.addAddressToRoute(routeId,visited, VisitStatus.valueOf(status));
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    @DeleteMapping("/routes/{routeId}/address")
-    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody String address) {
+    @PatchMapping("/routes/removeAddress/{routeId}")
+    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody long visitId) {
         try {
-            drivingService.removeAddressFromRoute(routeId, address);
+            drivingService.removeAddressFromRoute(routeId, visitId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -157,7 +148,7 @@ public class DrivingController {
     }
 
     @GetMapping("/routes")
-    public ResponseEntity<?> getRouteByDateAndDriver(@RequestParam LocalDate date, @RequestParam String driverId) {
+    public ResponseEntity<?> getRouteByDateAndDriver(@RequestParam LocalDate date, @RequestParam long driverId) {
         try {
             return ResponseEntity.ok(drivingService.getRoute(date, driverId));
         } catch (Exception e) {

@@ -12,6 +12,6 @@ import Project.Final.FeedingTheNeeding.driving.Model.Route;
 public interface RouteRepository extends JpaRepository<Route, Long> {
 
     List<Route> findRoutesByDate(LocalDate date);
-    Optional<Route> findRouteByDateAndDriverId(LocalDate date, String driverId);
+    Optional<Route> findRouteByDateAndDriverId(LocalDate date, long driverId);
        
 }

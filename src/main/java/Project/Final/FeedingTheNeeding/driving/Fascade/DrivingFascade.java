@@ -8,6 +8,7 @@ import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepos
 import Project.Final.FeedingTheNeeding.driving.Repository.RouteRepository;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
+import Project.Final.FeedingTheNeeding.driving.exception.VisitNotExistException;
 import jakarta.transaction.Transactional;
 import Project.Final.FeedingTheNeeding.driving.Model.*;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +22,7 @@ public class DrivingFascade {
     private final RouteRepository routeRepository;
     private static final Logger logger = LogManager.getLogger(DrivingFascade.class);
 
-    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository){
+    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository) {
         logger.info("DrivingFascade create");
         this.driverConstraintsRepository = driverConstraintsRepository;
         this.routeRepository = routeRepository;
@@ -62,28 +63,21 @@ public class DrivingFascade {
         logger.info("createRoute done");
         return route;
     }
-    public Route createRoute(String driverId, LocalDate date, int startHour){
-        logger.info("createRoute with driver id={}, date={} and start hour={}", driverId, date, startHour);
-        Route route = new Route(driverId, date, startHour);
+    public Route createRoute(long driverId, LocalDate date){
+        logger.info("createRoute with driver id={} and date={}", driverId, date);
+        Route route = new Route(driverId, date);
         routeRepository.save(route);
-        logger.info("createRoute with driver id={}, date={} and start hour={} done", driverId, date, startHour);
+        logger.info("createRoute with driver id={} and date={} done", driverId, date);
         return route;
     }
     @Transactional
-    public void setDriverIdToRoute(long routeId, String driverId){
+    public void setDriverIdToRoute(long routeId, long driverId){
         logger.info("setDriverIdToRoute with route id={} and driver id {}", routeId, driverId);
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
-        driverConstraintsRepository.findByDriverIdAndDate(Long.parseLong(driverId), route.getDate()).orElseThrow(() -> new DriverConstraintsNotExistException(route.getDate()));
+        driverConstraintsRepository.findByDriverIdAndDate(driverId, route.getDate()).orElseThrow(() -> new DriverConstraintsNotExistException(route.getDate()));
         route.setDriverId(driverId);
         routeRepository.save(route);
         logger.info("setDriverIdToRoute with route id={} and driver id {} done", routeId, driverId);
-    }
-    public void setStartHourToRoute(long routeId, int startHour){
-        logger.info("setStartHourToRoute with route id={} and start hour {}", routeId, startHour);
-        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
-        route.setStartHour(startHour);
-        routeRepository.save(route);
-        logger.info("setStartHourToRoute with route id={} and start hour {} done", routeId, startHour);
     }
 
     public void removeRoute(long routeId){
@@ -98,30 +92,36 @@ public class DrivingFascade {
         List<Route> routes = routeRepository.findRoutesByDate(date);
         for(Route route : routes){
             route.setSubmitted(true);
-            routeRepository.save(route);
         }
+        routeRepository.saveAll(routes);
         logger.info("submitAllRoutes with date {} done", date);
     }
 
-    public void addAddressToRoute(long routeId,String address) {
-        logger.info("addAddressToRoute with route id={} and address {}", routeId, address);
+    public void addAddressToRoute(long routeId,long address,VisitStatus status){ 
+        logger.info("addAddressToRoute with route id={} and address {} and status", routeId, address,status);
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
-        route.addAddresses(address);
+        if(status==VisitStatus.Deliver){
+            //TODO: get address from cooking service
+        }
+        else if(status==VisitStatus.Pickup){
+            //TODO: get address from social service
+        }
         routeRepository.save(route);
-        logger.info("addAddressToRoute with route id={} and address {} done", routeId, address);
+        logger.info("addAddressToRoute with route id={} and address {} and status={} done", routeId, address,status);
     }
-    public void removeAddressFromRoute(long routeId,String address){
-        logger.info("removeAddressFromRoute with route id={} and address {}", routeId, address);
+    public void removeAddressFromRoute(long routeId,long visitId){
+        logger.info("removeAddressFromRoute with route id={} and visitId= {}", routeId, visitId);
        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
-       route.removeAddresses(address);
+       Visit visitToRemove = route.getVisit().stream().filter(visit -> visit.getVisitId() == visitId).findFirst().orElseThrow(()->new VisitNotExistException(routeId,visitId));
+       route.removeVisit(visitToRemove);
        routeRepository.save(route);
-       logger.info("removeAddressFromRoute with route id={} and address {} done", routeId, address);
+       logger.info("removeAddressFromRoute with route id={} and visitId={} done", routeId, visitId);
     }
     public Route getRoute(long routeId){
         logger.info("getRoute with route id={}", routeId);
         return routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
     }
-    public Route getRoute(LocalDate date, String driverId){
+    public Route getRoute(LocalDate date, long driverId){
         logger.info("getRoute with date {} and driver id {}", date, driverId);
         return routeRepository.findRouteByDateAndDriverId(date, driverId).orElse(null);
     }
