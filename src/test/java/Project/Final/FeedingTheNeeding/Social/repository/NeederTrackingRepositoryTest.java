@@ -3,6 +3,8 @@ package Project.Final.FeedingTheNeeding.Social.repository;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
+import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -79,4 +82,105 @@ public class NeederTrackingRepositoryTest {
         assertEquals(DIETARY_PREFERENCES, foundNeederTracking.getDietaryPreferences());
         assertEquals(ADDITIONAL_NOTES, foundNeederTracking.getAdditionalNotes());
     }
+
+        @Test
+        public void testFindByWeekStatus() {
+            // Arrange: Create and save a Needy entity
+            Needy user = createSampleNeedy();
+            neederRepository.save(user);
+
+            // Create multiple NeederTracking entities with different week statuses
+            NeederTracking tracking1 = createNeederTracking(user, WeekStatus.Here);
+            NeederTracking tracking2 = createNeederTracking(user, WeekStatus.Here);
+            NeederTracking tracking3 = createNeederTracking(user, WeekStatus.NotHere);
+
+            repository.save(tracking1);
+            repository.save(tracking2);
+            repository.save(tracking3);
+
+            // Act: Find all NeederTracking with WeekStatus.Here
+            List<NeederTrackingProjection> hereTrackings = repository.findByWeekStatus(WeekStatus.Here);
+
+            // Assert
+            assertNotNull(hereTrackings);
+            assertEquals(2, hereTrackings.size());
+        }
+
+        @Test
+        public void testDeleteNeederTracking() {
+            // Arrange: Create and save a Needy entity
+            Needy user = createSampleNeedy();
+            neederRepository.save(user);
+
+            // Create a NeederTracking entity
+            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+            NeederTracking savedTracking = repository.save(neederTracking);
+
+            // Act: Delete the NeederTracking
+            repository.deleteById(savedTracking.getId());
+
+            // Assert: Verify deletion
+            Optional<NeederTracking> deletedTracking = repository.findById(savedTracking.getId());
+            assertFalse(deletedTracking.isPresent());
+        }
+
+        @Test
+        public void testUpdateNeederTracking() {
+            // Arrange: Create and save a Needy entity
+            Needy user = createSampleNeedy();
+            neederRepository.save(user);
+
+            // Create a NeederTracking entity
+            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+            NeederTracking savedTracking = repository.save(neederTracking);
+
+            // Act: Update the NeederTracking
+            savedTracking.setDietaryPreferences("Updated Preferences");
+            savedTracking.setAdditionalNotes("Updated Notes");
+            NeederTracking updatedTracking = repository.save(savedTracking);
+
+            // Assert
+            assertEquals("Updated Preferences", updatedTracking.getDietaryPreferences());
+            assertEquals("Updated Notes", updatedTracking.getAdditionalNotes());
+        }
+
+        @Test
+        public void testEntityGraphFindById() {
+            // Arrange: Create and save a Needy entity
+            Needy user = createSampleNeedy();
+            neederRepository.save(user);
+
+            // Create a NeederTracking entity
+            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+            NeederTracking savedTracking = repository.save(neederTracking);
+
+            // Act: Find by ID
+            Optional<NeederTracking> foundTracking = repository.findById(savedTracking.getId());
+
+            // Assert
+            assertTrue(foundTracking.isPresent());
+            assertNotNull(foundTracking.get().getNeedy());
+            assertEquals(user.getId(), foundTracking.get().getNeedy().getId());
+        }
+
+        // Helper methods to reduce code duplication
+        private Needy createSampleNeedy() {
+            Needy user = new Needy();
+            user.setFirstName(FIRST_NAME);
+            user.setLastName(LAST_NAME);
+            user.setPhoneNumber(PHONE_NUMBER);
+            user.setAddress(ADDRESS);
+            user.setCity(CITY);
+            user.setFamilySize(FAMILY_SIZE);
+            return user;
+        }
+
+        private NeederTracking createNeederTracking(Needy user, WeekStatus weekStatus) {
+            NeederTracking neederTracking = new NeederTracking();
+            neederTracking.setNeedy(user);
+            neederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
+            neederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
+            neederTracking.setWeekStatus(weekStatus);
+            return neederTracking;
+        }
 }
