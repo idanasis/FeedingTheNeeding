@@ -1,11 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Repository;
 
-import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
-import Project.Final.FeedingTheNeeding.User.Model.UserStatus;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface IUserRepository {
 

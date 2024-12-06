@@ -1,10 +1,6 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
-import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
-import Project.Final.FeedingTheNeeding.User.Model.LoginRequest;
-import Project.Final.FeedingTheNeeding.User.Model.LoginResponse;
-import Project.Final.FeedingTheNeeding.User.Model.RegistrationRequest;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
