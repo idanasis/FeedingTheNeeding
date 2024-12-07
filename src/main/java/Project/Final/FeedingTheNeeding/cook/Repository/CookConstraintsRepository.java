@@ -16,6 +16,5 @@ public interface CookConstraintsRepository extends JpaRepository<CookConstraints
     public Optional<CookConstraints> findByCookIdAndDate(long cookId, LocalDate date);
 
     public List<CookConstraints> findConstraintsByDate(LocalDate date);
-
-    // public List<DriverConstraint> findConstraintsByDriverId(long driverId);
+    public List<CookConstraints> findConstraintsByCookId(long cookId);
 }
