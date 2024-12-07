@@ -8,6 +8,7 @@ import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExistException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -71,6 +72,13 @@ public class CookingService {
         logger.info("Trying to get all cook history for cook {}", cookId);
         List<CookConstraints> constraints = ccr.findConstraintsByCookId(cookId);
         logger.info("Successfully got all cook history");
+        return constraints;
+    }
+
+    public List<CookConstraints> getAllCookOnDate(LocalDate date){
+        logger.info("Getting all cookers for the date {}", date);
+        List<CookConstraints> constraints = ccr.findConstraintsByDate(date);
+        logger.info("Successfully got all constraints for the date: {}", date);
         return constraints;
     }
 }
