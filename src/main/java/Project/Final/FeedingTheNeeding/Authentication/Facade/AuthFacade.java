@@ -1,8 +1,5 @@
 package Project.Final.FeedingTheNeeding.Authentication.Facade;
 
-import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
-import Project.Final.FeedingTheNeeding.User.Exception.*;
-import Project.Final.FeedingTheNeeding.User.Model.*;
 import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import Project.Final.FeedingTheNeeding.config.TokenService;
 import org.springframework.stereotype.Service;

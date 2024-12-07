@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface NeederRepository extends JpaRepository<Needy, Long> {
+public interface NeederRepository extends UserRepository<Needy> {
         //find needy by needyStatus
         List<Needy> findByConfirmStatus(NeedyStatus needyStatus);
-
-        Optional<Needy> findByPhoneNumber(String phoneNumber);
 }

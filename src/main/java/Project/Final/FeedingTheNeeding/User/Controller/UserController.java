@@ -1,11 +1,17 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
-import Project.Final.FeedingTheNeeding.User.Repository.IUserRepository;
+import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
+    @Autowired
+    private UserService userService;
 
-    private IUserRepository userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 }

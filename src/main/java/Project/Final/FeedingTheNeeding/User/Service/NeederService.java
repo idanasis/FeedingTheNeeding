@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.User.Service;
 
 import Project.Final.FeedingTheNeeding.User.Controller.NeederController;
+import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
@@ -14,7 +15,6 @@ import java.util.Optional;
 @Service
 public class NeederService {
 
-    @Autowired
     NeederRepository neederRepository;
 
     public NeederService(NeederRepository neederRepository) {
@@ -50,7 +50,7 @@ public class NeederService {
     }
 
 
-    public Optional<Needy> getNeedyByPhoneNumber(String phoneNumber) {
+    public Optional<BaseUser> getNeedyByPhoneNumber(String phoneNumber) {
         return neederRepository.findByPhoneNumber(phoneNumber);
     }
 }

@@ -1,26 +1,18 @@
 package Project.Final.FeedingTheNeeding.User.Service;
 
-import Project.Final.FeedingTheNeeding.User.Controller.UserController;
-import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
-import Project.Final.FeedingTheNeeding.User.Repository.IUserRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.DonatorRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class UserService {
 
-    private IUserRepository userRepository;
+    private final DonatorRepository donatorRepository;
+    private final NeederRepository neederRepository;
 
-//    public boolean existByEmail(String email) {
-//        return userRepository.existsByEmail(email);
-//    }
-
-//    public Optional<BaseUser> findByEmail(String email) {
-//        return userRepository.findByEmail(email);
-//    }
-
-    public BaseUser saveUser(BaseUser baseUser) {
-        return userRepository.save(baseUser);
+    public UserService(DonatorRepository donatorRepository, NeederRepository neederRepository) {
+        this.donatorRepository = donatorRepository;
+        this.neederRepository = neederRepository;
     }
 }
