@@ -78,7 +78,7 @@ public class NeederController {
     }
 
     @GetMapping("/phone/{phoneNumber}")
-    public ResponseEntity<Needy> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
+    public ResponseEntity<?> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
         try {
             return neederService.getNeedyByPhoneNumber(phoneNumber)
                     .map(ResponseEntity::ok)
