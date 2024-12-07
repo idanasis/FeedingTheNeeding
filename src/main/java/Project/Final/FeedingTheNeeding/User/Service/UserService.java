@@ -15,4 +15,12 @@ public class UserService {
         this.donatorRepository = donatorRepository;
         this.neederRepository = neederRepository;
     }
+
+    public void login(String email, String password) {
+
+    }
+
+    public void register(String email, String firstName, String lastName, String phoneNumber, String address, String city) {
+
+    }
 }

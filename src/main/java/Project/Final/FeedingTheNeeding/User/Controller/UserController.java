@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
+import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
 import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     @Autowired
     private UserService userService;
+    private AuthFacade authService;
 
     public UserController(UserService userService) {
         this.userService = userService;

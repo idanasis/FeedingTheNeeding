@@ -19,6 +19,6 @@ public class Donator extends BaseUser{
     private double timeOfDonation;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(nullable = false)
     private RegistrationStatus status;
 }
