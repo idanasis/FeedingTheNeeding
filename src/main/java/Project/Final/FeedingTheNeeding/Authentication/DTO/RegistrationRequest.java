@@ -1,4 +1,4 @@
-package Project.Final.FeedingTheNeeding.User.Model;
+package Project.Final.FeedingTheNeeding.Authentication.DTO;
 
 import lombok.Builder;
 import lombok.Data;

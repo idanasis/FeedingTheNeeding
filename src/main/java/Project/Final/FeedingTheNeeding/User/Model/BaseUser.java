@@ -3,15 +3,17 @@ package Project.Final.FeedingTheNeeding.User.Model;
 import jakarta.persistence.*;
 import lombok.*;
 
-@MappedSuperclass
 @Data // automatically created getters, setters, toString and etc..
-@Builder
+@Entity
 @NoArgsConstructor // create constructor without a parameters
 @AllArgsConstructor // create constructor with all the parameters
-public class BaseUser {
+public abstract class BaseUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String email;
 
     @Column(nullable = false)
     private String firstName;
@@ -29,5 +31,9 @@ public class BaseUser {
     @Column(nullable = false)
     private String city;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
 
+    public abstract String getUserTypeDescription();
 }

@@ -1,24 +1,28 @@
 package Project.Final.FeedingTheNeeding.User.Model;
 
 
+import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Donator extends BaseUser{
-
-
-    @Column(unique = true) // have to be unique in the table
-    private String email;
-    private String password;
+@EqualsAndHashCode(callSuper = true)
+public class Donor extends BaseUser{
     private double timeOfDonation;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegistrationStatus status;
+
+
+    @Override
+    public String getUserTypeDescription() {
+        return "Donator";
+    }
 }

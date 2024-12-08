@@ -1,6 +1,5 @@
-package Project.Final.FeedingTheNeeding.User.Model;
+package Project.Final.FeedingTheNeeding.Authentication.DTO;
 
-import Project.Final.FeedingTheNeeding.User.DTO.BaseUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+public class AuthenticationResponse {
     private String token;
-    private BaseUserDTO user;
 }

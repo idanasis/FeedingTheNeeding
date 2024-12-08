@@ -10,6 +10,6 @@ import java.util.Optional;
 
 @NoRepositoryBean
 public interface UserRepository<T extends BaseUser> extends JpaRepository<T, Long> {
-
     Optional<BaseUser> findByPhoneNumber(String phoneNumber);
+    Optional<BaseUser> findByEmail(String email);
 }

@@ -1,8 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
-import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
-import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
 import Project.Final.FeedingTheNeeding.User.Service.NeederService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
