@@ -29,7 +29,6 @@ public abstract class BaseUser {
     private String city;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private UserRole role;
 
     public abstract String getUserTypeDescription();

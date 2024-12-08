@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Social.repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
+import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
@@ -32,6 +33,7 @@ public class NeederTrackingRepositoryTest {
     private static final int FAMILY_SIZE = 4;
     private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+    private static final UserRole USER_ROLE = UserRole.NEEDY;
 
     @Autowired
     private NeederTrackingRepository repository;
@@ -49,6 +51,9 @@ public class NeederTrackingRepositoryTest {
         user.setAddress(ADDRESS);
         user.setCity(CITY);
         user.setFamilySize(FAMILY_SIZE);
+        user.setDietaryPreferences(DIETARY_PREFERENCES);
+        user.setAdditionalNotes(ADDITIONAL_NOTES);
+        user.setRole(USER_ROLE);
         needyRepository.save(user);
 
         // Arrange: Create a NeederTracking entity
@@ -172,6 +177,9 @@ public class NeederTrackingRepositoryTest {
             user.setAddress(ADDRESS);
             user.setCity(CITY);
             user.setFamilySize(FAMILY_SIZE);
+            user.setDietaryPreferences(DIETARY_PREFERENCES);
+            user.setAdditionalNotes(ADDITIONAL_NOTES);
+            user.setRole(USER_ROLE);
             return user;
         }
 
