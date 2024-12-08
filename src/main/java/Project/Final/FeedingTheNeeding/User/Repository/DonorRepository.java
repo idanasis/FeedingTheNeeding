@@ -8,4 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface DonorRepository extends UserRepository<Donor> {
+    Optional<Donor> findByEmail(String email);
 }

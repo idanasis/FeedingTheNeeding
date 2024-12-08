@@ -94,12 +94,11 @@ public class AuthService {
     }
 
     public void registerNeedy(NeedyRegistrationRequest needyRegistrationRequest) {
-        if(needyRepository.findByEmail(needyRegistrationRequest.getEmail()).isPresent())
+        if(needyRepository.findByPhoneNumber(needyRegistrationRequest.getPhoneNumber()).isPresent())
             throw new UserAlreadyExistsException("Needy already exists");
 
         Needy needy = new Needy();
         needy.setId(1L); // TODO: change it
-        needy.setEmail(needyRegistrationRequest.getEmail());
         needy.setFirstName(needyRegistrationRequest.getFirstName());
         needy.setLastName(needyRegistrationRequest.getLastName());
         needy.setPhoneNumber(needyRegistrationRequest.getPhoneNumber());
