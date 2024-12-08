@@ -9,5 +9,4 @@ import java.util.List;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface UserRepository<T extends BaseUser> extends JpaRepository<T, Long> {
-    Optional<BaseUser> findByPhoneNumber(String phoneNumber);}
+public interface UserRepository<T extends BaseUser> extends JpaRepository<T, Long> {}

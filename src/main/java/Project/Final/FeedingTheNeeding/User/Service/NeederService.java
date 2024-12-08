@@ -47,7 +47,7 @@ public class NeederService {
     }
 
 
-    public Optional<BaseUser> getNeedyByPhoneNumber(String phoneNumber) {
+    public Optional<Needy> getNeedyByPhoneNumber(String phoneNumber) {
         return needyRepository.findByPhoneNumber(phoneNumber);
     }
 }
