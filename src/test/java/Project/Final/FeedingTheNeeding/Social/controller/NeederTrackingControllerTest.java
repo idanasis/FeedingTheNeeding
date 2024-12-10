@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.Social.controller;
 
+import Project.Final.FeedingTheNeeding.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.social.controller.NeederTrackingController;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 @TestPropertySource(locations = "classpath:application-test.properties")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(TestSecurityConfig.class)
 public class NeederTrackingControllerTest {
 
     private static final Long NEEDY_ID = 1L;
