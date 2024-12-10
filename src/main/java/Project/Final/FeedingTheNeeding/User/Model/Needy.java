@@ -15,14 +15,10 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Needy extends BaseUser {
+
     private int familySize;
     @Enumerated(EnumType.STRING)
     private NeedyStatus confirmStatus;
-
-    private String dietaryPreferences;
-
-    @Column(length = 1000)
-    private String additionalNotes;
 
 
     @Override

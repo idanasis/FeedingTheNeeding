@@ -12,6 +12,4 @@ public class NeedyRegistrationRequest {
     private String address;
     private String city;
     private int familySize;
-    private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
-    private String additionalNotes;
 }

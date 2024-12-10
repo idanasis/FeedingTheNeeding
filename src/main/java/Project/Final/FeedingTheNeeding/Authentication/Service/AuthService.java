@@ -119,8 +119,6 @@ public class AuthService {
         needy.setRole(UserRole.NEEDY);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(needyRegistrationRequest.getFamilySize());
-        needy.setDietaryPreferences(needyRegistrationRequest.getDietaryPreferences());
-        needy.setAdditionalNotes(needyRegistrationRequest.getAdditionalNotes());
 
         needyRepository.save(needy);
         logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());

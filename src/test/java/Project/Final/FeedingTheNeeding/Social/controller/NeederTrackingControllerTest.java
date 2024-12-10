@@ -55,8 +55,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         NeederTracking mockNeederTracking = new NeederTracking();
         mockNeederTracking.setId(NEEDY_ID);
@@ -98,8 +96,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         NeederTracking newNeederTracking = new NeederTracking();
         newNeederTracking.setNeedy(needy);
@@ -129,8 +125,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         NeederTracking mockNeederTracking = new NeederTracking();
         mockNeederTracking.setId(NEEDER_TRACKING_ID);
@@ -159,8 +153,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         NeederTracking existingNeederTracking = new NeederTracking();
         existingNeederTracking.setId(NEEDER_TRACKING_ID);
@@ -206,8 +198,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         // Create a mock NeederTracking and set all necessary properties
         NeederTracking mockNeederTracking = new NeederTracking();
@@ -257,7 +247,7 @@ public class NeederTrackingControllerTest {
                 .andExpect(jsonPath("$[0].dietaryPreferences").value(DIETARY_PREFERENCES))
                 .andExpect(jsonPath("$[0].additionalNotes").value(ADDITIONAL_NOTES))
                 .andExpect(jsonPath("$[0].needy_Id").value(NEEDY_ID)).andExpect(jsonPath("$[0].weekStatus").value("Here"));
-                // Ensure this matches the field name in projection
+        // Ensure this matches the field name in projection
     }
 
 
@@ -268,8 +258,6 @@ public class NeederTrackingControllerTest {
         needy.setId(NEEDY_ID);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(FAMILY_SIZE);
-        needy.setDietaryPreferences(DIETARY_PREFERENCES);
-        needy.setAdditionalNotes(ADDITIONAL_NOTES);
 
         NeederTracking mockNeederTracking = new NeederTracking();
         mockNeederTracking.setId(NEEDER_TRACKING_ID);

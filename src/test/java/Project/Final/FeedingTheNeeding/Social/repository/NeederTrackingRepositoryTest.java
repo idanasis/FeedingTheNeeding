@@ -1,7 +1,6 @@
 package Project.Final.FeedingTheNeeding.Social.repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
-import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
@@ -33,13 +32,12 @@ public class NeederTrackingRepositoryTest {
     private static final int FAMILY_SIZE = 4;
     private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
-    private static final UserRole USER_ROLE = UserRole.NEEDY;
 
     @Autowired
     private NeederTrackingRepository repository;
 
     @Autowired
-    private NeedyRepository needyRepository;
+    private NeedyRepository neederRepository;
 
     @Test
     public void testSaveAndFindNeeder() {
@@ -51,10 +49,7 @@ public class NeederTrackingRepositoryTest {
         user.setAddress(ADDRESS);
         user.setCity(CITY);
         user.setFamilySize(FAMILY_SIZE);
-        user.setDietaryPreferences(DIETARY_PREFERENCES);
-        user.setAdditionalNotes(ADDITIONAL_NOTES);
-        user.setRole(USER_ROLE);
-        needyRepository.save(user);
+        neederRepository.save(user);
 
         // Arrange: Create a NeederTracking entity
         NeederTracking neederTracking = new NeederTracking();
@@ -88,107 +83,104 @@ public class NeederTrackingRepositoryTest {
         assertEquals(ADDITIONAL_NOTES, foundNeederTracking.getAdditionalNotes());
     }
 
-        @Test
-        public void testFindByWeekStatus() {
-            // Arrange: Create and save a Needy entity
-            Needy user = createSampleNeedy();
-            needyRepository.save(user);
+    @Test
+    public void testFindByWeekStatus() {
+        // Arrange: Create and save a Needy entity
+        Needy user = createSampleNeedy();
+        neederRepository.save(user);
 
-            // Create multiple NeederTracking entities with different week statuses
-            NeederTracking tracking1 = createNeederTracking(user, WeekStatus.Here);
-            NeederTracking tracking2 = createNeederTracking(user, WeekStatus.Here);
-            NeederTracking tracking3 = createNeederTracking(user, WeekStatus.NotHere);
+        // Create multiple NeederTracking entities with different week statuses
+        NeederTracking tracking1 = createNeederTracking(user, WeekStatus.Here);
+        NeederTracking tracking2 = createNeederTracking(user, WeekStatus.Here);
+        NeederTracking tracking3 = createNeederTracking(user, WeekStatus.NotHere);
 
-            repository.save(tracking1);
-            repository.save(tracking2);
-            repository.save(tracking3);
+        repository.save(tracking1);
+        repository.save(tracking2);
+        repository.save(tracking3);
 
-            // Act: Find all NeederTracking with WeekStatus.Here
-            List<NeederTrackingProjection> hereTrackings = repository.findByWeekStatus(WeekStatus.Here);
+        // Act: Find all NeederTracking with WeekStatus.Here
+        List<NeederTrackingProjection> hereTrackings = repository.findByWeekStatus(WeekStatus.Here);
 
-            // Assert
-            assertNotNull(hereTrackings);
-            assertEquals(2, hereTrackings.size());
-        }
+        // Assert
+        assertNotNull(hereTrackings);
+        assertEquals(2, hereTrackings.size());
+    }
 
-        @Test
-        public void testDeleteNeederTracking() {
-            // Arrange: Create and save a Needy entity
-            Needy user = createSampleNeedy();
-            needyRepository.save(user);
+    @Test
+    public void testDeleteNeederTracking() {
+        // Arrange: Create and save a Needy entity
+        Needy user = createSampleNeedy();
+        neederRepository.save(user);
 
-            // Create a NeederTracking entity
-            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
-            NeederTracking savedTracking = repository.save(neederTracking);
+        // Create a NeederTracking entity
+        NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+        NeederTracking savedTracking = repository.save(neederTracking);
 
-            // Act: Delete the NeederTracking
-            repository.deleteById(savedTracking.getId());
+        // Act: Delete the NeederTracking
+        repository.deleteById(savedTracking.getId());
 
-            // Assert: Verify deletion
-            Optional<NeederTracking> deletedTracking = repository.findById(savedTracking.getId());
-            assertFalse(deletedTracking.isPresent());
-        }
+        // Assert: Verify deletion
+        Optional<NeederTracking> deletedTracking = repository.findById(savedTracking.getId());
+        assertFalse(deletedTracking.isPresent());
+    }
 
-        @Test
-        public void testUpdateNeederTracking() {
-            // Arrange: Create and save a Needy entity
-            Needy user = createSampleNeedy();
-            needyRepository.save(user);
+    @Test
+    public void testUpdateNeederTracking() {
+        // Arrange: Create and save a Needy entity
+        Needy user = createSampleNeedy();
+        neederRepository.save(user);
 
-            // Create a NeederTracking entity
-            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
-            NeederTracking savedTracking = repository.save(neederTracking);
+        // Create a NeederTracking entity
+        NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+        NeederTracking savedTracking = repository.save(neederTracking);
 
-            // Act: Update the NeederTracking
-            savedTracking.setDietaryPreferences("Updated Preferences");
-            savedTracking.setAdditionalNotes("Updated Notes");
-            NeederTracking updatedTracking = repository.save(savedTracking);
+        // Act: Update the NeederTracking
+        savedTracking.setDietaryPreferences("Updated Preferences");
+        savedTracking.setAdditionalNotes("Updated Notes");
+        NeederTracking updatedTracking = repository.save(savedTracking);
 
-            // Assert
-            assertEquals("Updated Preferences", updatedTracking.getDietaryPreferences());
-            assertEquals("Updated Notes", updatedTracking.getAdditionalNotes());
-        }
+        // Assert
+        assertEquals("Updated Preferences", updatedTracking.getDietaryPreferences());
+        assertEquals("Updated Notes", updatedTracking.getAdditionalNotes());
+    }
 
-        @Test
-        public void testEntityGraphFindById() {
-            // Arrange: Create and save a Needy entity
-            Needy user = createSampleNeedy();
-            needyRepository.save(user);
+    @Test
+    public void testEntityGraphFindById() {
+        // Arrange: Create and save a Needy entity
+        Needy user = createSampleNeedy();
+        neederRepository.save(user);
 
-            // Create a NeederTracking entity
-            NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
-            NeederTracking savedTracking = repository.save(neederTracking);
+        // Create a NeederTracking entity
+        NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+        NeederTracking savedTracking = repository.save(neederTracking);
 
-            // Act: Find by ID
-            Optional<NeederTracking> foundTracking = repository.findById(savedTracking.getId());
+        // Act: Find by ID
+        Optional<NeederTracking> foundTracking = repository.findById(savedTracking.getId());
 
-            // Assert
-            assertTrue(foundTracking.isPresent());
-            assertNotNull(foundTracking.get().getNeedy());
-            assertEquals(user.getId(), foundTracking.get().getNeedy().getId());
-        }
+        // Assert
+        assertTrue(foundTracking.isPresent());
+        assertNotNull(foundTracking.get().getNeedy());
+        assertEquals(user.getId(), foundTracking.get().getNeedy().getId());
+    }
 
-        // Helper methods to reduce code duplication
-        private Needy createSampleNeedy() {
-            Needy user = new Needy();
-            user.setFirstName(FIRST_NAME);
-            user.setLastName(LAST_NAME);
-            user.setPhoneNumber(PHONE_NUMBER);
-            user.setAddress(ADDRESS);
-            user.setCity(CITY);
-            user.setFamilySize(FAMILY_SIZE);
-            user.setDietaryPreferences(DIETARY_PREFERENCES);
-            user.setAdditionalNotes(ADDITIONAL_NOTES);
-            user.setRole(USER_ROLE);
-            return user;
-        }
+    // Helper methods to reduce code duplication
+    private Needy createSampleNeedy() {
+        Needy user = new Needy();
+        user.setFirstName(FIRST_NAME);
+        user.setLastName(LAST_NAME);
+        user.setPhoneNumber(PHONE_NUMBER);
+        user.setAddress(ADDRESS);
+        user.setCity(CITY);
+        user.setFamilySize(FAMILY_SIZE);
+        return user;
+    }
 
-        private NeederTracking createNeederTracking(Needy user, WeekStatus weekStatus) {
-            NeederTracking neederTracking = new NeederTracking();
-            neederTracking.setNeedy(user);
-            neederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
-            neederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
-            neederTracking.setWeekStatus(weekStatus);
-            return neederTracking;
-        }
+    private NeederTracking createNeederTracking(Needy user, WeekStatus weekStatus) {
+        NeederTracking neederTracking = new NeederTracking();
+        neederTracking.setNeedy(user);
+        neederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
+        neederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
+        neederTracking.setWeekStatus(weekStatus);
+        return neederTracking;
+    }
 }
