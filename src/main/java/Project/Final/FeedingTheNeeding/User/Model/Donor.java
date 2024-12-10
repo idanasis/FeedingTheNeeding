@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Data
 @AllArgsConstructor
@@ -24,6 +26,10 @@ public class Donor extends BaseUser{
     private RegistrationStatus status;
     @OneToOne
     private UserCredentials userCredentials;
+
+    private String verificationCode;
+    private LocalDateTime verificationCodeExpiresAt;
+    private boolean verified;
 
     @Override
     public String getUserTypeDescription() {
