@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Authentication.Model;
 
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
+import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,5 +25,5 @@ public class UserCredentials {
 
     @OneToOne
     @JoinColumn(name = "base_user_id", nullable = false)
-    private BaseUser baseUser;
+    private Donor baseUser;
 }

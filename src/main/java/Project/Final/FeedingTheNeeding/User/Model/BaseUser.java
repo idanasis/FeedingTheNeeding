@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Data // automatically created getters, setters, toString and etc..
-@Entity
+@MappedSuperclass
 @NoArgsConstructor // create constructor without a parameters
 @AllArgsConstructor // create constructor with all the parameters
 public abstract class BaseUser {
