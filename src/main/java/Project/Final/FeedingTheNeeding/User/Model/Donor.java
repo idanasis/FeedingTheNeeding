@@ -2,6 +2,7 @@ package Project.Final.FeedingTheNeeding.User.Model;
 
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
+import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,7 +22,8 @@ public class Donor extends BaseUser{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegistrationStatus status;
-
+    @OneToOne
+    private UserCredentials userCredentials;
 
     @Override
     public String getUserTypeDescription() {
