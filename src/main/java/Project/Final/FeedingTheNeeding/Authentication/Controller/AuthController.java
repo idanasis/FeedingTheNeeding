@@ -1,15 +1,15 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
-import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
+import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final AuthFacade authFacade;
+    private final AuthService authService;
 
-    public AuthController(AuthFacade authFacade) {
-        this.authFacade = authFacade;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
 //    @PostMapping("/register")
@@ -24,6 +24,6 @@ public class AuthController {
 
     @PostMapping("/logout")
     public void logout(@RequestHeader("Authorization") String token) {
-        authFacade.logout(token);
+        authService.logout(token);
     }
 }

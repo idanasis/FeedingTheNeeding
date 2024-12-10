@@ -1,16 +1,16 @@
-package Project.Final.FeedingTheNeeding.Authentication.Facade;
+package Project.Final.FeedingTheNeeding.Authentication.Service;
 
 import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import Project.Final.FeedingTheNeeding.config.TokenService;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthFacade {
+public class AuthService {
 
     private final TokenService tokenService;
     private UserService userService;
 
-    public AuthFacade(TokenService tokenService, UserService userService) {
+    public AuthService(TokenService tokenService, UserService userService) {
         this.tokenService = tokenService;
         this.userService = userService;
     }
