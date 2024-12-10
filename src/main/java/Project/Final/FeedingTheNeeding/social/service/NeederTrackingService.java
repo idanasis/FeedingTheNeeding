@@ -1,7 +1,10 @@
 package Project.Final.FeedingTheNeeding.social.service;
 
+import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
+import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import org.springframework.stereotype.Service;
 
@@ -54,5 +57,14 @@ public class NeederTrackingService {
         neederTrackingRepository.deleteById(id);
     }
 
+
+    public List<NeederTrackingProjection> getNeedersHere() {
+        return neederTrackingRepository.findByWeekStatus(WeekStatus.Here);
+    }
+
+    public NeedySimpleDTO getNeedyFromNeederTrackingId(Long id) {
+        NeederTracking neederTracking = getNeederTrackById(id);
+        return new NeedySimpleDTO(neederTracking.getNeedy(), neederTracking.getAdditionalNotes());
+    }
 
 }
