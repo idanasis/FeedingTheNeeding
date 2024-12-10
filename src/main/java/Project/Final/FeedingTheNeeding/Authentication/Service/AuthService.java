@@ -22,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AuthService {
@@ -33,10 +35,11 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final UserDetailsService userDetailsService;
+    private final EmailService emailService;
 
     private static final Logger logger = LogManager.getLogger(AuthService.class);
 
-    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserDetailsService userDetailsService) {
+    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, JwtTokenService jwtTokenService, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, UserDetailsService userDetailsService, EmailService emailService) {
         this.donorRepository = donorRepository;
         this.needyRepository = needyRepository;
         this.userCredentialsRepository = userCredentialsRepository;
@@ -44,6 +47,7 @@ public class AuthService {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
+        this.emailService = emailService;
     }
 
     @Transactional
@@ -65,6 +69,7 @@ public class AuthService {
 
     @Transactional
     public void registerDonor(RegistrationRequest registrationRequest) {
+        logger.info("start-register donor,  email: {}", registrationRequest.getEmail());
         if(donorRepository.findByEmail(registrationRequest.getEmail()).isPresent())
             throw new UserAlreadyExistsException("Donor already exists");
 
@@ -82,6 +87,11 @@ public class AuthService {
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
 
+        donor.setVerificationCode(generateVerificationCode());
+        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+        donor.setVerified(false);
+        sendVerificationEmail(donor);
+
         Donor savedDonor = donorRepository.save(donor);
 
         UserCredentials credentials = new UserCredentials();
@@ -91,9 +101,11 @@ public class AuthService {
         credentials.setBaseUser(savedDonor);
 
         userCredentialsRepository.save(credentials);
+        logger.info("end-register donor, email: {}", registrationRequest.getEmail());
     }
 
     public void registerNeedy(NeedyRegistrationRequest needyRegistrationRequest) {
+        logger.info("start-register needy,  phone number: {}", needyRegistrationRequest.getPhoneNumber());
         if(needyRepository.findByPhoneNumber(needyRegistrationRequest.getPhoneNumber()).isPresent())
             throw new UserAlreadyExistsException("Needy already exists");
 
@@ -111,9 +123,11 @@ public class AuthService {
         needy.setAdditionalNotes(needyRegistrationRequest.getAdditionalNotes());
 
         needyRepository.save(needy);
+        logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());
     }
 
     public void resetPassword(String email, String newPassword) {
+        logger.info("start-reset password, for email: {}", email);
         UserCredentials credentials = userCredentialsRepository.findCredentialsByEmail(email);
         if(credentials == null)
             throw new UserDoesntExistsException("User not found");
@@ -122,15 +136,91 @@ public class AuthService {
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
 
         userCredentialsRepository.save(credentials);
+        logger.info("end-reset password, for email: {}", email);
     }
 
     public boolean validateToken(String token) {
+        logger.info("start-reset password, for token: {}", token);
         try{
             String email = jwtTokenService.extractEmail(token);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            logger.info("end-validate token - success, for token: {}", token);
             return jwtTokenService.validateToken(token, userDetails);
         }catch (Exception e){
+            logger.info("end-reset password - failed, for token: {}", token);
             return false;
         }
+    }
+
+    private void sendVerificationEmail(Donor donor) {
+        logger.info("start-send verification email, for email: {}", donor.getEmail());
+        String subject = "Account Verification";
+        String verificationCode = "VERIFICATION CODE" + donor.getVerificationCode();
+        String htmlMessage = "<html>"
+                + "<body style=\"font-family: Arial, sans-serif;\">"
+                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
+                + "<h2 style=\"color: #333;\">Welcome to Feeding The Needing</h2>"
+                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
+                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
+                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
+                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "</div>"
+                + "</div>"
+                + "</body>"
+                + "</html>";
+
+        try{
+            emailService.sendVerificationEmail(donor.getEmail(), subject, htmlMessage);
+            logger.info("end-send verification email, for email: {}", donor.getEmail());
+        } catch (Exception e) {
+            logger.info("end-send verification email - failed, for email: {}", donor.getEmail());
+            throw new UserDoesntExistsException("cant send verification email"); // change the error type
+        }
+    }
+
+    private String generateVerificationCode() {
+        logger.info("start-generate verification code");
+        Random random = new Random();
+        int code = random.nextInt(900000) + 10000;
+        logger.info("end-generate verification code");
+        return String.valueOf(code);
+    }
+
+    public void verifyDonor(VerifyDonorDTO input) {
+        logger.info("start-verify donor, email: {}", input.email());
+        Optional<Donor> optionalDonor = donorRepository.findByEmail(input.email());
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            if(donor.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
+                throw new RuntimeException("Verification code expired");
+
+            if(donor.getVerificationCode().equals(input.verificationCode())){
+                donor.setVerified(true);
+                donor.setVerificationCode(null);
+                donor.setVerificationCodeExpiresAt(null);
+                donorRepository.save(donor);
+            }
+            else
+                throw new RuntimeException("Invalid verification code");
+        }
+        else
+            throw new UserDoesntExistsException("User not found");
+    }
+
+    public void resendVerificationEmail(String email) {
+        logger.info("start-resend verification code, email: {}", email);
+        Optional<Donor> optionalDonor = donorRepository.findByEmail(email);
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            if(donor.isVerified())
+                throw new RuntimeException("account is already verified");
+
+            donor.setVerificationCode(generateVerificationCode());
+            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+            sendVerificationEmail(donor);
+            donorRepository.save(donor);
+        }
+        else
+            throw new UserDoesntExistsException("donor not found");
     }
 }

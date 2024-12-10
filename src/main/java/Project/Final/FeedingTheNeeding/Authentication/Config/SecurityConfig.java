@@ -1,7 +1,6 @@
-package Project.Final.FeedingTheNeeding.config;
+package Project.Final.FeedingTheNeeding.Authentication.Config;
 
 import Project.Final.FeedingTheNeeding.Authentication.Service.CustomUserDetailsService;
-import Project.Final.FeedingTheNeeding.Authentication.Service.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

@@ -1,5 +1,7 @@
-package Project.Final.FeedingTheNeeding.Authentication.Service;
+package Project.Final.FeedingTheNeeding.Authentication.Config;
 
+import Project.Final.FeedingTheNeeding.Authentication.Service.CustomUserDetailsService;
+import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

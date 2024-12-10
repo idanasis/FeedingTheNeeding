@@ -1,11 +1,9 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
-import Project.Final.FeedingTheNeeding.Authentication.DTO.AuthenticationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.AuthenticationResponse;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationRequest;
+import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -64,5 +62,26 @@ public class AuthController {
         boolean isValid = authService.validateToken(cleanToken);
         return ResponseEntity.ok(isValid);
     }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
+        try{
+            authService.verifyDonor(verifyDonorDTO);
+            return ResponseEntity.ok("Donor successfully verified");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend")
+    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+        try{
+            authService.resendVerificationEmail(email);
+            return ResponseEntity.ok("Email code resend successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }
