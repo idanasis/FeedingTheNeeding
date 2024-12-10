@@ -29,4 +29,5 @@ public class Donor extends BaseUser{
     public String getUserTypeDescription() {
         return "Donator";
     }
+
 }
