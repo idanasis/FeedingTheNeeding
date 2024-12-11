@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding;
 
+import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,11 @@ public class TestSecurityConfig {
                         .anyRequest().permitAll()
                 );
         return http.build();
+    }
+
+    @Bean
+    public JwtTokenService jwtTokenService() {
+        return new JwtTokenService();
     }
 }
 
