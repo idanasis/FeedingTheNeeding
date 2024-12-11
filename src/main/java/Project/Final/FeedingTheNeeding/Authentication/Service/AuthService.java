@@ -73,7 +73,6 @@ public class AuthService {
         // TODO: check for valid email, valid password, password == confirmPassword
 
         Donor donor = new Donor();
-        donor.setId(1L); // TODO: change it
         donor.setEmail(registrationRequest.getEmail());
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
@@ -107,7 +106,6 @@ public class AuthService {
             throw new UserAlreadyExistsException("Needy already exists");
 
         Needy needy = new Needy();
-        needy.setId(1L); // TODO: change it
         needy.setFirstName(needyRegistrationRequest.getFirstName());
         needy.setLastName(needyRegistrationRequest.getLastName());
         needy.setPhoneNumber(needyRegistrationRequest.getPhoneNumber());
@@ -181,6 +179,7 @@ public class AuthService {
                 donor.setVerificationCode(null);
                 donor.setVerificationCodeExpiresAt(null);
                 donorRepository.save(donor);
+                logger.info("end-verify donor, email: {}", input.email());
             }
             else
                 throw new RuntimeException("Invalid verification code");
@@ -201,6 +200,7 @@ public class AuthService {
             donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
             sendVerificationEmail(donor);
             donorRepository.save(donor);
+            logger.info("end-resend verification code, email: {}", email);
         }
         else
             throw new UserDoesntExistsException("donor not found");
