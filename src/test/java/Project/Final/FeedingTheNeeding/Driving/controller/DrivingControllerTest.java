@@ -4,7 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import Project.Final.FeedingTheNeeding.TestSecurityConfig;
+import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.jupiter.api.BeforeEach;
