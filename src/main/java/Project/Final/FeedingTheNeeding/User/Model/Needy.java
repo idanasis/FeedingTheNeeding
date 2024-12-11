@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -12,12 +13,16 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class Needy extends BaseUser {
-
 
     private int familySize;
     @Enumerated(EnumType.STRING)
     private NeedyStatus confirmStatus;
 
 
+    @Override
+    public String getUserTypeDescription() {
+        return "Needy";
+    }
 }

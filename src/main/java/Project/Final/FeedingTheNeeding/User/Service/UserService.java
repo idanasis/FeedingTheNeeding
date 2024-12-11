@@ -1,18 +1,17 @@
 package Project.Final.FeedingTheNeeding.User.Service;
 
-import Project.Final.FeedingTheNeeding.User.Repository.DonatorRepository;
-import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
-import Project.Final.FeedingTheNeeding.User.Repository.UserRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
 
-    private final DonatorRepository donatorRepository;
-    private final NeederRepository neederRepository;
+    private final DonorRepository donorRepository;
+    private final NeedyRepository needyRepository;
 
-    public UserService(DonatorRepository donatorRepository, NeederRepository neederRepository) {
-        this.donatorRepository = donatorRepository;
-        this.neederRepository = neederRepository;
+    public UserService(DonorRepository donorRepository, NeedyRepository needyRepository) {
+        this.donorRepository = donorRepository;
+        this.needyRepository = needyRepository;
     }
 }

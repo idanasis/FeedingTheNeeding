@@ -1,9 +1,7 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
-import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
-import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
-import Project.Final.FeedingTheNeeding.User.Service.NeederService;
+import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,16 +13,16 @@ import java.util.List;
 public class NeederController {
 
     @Autowired
-    NeederService neederService;
+    NeedyService needyService;
 
-    public NeederController(NeederService neederService) {
-        this.neederService = neederService;
+    public NeederController(NeedyService needyService) {
+        this.needyService = needyService;
     }
     // Create or Update a Needy user
     @PostMapping
     public ResponseEntity<Needy> createOrUpdateNeedy(@RequestBody Needy needy) {
         try {
-            Needy savedNeedy = neederService.saveOrUpdateNeedy(needy);
+            Needy savedNeedy = needyService.saveOrUpdateNeedy(needy);
             return ResponseEntity.ok(savedNeedy);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -35,7 +33,7 @@ public class NeederController {
     @GetMapping
     public ResponseEntity<List<Needy>> getAllNeedies() {
         try {
-            List<Needy> needyUsers = neederService.getAllNeedyUsers();
+            List<Needy> needyUsers = needyService.getAllNeedyUsers();
             return ResponseEntity.ok(needyUsers);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -46,7 +44,7 @@ public class NeederController {
     @GetMapping("/{id}")
     public ResponseEntity<Needy> getNeedyById(@PathVariable Long id) {
         try {
-            return neederService.getNeedyById(id)
+            return needyService.getNeedyById(id)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {
@@ -58,7 +56,7 @@ public class NeederController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNeedyById(@PathVariable Long id) {
         try {
-            neederService.deleteNeedyById(id);
+            needyService.deleteNeedyById(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
@@ -70,7 +68,7 @@ public class NeederController {
     @GetMapping("/pending")
     public ResponseEntity<List<Needy>> getPendingNeedies() {
         try {
-            List<Needy> pendingNeedies = neederService.getPendingNeedy();
+            List<Needy> pendingNeedies = needyService.getPendingNeedy();
             return ResponseEntity.ok(pendingNeedies);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
@@ -80,7 +78,7 @@ public class NeederController {
     @GetMapping("/phone/{phoneNumber}")
     public ResponseEntity<?> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
         try {
-            return neederService.getNeedyByPhoneNumber(phoneNumber)
+            return needyService.getNeedyByPhoneNumber(phoneNumber)
                     .map(ResponseEntity::ok)
                     .orElse(ResponseEntity.notFound().build());
         } catch (Exception e) {

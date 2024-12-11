@@ -1,7 +1,7 @@
 package Project.Final.FeedingTheNeeding.Social.repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
-import Project.Final.FeedingTheNeeding.User.Repository.NeederRepository;
+import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
@@ -37,7 +37,7 @@ public class NeederTrackingRepositoryTest {
     private NeederTrackingRepository repository;
 
     @Autowired
-    private NeederRepository neederRepository;
+    private NeedyRepository needyRepository;
 
     @Test
     public void testSaveAndFindNeeder() {
@@ -49,7 +49,7 @@ public class NeederTrackingRepositoryTest {
         user.setAddress(ADDRESS);
         user.setCity(CITY);
         user.setFamilySize(FAMILY_SIZE);
-        neederRepository.save(user);
+        needyRepository.save(user);
 
         // Arrange: Create a NeederTracking entity
         NeederTracking neederTracking = new NeederTracking();
@@ -87,7 +87,7 @@ public class NeederTrackingRepositoryTest {
         public void testFindByWeekStatus() {
             // Arrange: Create and save a Needy entity
             Needy user = createSampleNeedy();
-            neederRepository.save(user);
+            needyRepository.save(user);
 
             // Create multiple NeederTracking entities with different week statuses
             NeederTracking tracking1 = createNeederTracking(user, WeekStatus.Here);
@@ -110,7 +110,7 @@ public class NeederTrackingRepositoryTest {
         public void testDeleteNeederTracking() {
             // Arrange: Create and save a Needy entity
             Needy user = createSampleNeedy();
-            neederRepository.save(user);
+            needyRepository.save(user);
 
             // Create a NeederTracking entity
             NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
@@ -128,7 +128,7 @@ public class NeederTrackingRepositoryTest {
         public void testUpdateNeederTracking() {
             // Arrange: Create and save a Needy entity
             Needy user = createSampleNeedy();
-            neederRepository.save(user);
+            needyRepository.save(user);
 
             // Create a NeederTracking entity
             NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
@@ -148,7 +148,7 @@ public class NeederTrackingRepositoryTest {
         public void testEntityGraphFindById() {
             // Arrange: Create and save a Needy entity
             Needy user = createSampleNeedy();
-            neederRepository.save(user);
+            needyRepository.save(user);
 
             // Create a NeederTracking entity
             NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);

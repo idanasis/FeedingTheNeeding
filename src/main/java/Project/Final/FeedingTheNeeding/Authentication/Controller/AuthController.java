@@ -1,29 +1,87 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
-import Project.Final.FeedingTheNeeding.Authentication.Facade.AuthFacade;
+import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 public class AuthController {
-    private final AuthFacade authFacade;
 
-    public AuthController(AuthFacade authFacade) {
-        this.authFacade = authFacade;
+    private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
-
-//    @PostMapping("/register")
-//    public BaseUserDTO register(@RequestBody RegistrationRequest registrationRequest) {
-//        return authFacade.registerUser(registrationRequest);
-//    }
 
 //    @PostMapping("/login")
-//    public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-//        return authFacade.login(loginRequest);
+//    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
+//        try{
+//            AuthenticationResponse response = authService.authenticate(authenticationRequest);
+//            return ResponseEntity.ok(response);
+//        }catch (Exception e){
+//            return ResponseEntity.badRequest().build();
+//        }
 //    }
 
-    @PostMapping("/logout")
-    public void logout(@RequestHeader("Authorization") String token) {
-        authFacade.logout(token);
+    @PostMapping("/register/donor")
+    public ResponseEntity<?> registerDonor(@RequestBody RegistrationRequest registrationRequest) {
+        try{
+            authService.registerDonor(registrationRequest);
+            return ResponseEntity.ok("Donor successfully registered");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+    @PostMapping("/register/needy")
+    public ResponseEntity<?> registerNeedy(@RequestBody NeedyRegistrationRequest needyRegistrationRequest) {
+        try{
+            authService.registerNeedy(needyRegistrationRequest);
+            return ResponseEntity.ok("Needy successfully registered");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestParam String email, @RequestParam String newPassword) {
+        try {
+            authService.resetPassword(email, newPassword);
+            return ResponseEntity.ok("Password reset successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+//    @GetMapping("/validate-token")
+//    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
+//        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
+//        boolean isValid = authService.validateToken(cleanToken);
+//        return ResponseEntity.ok(isValid);
+//    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
+        try{
+            authService.verifyDonor(verifyDonorDTO);
+            return ResponseEntity.ok("Donor successfully verified");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend")
+    public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
+        try{
+            authService.resendVerificationEmail(email);
+            return ResponseEntity.ok("Email code resend successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+
 }
