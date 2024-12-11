@@ -1,9 +1,10 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
+import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -11,20 +12,24 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final JwtTokenService jwtTokenService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JwtTokenService jwtTokenService) {
         this.authService = authService;
+        this.jwtTokenService = jwtTokenService;
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
-//        try{
-//            AuthenticationResponse response = authService.authenticate(authenticationRequest);
-//            return ResponseEntity.ok(response);
-//        }catch (Exception e){
-//            return ResponseEntity.badRequest().build();
-//        }
-//    }
+    @PostMapping("/login")
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest authenticationRequest) {
+        try{
+            UserCredentials user = authService.authenticate(authenticationRequest);
+            String jwtToken = jwtTokenService.generateToken(user);
+            AuthenticationResponse response = new AuthenticationResponse(jwtToken, jwtTokenService.getExpirationTime());
+            return ResponseEntity.ok(response);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
 
     @PostMapping("/register/donor")
     public ResponseEntity<?> registerDonor(@RequestBody RegistrationRequest registrationRequest) {
@@ -55,13 +60,6 @@ public class AuthController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-//    @GetMapping("/validate-token")
-//    public ResponseEntity<Boolean> validateToken(@RequestHeader("Authorization") String token) {
-//        String cleanToken = token.startsWith("Bearer ") ? token.substring(7) : token;
-//        boolean isValid = authService.validateToken(cleanToken);
-//        return ResponseEntity.ok(isValid);
-//    }
 
     @PostMapping("/verify")
     public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
