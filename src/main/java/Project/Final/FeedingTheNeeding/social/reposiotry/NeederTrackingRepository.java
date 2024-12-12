@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.WeakHashMap;
@@ -15,7 +16,7 @@ import java.util.WeakHashMap;
 public interface NeederTrackingRepository extends JpaRepository<NeederTracking, Long> {
 
 
-    List<NeederTrackingProjection> findByWeekStatus(WeekStatus weekStatus);
+    List<NeederTrackingProjection> findByWeekStatusAndDate(WeekStatus weekStatus, LocalDate date);
 
     // Add custom queries if necessary
     @EntityGraph(attributePaths = {"needy"}) // Always include the Needy entity
@@ -23,6 +24,8 @@ public interface NeederTrackingRepository extends JpaRepository<NeederTracking, 
 
     @EntityGraph(attributePaths = {"needy"}) // Include Needy when finding by ID
     Optional<NeederTracking> findById(Long id);
+
+    List<NeederTracking> findByDate(LocalDate date);
 
 
 }

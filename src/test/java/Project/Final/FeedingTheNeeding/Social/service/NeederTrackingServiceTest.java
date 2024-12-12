@@ -7,13 +7,17 @@ import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +33,8 @@ class NeederTrackingServiceTest {
     private static final String PHONE_NUMBER = "123456789";
     private static final String DIETARY_PREFERENCES = "Vegetarian";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+    private static final LocalDate DATE = LocalDate.of(2021, 10, 10);
+
 
     @InjectMocks
     private NeederTrackingService neederTrackingService; // Service under test
@@ -191,21 +197,39 @@ class NeederTrackingServiceTest {
     }
 
     @Test
-    void testGetNeedersHere() {
+    void testGetNeedersHereByDate() {
         // Arrange
         List<NeederTrackingProjection> mockProjections = Arrays.asList(
                 mock(NeederTrackingProjection.class),
                 mock(NeederTrackingProjection.class)
         );
 
-        when(neederTrackingRepository.findByWeekStatus(WeekStatus.Here)).thenReturn(mockProjections);
+        when(neederTrackingRepository.findByWeekStatusAndDate(WeekStatus.Here,DATE)).thenReturn(mockProjections);
 
         // Act
-        List<NeederTrackingProjection> result = neederTrackingService.getNeedersHere();
+        List<NeederTrackingProjection> result = neederTrackingService.getNeedersHereByDate(DATE);
 
         // Assert
         assertNotNull(result);
         assertEquals(2, result.size());
-        verify(neederTrackingRepository, times(1)).findByWeekStatus(WeekStatus.Here);
+        verify(neederTrackingRepository, times(1)).findByWeekStatusAndDate(WeekStatus.Here,DATE);
+    }
+    @Test
+    public void testGetAllNeedersTrackingsByDate() {
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setDate(DATE);
+
+        Mockito.when(neederTrackingRepository.findByDate(DATE))
+                .thenReturn(Collections.singletonList(mockNeederTracking));
+
+        // Act
+        List<NeederTracking> result = neederTrackingService.getAllNeedersTrackingsByDate(DATE);
+
+        // Assert
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(DATE, result.get(0).getDate());
+        Mockito.verify(neederTrackingRepository, Mockito.times(1)).findByDate(DATE);
     }
 }

@@ -8,6 +8,7 @@ import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjectio
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -45,6 +46,7 @@ public class NeederTrackingService {
         existingNeederTracking.setWeekStatus(updatedNeeder.getWeekStatus());
         existingNeederTracking.setDietaryPreferences(updatedNeeder.getDietaryPreferences());
         existingNeederTracking.setAdditionalNotes(updatedNeeder.getAdditionalNotes());
+        existingNeederTracking.setDate(updatedNeeder.getDate());
 
         return neederTrackingRepository.save(existingNeederTracking);
     }
@@ -58,13 +60,17 @@ public class NeederTrackingService {
     }
 
 
-    public List<NeederTrackingProjection> getNeedersHere() {
-        return neederTrackingRepository.findByWeekStatus(WeekStatus.Here);
+    public List<NeederTrackingProjection> getNeedersHereByDate(LocalDate date) {
+        return neederTrackingRepository.findByWeekStatusAndDate(WeekStatus.Here,date);
     }
 
     public NeedySimpleDTO getNeedyFromNeederTrackingId(Long id) {
         NeederTracking neederTracking = getNeederTrackById(id);
         return new NeedySimpleDTO(neederTracking.getNeedy(), neederTracking.getAdditionalNotes());
+    }
+
+    public List<NeederTracking> getAllNeedersTrackingsByDate(LocalDate date) {
+        return neederTrackingRepository.findByDate(date);
     }
 
 }

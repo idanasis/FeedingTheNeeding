@@ -4,6 +4,8 @@ import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 @Entity
 public class NeederTracking {
@@ -18,6 +20,7 @@ public class NeederTracking {
 
     private WeekStatus weekStatus;
     private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
+    private LocalDate date;
 
     @Column(length = 1000)
     private String additionalNotes;
