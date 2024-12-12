@@ -35,7 +35,7 @@ jobs:
     - name: Start application and check for exceptions
       run: |
         cd front
-        npm start &
+        npm run dev &
         sleep 10
         curl -s http://localhost:5173 | grep -i "error" && exit 1 || echo "Application running without exceptions"
       env:
