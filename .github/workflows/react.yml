@@ -1,0 +1,42 @@
+name: CI - React Application
+
+on:
+#   push:
+#     branches:
+#       - main
+  pull_request:
+    branches: [master]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16 # Use your desired Node.js version
+
+    # Install dependencies
+    - name: Install dependencies
+      run: |
+       cd front
+       npm install
+
+    - name: Build application
+      run: |
+       cd front
+       npm run build
+
+
+    - name: Start application and check for exceptions
+      run: |
+        cd front
+        npm start &
+        sleep 10
+        curl -s http://localhost:5173 | grep -i "error" && exit 1 || echo "Application running without exceptions"
+      env:
+        CI: true
