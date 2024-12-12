@@ -25,5 +25,7 @@ public interface NeederTrackingRepository extends JpaRepository<NeederTracking, 
     @EntityGraph(attributePaths = {"needy"}) // Include Needy when finding by ID
     Optional<NeederTracking> findById(Long id);
 
+    List<NeederTracking> findByDate(LocalDate date);
+
 
 }

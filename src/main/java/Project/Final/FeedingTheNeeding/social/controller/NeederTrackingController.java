@@ -131,4 +131,16 @@ public class NeederTrackingController {
         }
     }
 
+    @GetMapping("/getNeedersByDate")
+    public ResponseEntity<?> getAllNeederTrackings(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            logger.info("Fetching all NeederTracking records for date: {}", date);
+            List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
+            logger.info("Fetched all NeederTracking records for date: {}", date);
+            return ResponseEntity.ok(neederTrackings);
+        } catch (Exception e) {
+            logger.error("Failed to fetch all NeederTracking records for date: {}", date, e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

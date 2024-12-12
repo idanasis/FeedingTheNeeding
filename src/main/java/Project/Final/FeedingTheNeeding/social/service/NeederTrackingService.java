@@ -46,6 +46,7 @@ public class NeederTrackingService {
         existingNeederTracking.setWeekStatus(updatedNeeder.getWeekStatus());
         existingNeederTracking.setDietaryPreferences(updatedNeeder.getDietaryPreferences());
         existingNeederTracking.setAdditionalNotes(updatedNeeder.getAdditionalNotes());
+        existingNeederTracking.setDate(updatedNeeder.getDate());
 
         return neederTrackingRepository.save(existingNeederTracking);
     }
@@ -68,5 +69,8 @@ public class NeederTrackingService {
         return new NeedySimpleDTO(neederTracking.getNeedy(), neederTracking.getAdditionalNotes());
     }
 
+    public List<NeederTracking> getAllNeedersTrackingsByDate(LocalDate date) {
+        return neederTrackingRepository.findByDate(date);
+    }
 
 }

@@ -292,5 +292,23 @@ public class NeederTrackingControllerTest {
                 .andExpect(jsonPath("$.additionalNotes").value(ADDITIONAL_NOTES));  // Expecting the additional notes
     }
 
+    @Test
+    public void testGetAllNeederTrackingsByDate() throws Exception {
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setDate(DATE);
+
+        Mockito.when(neederTrackingService.getAllNeedersTrackingsByDate(DATE))
+                .thenReturn(Collections.singletonList(mockNeederTracking));
+
+        // Act & Assert
+        mockMvc.perform(get("/social/getNeedersByDate")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].date").value(DATE.toString()));
+    }
 
 }

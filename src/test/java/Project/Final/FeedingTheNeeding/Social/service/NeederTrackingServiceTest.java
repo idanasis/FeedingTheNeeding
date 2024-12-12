@@ -7,14 +7,17 @@ import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -210,5 +213,23 @@ class NeederTrackingServiceTest {
         assertNotNull(result);
         assertEquals(2, result.size());
         verify(neederTrackingRepository, times(1)).findByWeekStatusAndDate(WeekStatus.Here,DATE);
+    }
+    @Test
+    public void testGetAllNeedersTrackingsByDate() {
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setDate(DATE);
+
+        Mockito.when(neederTrackingRepository.findByDate(DATE))
+                .thenReturn(Collections.singletonList(mockNeederTracking));
+
+        // Act
+        List<NeederTracking> result = neederTrackingService.getAllNeedersTrackingsByDate(DATE);
+
+        // Assert
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(DATE, result.get(0).getDate());
+        Mockito.verify(neederTrackingRepository, Mockito.times(1)).findByDate(DATE);
     }
 }

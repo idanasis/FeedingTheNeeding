@@ -6,6 +6,7 @@ import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -186,4 +187,25 @@ public class NeederTrackingRepositoryTest {
             neederTracking.setDate(DATE);
             return neederTracking;
         }
+
+    @Test
+    public void testFindByDate() {
+        // Arrange
+        Needy user = createSampleNeedy();
+        needyRepository.save(user);
+
+        NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+        neederTracking.setDate(DATE);
+        NeederTracking savedTracking = repository.save(neederTracking);
+
+        // Save to repository
+        repository.save(savedTracking);
+
+        // Act
+        List<NeederTracking> result = repository.findByDate(DATE);
+
+        // Assert
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(DATE, result.get(0).getDate());
+    }
 }
