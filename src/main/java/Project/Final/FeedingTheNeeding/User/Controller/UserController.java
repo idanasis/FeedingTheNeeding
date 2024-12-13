@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/donors")
-    public ResponseEntity<?> allDonors() {
+    public ResponseEntity<?> getAllDonors() {
         try {
             List<Donor> donors = userService.getAllDonors();
             return ResponseEntity.ok(donors);
@@ -57,7 +57,7 @@ public class UserController {
     }
 
     @GetMapping("/needy")
-    public ResponseEntity<?> allNeedy() {
+    public ResponseEntity<?> getAllNeedyUsers() {
         try {
             List<Needy> needyList = userService.getAllNeedyUsers();
             return ResponseEntity.ok(needyList);
