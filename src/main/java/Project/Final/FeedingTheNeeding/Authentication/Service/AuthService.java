@@ -132,7 +132,7 @@ public class AuthService {
         logger.info("end-reset password, for email: {}", email);
     }
 
-    private void sendVerificationEmail(Donor donor) {
+    public void sendVerificationEmail(Donor donor) {
         logger.info("start-send verification email, for email: {}", donor.getEmail());
         String subject = "Account Verification";
         String verificationCode = "VERIFICATION CODE" + donor.getVerificationCode();
@@ -158,7 +158,7 @@ public class AuthService {
         }
     }
 
-    private String generateVerificationCode() {
+    public String generateVerificationCode() {
         logger.info("start-generate verification code");
         Random random = new Random();
         int code = random.nextInt(900000) + 10000;
