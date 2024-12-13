@@ -9,6 +9,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
+import Project.Final.FeedingTheNeeding.User.Exception.InvalidCredentialException;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
@@ -103,7 +104,7 @@ public class AuthServiceTest {
     void authenticate_UserNotFound_ThrowsException() {
         when(userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail())).thenReturn(null);
 
-        assertThrows(UserDoesntExistsException.class, () -> authService.authenticate(authenticationRequest));
+        assertThrows(InvalidCredentialException.class, () -> authService.authenticate(authenticationRequest));
     }
 
     @Test
