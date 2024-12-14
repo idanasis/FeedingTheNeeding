@@ -30,6 +30,9 @@ public class JwtTokenServiceTest {
     private String base64SecretKey;
     private final long jwtExpiration = 1000 * 60 * 60; // 1 hour
 
+    private final String ROLE = "role", USER = "USER", ADMIN = "ADMIN";
+    private final String USER_NAME = "testuser";
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
@@ -39,10 +42,10 @@ public class JwtTokenServiceTest {
         base64SecretKey = java.util.Base64.getEncoder().encodeToString(secretKey.getEncoded());
 
         jwtTokenService = new JwtTokenService();
-        setPrivateField(jwtTokenService, "secretKey", base64SecretKey);
-        setPrivateField(jwtTokenService, "jwtExpiration", jwtExpiration);
+        jwtTokenService.setPrivateField(jwtTokenService, "secretKey", base64SecretKey);
+        jwtTokenService.setPrivateField(jwtTokenService, "jwtExpiration", jwtExpiration);
 
-        when(mockUserDetails.getUsername()).thenReturn("testuser");
+        when(mockUserDetails.getUsername()).thenReturn(USER_NAME);
     }
 
     @Test
@@ -51,7 +54,7 @@ public class JwtTokenServiceTest {
 
         assertNotNull(token);
         assertFalse(token.isEmpty());
-        assertEquals("testuser", jwtTokenService.extractUsername(token));
+        assertEquals(USER_NAME, jwtTokenService.extractUsername(token));
 
         verify(mockUserDetails, atLeastOnce()).getUsername();
     }
@@ -69,30 +72,30 @@ public class JwtTokenServiceTest {
     @Test
     void testExtractClaim() {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", "ADMIN");
+        claims.put(ROLE, ADMIN);
 
         String token = Jwts.builder()
                 .setClaims(claims)
-                .setSubject("testuser")
+                .setSubject(USER_NAME)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(secretKey, SignatureAlgorithm.HS256)
                 .compact();
 
-        String role = jwtTokenService.extractClaim(token, claimsMap -> claimsMap.get("role").toString());
-        assertEquals("ADMIN", role);
+        String role = jwtTokenService.extractClaim(token, claimsMap -> claimsMap.get(ROLE).toString());
+        assertEquals(ADMIN, role);
     }
 
     @Test
     void testGenerateTokenWithClaims() {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", "USER");
+        claims.put(ROLE, USER);
 
         String token = jwtTokenService.generateToken(claims, mockUserDetails);
         assertNotNull(token);
 
-        String role = jwtTokenService.extractClaim(token, claimsMap -> claimsMap.get("role").toString());
-        assertEquals("USER", role);
+        String role = jwtTokenService.extractClaim(token, claimsMap -> claimsMap.get(ROLE).toString());
+        assertEquals(USER, role);
     }
 
     @Test
@@ -109,16 +112,6 @@ public class JwtTokenServiceTest {
     @Test
     void testExtractUsername() {
         String token = jwtTokenService.generateToken(mockUserDetails);
-        assertEquals("testuser", jwtTokenService.extractUsername(token));
-    }
-
-    private void setPrivateField(Object target, String fieldName, Object value) {
-        try {
-            var field = target.getClass().getDeclaredField(fieldName);
-            field.setAccessible(true);
-            field.set(target, value);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        assertEquals(USER_NAME, jwtTokenService.extractUsername(token));
     }
 }
