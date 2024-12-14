@@ -2,10 +2,12 @@ package Project.Final.FeedingTheNeeding.User.Controller;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
+import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -86,6 +88,19 @@ public class NeederController {
         }
     }
 
+    @GetMapping("/needy-tracking")
+    public ResponseEntity<?> getNeedyUsersTrackingByData(@RequestParam("date") String dateStr) {
+        try {
+            LocalDate localDate = LocalDate.parse(dateStr);  // Parse the date from the request parameter
+
+            List<NeederTracking> trackingList = needyService.getNeedyUsersTrackingByData(localDate);
+
+            return ResponseEntity.ok(trackingList);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+
+    }
 
 
 }
