@@ -71,6 +71,8 @@ public class JwtTokenService {
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         logger.info("start-isTokenValid token: {}", token);
+        if (userDetails == null || token == null)
+            return false;
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
@@ -99,5 +101,15 @@ public class JwtTokenService {
         logger.info("start-getSignInKey");
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public void setPrivateField(Object target, String fieldName, Object value) {
+        try {
+            var field = target.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(target, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

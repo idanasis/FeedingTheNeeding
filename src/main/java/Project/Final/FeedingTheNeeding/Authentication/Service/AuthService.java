@@ -162,7 +162,7 @@ public class AuthService {
     public String generateVerificationCode() {
         logger.info("start-generate verification code");
         Random random = new Random();
-        int code = random.nextInt(900000) + 10000;
+        int code = random.nextInt(900000) + 100000;
         logger.info("end-generate verification code");
         return String.valueOf(code);
     }
