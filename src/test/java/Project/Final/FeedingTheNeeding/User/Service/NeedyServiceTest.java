@@ -59,7 +59,7 @@ public class NeedyServiceTest {
         List<Needy> result = needyService.getPendingNeedy();
 
         assertEquals(1, result.size());
-        assertEquals("needy1", result.get(0).getFirstName());
+        assertEquals(NEEDY1_FIRST_NAME, result.get(0).getFirstName());
         verify(needyRepository, times(1)).findByConfirmStatus(NeedyStatus.PENDING);
     }
 
@@ -70,7 +70,7 @@ public class NeedyServiceTest {
         Needy result = needyService.saveOrUpdateNeedy(needy1);
 
         assertNotNull(result);
-        assertEquals("needy1", result.getFirstName());
+        assertEquals(NEEDY1_FIRST_NAME, result.getFirstName());
         verify(needyRepository, times(1)).save(needy1);
     }
 
@@ -91,7 +91,7 @@ public class NeedyServiceTest {
         Optional<Needy> result = needyService.getNeedyById(NEEDY1_ID);
 
         assertTrue(result.isPresent());
-        assertEquals("needy1", result.get().getFirstName());
+        assertEquals(NEEDY1_FIRST_NAME, result.get().getFirstName());
         verify(needyRepository, times(1)).findById(NEEDY1_ID);
     }
 
@@ -125,7 +125,7 @@ public class NeedyServiceTest {
         Optional<Needy> result = needyService.getNeedyByPhoneNumber(NEEDY1_PHONE_NUMBER);
 
         assertTrue(result.isPresent());
-        assertEquals("needy1", result.get().getFirstName());
+        assertEquals(NEEDY1_FIRST_NAME, result.get().getFirstName());
         verify(needyRepository, times(1)).findByPhoneNumber(NEEDY1_PHONE_NUMBER);
     }
 }
