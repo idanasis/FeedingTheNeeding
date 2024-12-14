@@ -6,6 +6,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
+import Project.Final.FeedingTheNeeding.User.Exception.InvalidCredentialException;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
@@ -49,7 +50,7 @@ public class AuthService {
 
         UserCredentials user = userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail());
         if (user == null)
-            throw new UserDoesntExistsException("User doesn't exist");
+            throw new InvalidCredentialException("Invalid credentials");
 
         if(!user.isEnabled())
             throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
@@ -132,7 +133,7 @@ public class AuthService {
         logger.info("end-reset password, for email: {}", email);
     }
 
-    private void sendVerificationEmail(Donor donor) {
+    public void sendVerificationEmail(Donor donor) {
         logger.info("start-send verification email, for email: {}", donor.getEmail());
         String subject = "Account Verification";
         String verificationCode = "VERIFICATION CODE" + donor.getVerificationCode();
@@ -158,7 +159,7 @@ public class AuthService {
         }
     }
 
-    private String generateVerificationCode() {
+    public String generateVerificationCode() {
         logger.info("start-generate verification code");
         Random random = new Random();
         int code = random.nextInt(900000) + 10000;
