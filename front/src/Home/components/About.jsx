@@ -3,7 +3,7 @@ import {motion} from 'framer-motion';
 import { slideUpVariants ,zoomInVariants} from './animation';
 const About = () => {
   return (
-    <div id='about'className='lg:w-[80%] w-[90%] m-auto py-[60px] flex lg:flex-row flex-col items-start gap-[50px] justify-between'>
+    <div id='אודות'className='lg:w-[80%] w-[90%] m-auto py-[60px] flex lg:flex-row flex-col items-start gap-[50px] justify-between'>
       <motion.div
        initial="hidden" whileInView="visible" variants={slideUpVariants} className=' lg:w-[60%] w-full flex flex-col justify-center items-start gap-6'>
         <motion.h1 variants={slideUpVariants} className='text-red-500 text-2xl' >
