@@ -20,14 +20,14 @@ import { useState } from 'react';
 function createData(neederTrackingModel: NeederTrackingModel) {
   return {
     id: neederTrackingModel.id,
-    name: neederTrackingModel.firstName + ' ' + neederTrackingModel.lastName,
-    phoneNumber: neederTrackingModel.phoneNumber,
-    address: neederTrackingModel.address,
-    city: neederTrackingModel.city,
+    name: neederTrackingModel.needy.firstName + ' ' + neederTrackingModel.needy.lastName,
+    phoneNumber: neederTrackingModel.needy.phoneNumber,
+    address: neederTrackingModel.needy.address,
+    city: neederTrackingModel.needy.city,
     status: neederTrackingModel.status,
     details: [
       {
-        familySize: neederTrackingModel.familySize,
+        familySize: neederTrackingModel.needy.familySize,
         foodPreference: neederTrackingModel.foodPreference,
         notes: neederTrackingModel.notes,
       },
