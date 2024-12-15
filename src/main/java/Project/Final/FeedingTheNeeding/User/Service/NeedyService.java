@@ -23,6 +23,7 @@ public class NeedyService {
 
     public NeedyService(NeedyRepository needyRepository,NeederTrackingService neederTrackingService) {
         this.needyRepository = needyRepository;
+        this.neederTrackingService = neederTrackingService;
     }
 
     public List<Needy> getPendingNeedy() {
