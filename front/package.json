@@ -15,6 +15,7 @@
     "@mui/icons-material": "^6.2.0",
     "@mui/material": "^6.2.0",
     "@mui/x-date-pickers": "^7.23.1",
+    "axios": "^1.7.9",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.4.0",
     "project": "file:",
@@ -27,6 +28,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/axios": "^0.9.36",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
