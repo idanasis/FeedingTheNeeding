@@ -1,11 +1,15 @@
 package Project.Final.FeedingTheNeeding.social.service;
 
+import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -15,7 +19,7 @@ import java.util.List;
 public class NeederTrackingService {
 
     private final NeederTrackingRepository neederTrackingRepository;
-
+    private static final Logger logger = LoggerFactory.getLogger(NeederTrackingService.class);
     public NeederTrackingService(NeederTrackingRepository neederTrackingRepository) {
         this.neederTrackingRepository = neederTrackingRepository;
     }
@@ -71,6 +75,15 @@ public class NeederTrackingService {
 
     public List<NeederTracking> getAllNeedersTrackingsByDate(LocalDate date) {
         return neederTrackingRepository.findByDate(date);
+    }
+    public void addNeederTracking(Needy needer, LocalDate date) {
+        logger.info("Adding NeederTracking for Needy={} on date={}",needer.getId(),date);
+        NeederTracking neederTracking = new NeederTracking();
+        neederTracking.setNeedy(needer);
+        neederTracking.setDate(date);
+        neederTracking.setWeekStatus(WeekStatus.Here);
+        neederTrackingRepository.save(neederTracking);
+        logger.info("NeederTracking added for Needy={} on date={}",needer.getId(),date);
     }
 
 }

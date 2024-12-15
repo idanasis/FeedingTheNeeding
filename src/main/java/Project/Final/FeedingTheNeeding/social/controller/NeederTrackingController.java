@@ -1,10 +1,8 @@
 package Project.Final.FeedingTheNeeding.social.controller;
 
-import Project.Final.FeedingTheNeeding.User.Controller.UserController;
 import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
-import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import org.slf4j.Logger;

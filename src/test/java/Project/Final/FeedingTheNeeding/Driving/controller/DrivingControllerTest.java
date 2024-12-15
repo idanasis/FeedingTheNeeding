@@ -66,7 +66,18 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).submitConstraint(any(DriverConstraint.class));
     }
+    @Test
+    void testSubmitConstraintFail() throws Exception {
+        DriverConstraint constraint = new DriverConstraint();
+        when(drivingService.submitConstraint(any(DriverConstraint.class))).thenThrow(new IllegalArgumentException());
 
+        mockMvc.perform(post("/driving/constraints")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(constraint)))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).submitConstraint(any(DriverConstraint.class));
+    }
     @Test
     void testRemoveConstraint() throws Exception {
         DriverConstraintId constraintId = new DriverConstraintId(driverId, date);
@@ -88,7 +99,15 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).getDateConstraints(date);
     }
+    @Test
+    void testGetDateConstraintsFail() throws Exception {
+        when(drivingService.getDateConstraints(any(LocalDate.class))).thenThrow(new IllegalArgumentException());
 
+        mockMvc.perform(get("/driving/constraints/date/{date}", date.toString()))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).getDateConstraints(date);
+    }
     @Test
     void testGetDriverConstraints() throws Exception {
         when(drivingService.getDriverConstraints(driverId)).thenReturn(Collections.emptyList());
@@ -98,7 +117,15 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).getDriverConstraints(driverId);
     }
+    @Test
+    void testGetDriverConstraintsFail() throws Exception {
+        when(drivingService.getDriverConstraints(driverId)).thenThrow(new IllegalArgumentException());
 
+        mockMvc.perform(get("/driving/constraints/driver/{driverId}", driverId))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).getDriverConstraints(driverId);
+    }
     @Test
     void testSubmitRouteForDriver() throws Exception {
         mockMvc.perform(post("/driving/routes/submit/{routeId}", routeId))
@@ -106,7 +133,15 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).submitRouteForDriver(routeId);
     }
+    @Test
+    void testSubmitRouteForDriverFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).submitRouteForDriver(routeId);
 
+        mockMvc.perform(post("/driving/routes/submit/{routeId}", routeId))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).submitRouteForDriver(routeId);
+    }
     @Test
     void testCreateRoute() throws Exception {
         when(drivingService.createRoute(date)).thenReturn(route);
@@ -117,7 +152,16 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).createRoute(date);
     }
+    @Test
+    void testCreateRouteFail() throws Exception {
+        when(drivingService.createRoute(date)).thenThrow(new IllegalArgumentException());
 
+        mockMvc.perform(post("/driving/routes/create")
+                .param("date", date.toString()))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).createRoute(date);
+    }
     @Test
     void testCreateRouteWithDriver() throws Exception {
         when(drivingService.createRoute(driverId, date)).thenReturn(route);
@@ -129,7 +173,18 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).createRoute(driverId, date);
     }
+ 
+    @Test
+    void testCreateRouteWithDriverFail() throws Exception {
+        when(drivingService.createRoute(driverId, date)).thenThrow(new IllegalArgumentException());
 
+        mockMvc.perform(post("/driving/routes/create/driver")
+                .param("driverId", driverId.toString())
+                .param("date", date.toString()))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).createRoute(driverId, date);
+    }
     @Test
     void testSetDriverIdToRoute() throws Exception {
         mockMvc.perform(put("/driving/routes/{routeId}/driver/{driverId}", routeId, driverId))
@@ -137,7 +192,15 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).setDriverIdToRoute(routeId, driverId);
     }
+    @Test
+    void testSetDriverIdToRouteFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).setDriverIdToRoute(routeId, driverId);
 
+        mockMvc.perform(put("/driving/routes/{routeId}/driver/{driverId}", routeId, driverId))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).setDriverIdToRoute(routeId, driverId);
+    }
     @Test
     void testRemoveRoute() throws Exception {
         mockMvc.perform(delete("/driving/routes/{routeId}", routeId))
@@ -153,7 +216,15 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).submitAllRoutes(date);
     }
+    @Test
+    void testSubmitAllRoutesFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).submitAllRoutes(date);
 
+        mockMvc.perform(post("/driving/routes/submitAll/{date}", date.toString()))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).submitAllRoutes(date);
+    }
     @Test
     void testAddAddressToRoute() throws Exception {
         
@@ -165,7 +236,18 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
     }
+    @Test
+    void testAddAddressToRouteFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
 
+        mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(visitId))
+                .param("status", status))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+    }
     @Test
     void testRemoveAddressFromRoute() throws Exception {
         mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
@@ -175,7 +257,17 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).removeAddressFromRoute(routeId, visitId);
     }
+    @Test
+    void testRemoveAddressFromRouteFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).removeAddressFromRoute(routeId, visitId);
 
+        mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(visitId)))
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visitId);
+    }
     @Test
     void testGetRoute() throws Exception {
         when(drivingService.getRoute(routeId)).thenReturn(route);
@@ -184,7 +276,14 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).getRoute(routeId);
     }
+    @Test
+    void testGetRouteFail() throws Exception {
+        when(drivingService.getRoute(routeId)).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(get("/driving/routes/{routeId}", routeId))
+                .andExpect(status().isBadRequest());
 
+        verify(drivingService, times(1)).getRoute(routeId);
+    }
     @Test
     void testGetRouteByDateAndDriver() throws Exception {  
         when(drivingService.getRoute(date, driverId)).thenReturn(route);
@@ -194,12 +293,27 @@ public class DrivingControllerTest {
                 .andExpect(status().isOk());
         verify(drivingService, times(1)).getRoute(date, driverId);
     }
-
+    @Test
+    void testGetRouteByDateAndDriverFail() throws Exception {
+        when(drivingService.getRoute(date, driverId)).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(get("/driving/routes")
+                .param("date", date.toString())
+                .param("driverId", Long.toString(driverId)))
+                .andExpect(status().isBadRequest());
+        verify(drivingService, times(1)).getRoute(date, driverId);
+    }
     @Test
     void testViewHistory() throws Exception {
         when(drivingService.viewHistory()).thenReturn(Collections.emptyList());
         mockMvc.perform(get("/driving/history"))
                 .andExpect(status().isOk());
+        verify(drivingService, times(1)).viewHistory();
+    }
+    @Test
+    void testViewHistoryFail() throws Exception {
+        when(drivingService.viewHistory()).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(get("/driving/history"))
+                .andExpect(status().isBadRequest());
         verify(drivingService, times(1)).viewHistory();
     }
 }
