@@ -1,0 +1,176 @@
+/* רקע העמוד */
+.register-page {
+    background: url('./background.png') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center; /* מרכז את הטופס לרוחב */
+    align-items: center; /* מרכז את הטופס לגובה */
+    height: 100vh; /* גובה מלא */
+    margin: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    flex-direction: column; /* שיפור למכשירים ניידים */
+}
+
+/* קונטיינר הטופס */
+.register-container {
+    background-color: rgba(255, 255, 255, 0.95); /* רקע בהיר עם מעט שקיפות */
+    border-radius: 12px; /* פינות מעוגלות */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* צל */
+    padding: 20px 30px;
+    width: 90%; /* טופס מותאם למסכים קטנים */
+    max-width: 800px; /* גודל מקסימלי לטופס */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* מיקום הטופס במרכז */
+}
+
+/* לוגו */
+.form-logo {
+    text-align: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.logo-image {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* כותרת */
+h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* חלוקה לשתי עמודות */
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* רווח בין השדות */
+    width: 100%;
+}
+
+.form-row .form-group {
+    flex: 1 1 45%; /* כל שדה יתפוס 45% מהמרווח */
+}
+
+.form-group label {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px;
+    white-space: nowrap; /* מונע ירידה לשורה חדשה */
+}
+
+.form-row input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    direction: rtl;
+}
+
+input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* כפתור ההרשמה */
+.submit-button {
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.submit-button:hover {
+    background-color: #45a049;
+}
+
+/* הודעות שגיאה */
+.error-message {
+    color: red;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* קישור להתחברות */
+.login-redirect {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.login-link {
+    color: #d32f2f;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.login-link:hover {
+    color: #d32f2f;
+}
+
+/* התאמות למסכים קטנים */
+@media screen and (max-width: 600px) {
+    /* עיצוב חלוקה לשדות */
+    .form-row .form-group {
+        flex: 1 1 100%; /* שדה יתפוס את כל הרוחב */
+    }
+
+    .form-container {
+        width: 100%;
+    }
+
+    .logo-image {
+        width: 120px; /* התאמת גודל הלוגו */
+    }
+}
+
+/* עיצוב למודל קופץ */
+.success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #d32f2f;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 9999; /* מוודא שהמודל יישאר מעל לתוכן */
+    width: 300px;
+}
+
+.success-popup p {
+    margin: 0;
+}
+
+.success-popup button {
+    margin-top: 10px;
+    background-color: #fff;
+    color: #d32f2f;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.success-popup button:hover {
+    background-color: #f1f1f1;
+}
