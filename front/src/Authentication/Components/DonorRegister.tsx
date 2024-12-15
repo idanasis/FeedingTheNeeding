@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DonorRegister.css'; // קובץ ה-CSS לעיצוב
-import FeedingLogo from './Logo.png';
+import FeedingLogo from './logo.png';
 
 const Register: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -39,7 +39,7 @@ const Register: React.FC = () => {
         }
 
         if (!validatePhone(phone)) {
-            setError('מספר הטלפון חייב להתחיל ב-05 ולהיות באורך של 10 ספרות');
+            setError('מספר הטלפון אינו תקין');
             return;
         }
 
@@ -167,7 +167,7 @@ const Register: React.FC = () => {
                     <p className="login-redirect">
                         הצטרפת כבר אלינו?{' '}
                         <span className="login-link" onClick={() => navigate('/login')}>
-                            התחבר
+                            התחבר כאן
                         </span>
                     </p>
                 </form>

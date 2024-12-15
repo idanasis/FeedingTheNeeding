@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom'; // Import Link
 import './Login.css';
-import Logo from './Logo.png';
+import Logo from './logo.png';
 
 interface LoginResponse {
     token: string;
@@ -31,7 +31,7 @@ const Login: React.FC = () => {
             localStorage.setItem('token', token);
             navigate('/dashboard'); // Navigate to dashboard after successful login
         } catch (err) {
-            setError('Invalid email or password');
+            setError('אימייל או סיסמא לא נכונים');
             console.error('Login error:', err);
         } finally {
             setLoading(false); // Set loading to false when the request is finished
@@ -41,7 +41,7 @@ const Login: React.FC = () => {
     return (
         <div className="login-container">
             <h2>התחברות</h2>
-            <img src={Logo} alt="Logo" />
+            <img src={Logo} alt="Logo"/>
             <form onSubmit={handleLogin} className="login-form">
                 <div className="form-group">
                     <label htmlFor="email" className="form-label-right">אימייל:</label>
@@ -68,9 +68,12 @@ const Login: React.FC = () => {
                     {loading ? 'טוען...' : 'התחבר'}
                 </button>
             </form>
-            <div className="extra-options">
-                <p>עדיין לא הצטרפת אלינו? <Link to="/register">הצטרף כאן</Link></p> {/* Use Link for routing */}
-            </div>
+            <p className="login-redirect">
+                עדיין לא הצטרפת אלינו?{' '}
+                <span className="login-link" onClick={() => navigate('/donorRegister')}>
+                            הצטרף כאן
+                        </span>
+            </p>
         </div>
     );
 };
