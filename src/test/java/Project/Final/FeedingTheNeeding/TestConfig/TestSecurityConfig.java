@@ -1,4 +1,4 @@
-package Project.Final.FeedingTheNeeding;
+package Project.Final.FeedingTheNeeding.TestConfig;
 
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import org.springframework.context.annotation.Bean;

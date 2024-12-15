@@ -6,6 +6,7 @@ import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +34,7 @@ public class NeederTrackingRepositoryTest {
     private static final int FAMILY_SIZE = 4;
     private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+    private static final LocalDate DATE = LocalDate.of(2021, 10, 10);
 
     @Autowired
     private NeederTrackingRepository repository;
@@ -99,7 +102,7 @@ public class NeederTrackingRepositoryTest {
             repository.save(tracking3);
 
             // Act: Find all NeederTracking with WeekStatus.Here
-            List<NeederTrackingProjection> hereTrackings = repository.findByWeekStatus(WeekStatus.Here);
+            List<NeederTrackingProjection> hereTrackings = repository.findByWeekStatusAndDate(WeekStatus.Here,DATE);
 
             // Assert
             assertNotNull(hereTrackings);
@@ -181,6 +184,28 @@ public class NeederTrackingRepositoryTest {
             neederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
             neederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
             neederTracking.setWeekStatus(weekStatus);
+            neederTracking.setDate(DATE);
             return neederTracking;
         }
+
+    @Test
+    public void testFindByDate() {
+        // Arrange
+        Needy user = createSampleNeedy();
+        needyRepository.save(user);
+
+        NeederTracking neederTracking = createNeederTracking(user, WeekStatus.Here);
+        neederTracking.setDate(DATE);
+        NeederTracking savedTracking = repository.save(neederTracking);
+
+        // Save to repository
+        repository.save(savedTracking);
+
+        // Act
+        List<NeederTracking> result = repository.findByDate(DATE);
+
+        // Assert
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(DATE, result.get(0).getDate());
+    }
 }

@@ -56,6 +56,10 @@ public class UserCredentials implements UserDetails {
         return donor.isVerified();
     }
 
+    public void setEnabled(boolean enabled) {
+        donor.setVerified(enabled);
+    }
+
     @Override
     public String getPassword() {
         return passwordHash;

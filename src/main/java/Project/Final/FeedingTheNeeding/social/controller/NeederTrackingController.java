@@ -9,9 +9,11 @@ import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjectio
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -100,16 +102,15 @@ public class NeederTrackingController {
         }
     }
 
-    //get needertacking if weekstatus is HERE
     @GetMapping("/getNeedersHere")
-    public ResponseEntity<?> getNeedersHere() {
+    public ResponseEntity<?> getNeedersHere(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {
-            logger.info("Fetching all NeederTracking records with weekStatus HERE");
-            List<NeederTrackingProjection> neederTrackings = neederTrackingService.getNeedersHere();
-            logger.info("Fetched all NeederTracking records with weekStatus HERE");
+            logger.info("Fetching all NeederTracking records with weekStatus HERE for date: {}", date);
+            List<NeederTrackingProjection> neederTrackings = neederTrackingService.getNeedersHereByDate(date);
+            logger.info("Fetched all NeederTracking records with weekStatus HERE for date: {}", date);
             return ResponseEntity.ok(neederTrackings);
         } catch (Exception e) {
-            logger.error("Failed to fetch all NeederTracking records with weekStatus HERE", e);
+            logger.error("Failed to fetch NeederTracking records with weekStatus HERE for date: {}", date, e);
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -130,4 +131,16 @@ public class NeederTrackingController {
         }
     }
 
+    @GetMapping("/getNeedersByDate")
+    public ResponseEntity<?> getAllNeederTrackings(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            logger.info("Fetching all NeederTracking records for date: {}", date);
+            List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
+            logger.info("Fetched all NeederTracking records for date: {}", date);
+            return ResponseEntity.ok(neederTrackings);
+        } catch (Exception e) {
+            logger.error("Failed to fetch all NeederTracking records for date: {}", date, e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

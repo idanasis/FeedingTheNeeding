@@ -1,6 +1,6 @@
 package Project.Final.FeedingTheNeeding.Social.controller;
 
-import Project.Final.FeedingTheNeeding.TestSecurityConfig;
+import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.social.controller.NeederTrackingController;
@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -42,7 +42,7 @@ public class NeederTrackingControllerTest {
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
     private static final String UPDATED_DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final Long NEEDER_TRACKING_ID = 10L;
-
+    private static final LocalDate DATE = LocalDate.of(2021, 10, 10);
     @Autowired
     private MockMvc mockMvc;
 
@@ -210,6 +210,7 @@ public class NeederTrackingControllerTest {
         mockNeederTracking.setDietaryPreferences(DIETARY_PREFERENCES);
         mockNeederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
         mockNeederTracking.setWeekStatus(WeekStatus.Here); // Ensure weekStatus is set
+        mockNeederTracking.setDate(DATE);
 
         // Create a real implementation of NeederTrackingProjection
         NeederTrackingProjection projection = new NeederTrackingProjection() {
@@ -237,14 +238,19 @@ public class NeederTrackingControllerTest {
             public String getAdditionalNotes() {
                 return mockNeederTracking.getAdditionalNotes();
             }
+
+            @Override
+            public LocalDate getDate() {
+                return mockNeederTracking.getDate();
+            }
         };
 
         // Mock the service method to return a list with this projection
-        Mockito.when(neederTrackingService.getNeedersHere())
+        Mockito.when(neederTrackingService.getNeedersHereByDate(DATE))
                 .thenReturn(Collections.singletonList(projection));
 
         // Act & Assert
-        mockMvc.perform(get("/social/getNeedersHere")
+        mockMvc.perform(get("/social/getNeedersHere").param("date", DATE.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(NEEDER_TRACKING_ID))
@@ -285,5 +291,23 @@ public class NeederTrackingControllerTest {
                 .andExpect(jsonPath("$.additionalNotes").value(ADDITIONAL_NOTES));  // Expecting the additional notes
     }
 
+    @Test
+    public void testGetAllNeederTrackingsByDate() throws Exception {
+        // Arrange
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(1L);
+        mockNeederTracking.setDate(DATE);
+
+        Mockito.when(neederTrackingService.getAllNeedersTrackingsByDate(DATE))
+                .thenReturn(Collections.singletonList(mockNeederTracking));
+
+        // Act & Assert
+        mockMvc.perform(get("/social/getNeedersByDate")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].date").value(DATE.toString()));
+    }
 
 }

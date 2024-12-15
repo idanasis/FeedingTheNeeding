@@ -6,6 +6,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
+import Project.Final.FeedingTheNeeding.User.Exception.InvalidCredentialException;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
@@ -49,7 +50,7 @@ public class AuthService {
 
         UserCredentials user = userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail());
         if (user == null)
-            throw new UserDoesntExistsException("User doesn't exist");
+            throw new InvalidCredentialException("Invalid credentials");
 
         if(!user.isEnabled())
             throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
@@ -73,7 +74,6 @@ public class AuthService {
         // TODO: check for valid email, valid password, password == confirmPassword
 
         Donor donor = new Donor();
-        donor.setId(1L); // TODO: change it
         donor.setEmail(registrationRequest.getEmail());
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
@@ -107,7 +107,6 @@ public class AuthService {
             throw new UserAlreadyExistsException("Needy already exists");
 
         Needy needy = new Needy();
-        needy.setId(1L); // TODO: change it
         needy.setFirstName(needyRegistrationRequest.getFirstName());
         needy.setLastName(needyRegistrationRequest.getLastName());
         needy.setPhoneNumber(needyRegistrationRequest.getPhoneNumber());
@@ -134,7 +133,7 @@ public class AuthService {
         logger.info("end-reset password, for email: {}", email);
     }
 
-    private void sendVerificationEmail(Donor donor) {
+    public void sendVerificationEmail(Donor donor) {
         logger.info("start-send verification email, for email: {}", donor.getEmail());
         String subject = "Account Verification";
         String verificationCode = "VERIFICATION CODE" + donor.getVerificationCode();
@@ -160,10 +159,10 @@ public class AuthService {
         }
     }
 
-    private String generateVerificationCode() {
+    public String generateVerificationCode() {
         logger.info("start-generate verification code");
         Random random = new Random();
-        int code = random.nextInt(900000) + 10000;
+        int code = random.nextInt(900000) + 100000;
         logger.info("end-generate verification code");
         return String.valueOf(code);
     }
@@ -181,6 +180,7 @@ public class AuthService {
                 donor.setVerificationCode(null);
                 donor.setVerificationCodeExpiresAt(null);
                 donorRepository.save(donor);
+                logger.info("end-verify donor, email: {}", input.email());
             }
             else
                 throw new RuntimeException("Invalid verification code");
@@ -201,6 +201,7 @@ public class AuthService {
             donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
             sendVerificationEmail(donor);
             donorRepository.save(donor);
+            logger.info("end-resend verification code, email: {}", email);
         }
         else
             throw new UserDoesntExistsException("donor not found");
