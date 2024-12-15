@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom'; // Import Link
+import { useNavigate, Link } from 'react-router-dom';
 import './Login.css';
 import Logo from './logo.png';
 
@@ -29,7 +29,7 @@ const Login: React.FC = () => {
 
             const { token } = response.data;
             localStorage.setItem('token', token);
-            navigate('/dashboard'); // Navigate to dashboard after successful login
+            navigate('/'); // Navigate to home page after successful login
         } catch (err) {
             setError('אימייל או סיסמא לא נכונים');
             console.error('Login error:', err);

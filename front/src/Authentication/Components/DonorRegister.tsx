@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './DonorRegister.css'; // קובץ ה-CSS לעיצוב
+import './DonorRegister.css';
 import FeedingLogo from './logo.png';
 
 const Register: React.FC = () => {
@@ -13,7 +13,7 @@ const Register: React.FC = () => {
     const [address, setAddress] = useState('');
     const [city, setCity] = useState('');
     const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState(false); // מצב להודעת הצלחה
+    const [successMessage, setSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
     const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -46,10 +46,8 @@ const Register: React.FC = () => {
         // שליחה לשרת (לצורך הדוגמה נתוני הטופס נשלחים לקונסול)
         console.log({ email, password, firstName, lastName, phone, address, city });
 
-        // אחרי הרשמה מוצלחת, מראים את הודעת ההצלחה
-        setSuccessMessage(true);
+        setSuccessMessage(true); // after registrarion
 
-        // חזרה לעמוד התחברות לאחר 3 שניות
         setTimeout(() => {
             navigate('/login');
         }, 2000);
@@ -173,7 +171,6 @@ const Register: React.FC = () => {
                 </form>
             </div>
 
-            {/* הודעת הצלחה קופצת */}
             {successMessage && (
                 <div className="success-popup">
                     <p>ההרשמה בוצעה בהצלחה!</p>

@@ -1,17 +1,15 @@
-/* מאפיינים כלליים */
 body {
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url('./background.png'); /* הנתיב לתמונה */
+    background-image: url('./background.png');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
 }
 
-/* הוצאת ההעמעום של הרקע */
 body::after {
     content: '';
     position: absolute;
@@ -19,107 +17,102 @@ body::after {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0); /* ללא העמעה */
+    background: rgba(0, 0, 0, 0);
     pointer-events: none;
 }
 
-/* עיצוב מסך ההתחברות */
 .login-container {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
-    width: 500px; /* רוחב גדול יותר */
-    height: 750px; /* גובה גדול יותר */
-    max-width: 100%; /* לא יחרוג מהמסך */
+    width: 500px;
+    height: 750px;
+    max-width: 100%;
     padding: 40px;
-    background-color: rgba(255, 255, 255, 0.95); /* רקע בהיר */
+    background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px; /* פינות מעוגלות */
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2); /* הצללה */
-    direction: rtl; /* טקסט מימין לשמאל */
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    direction: rtl;
     z-index: 1;
 }
 
 /* עיצוב התמונה */
 .login-container img {
-    max-width: 280px; /* הגדלת גודל התמונה */
-    max-height: 280px; /* הגבלת גובה התמונה */
-    margin-bottom: 40px; /* רווח גדול יותר מתחת לתמונה */
-    transition: transform 0.3s ease; /* הוספת אפקט של ריחוף */
+    max-width: 280px;
+    max-height: 280px;
+    margin-bottom: 40px;
+    transition: transform 0.3s ease;
 }
 
 .login-container img:hover {
-    transform: scale(1.1); /* הגדלה קלה בהעברה מעל התמונה */
+    transform: scale(1.1);
 }
 
 /* עיצוב כותרת */
 h2 {
-    font-size: 36px; /* גודל כותרת גדול יותר */
-    color: #d32f2f; /* צבע אדום בוהק */
-    margin-bottom: 40px; /* הגדלת הרווח */
+    font-size: 36px;
+    color: #d32f2f;
+    margin-bottom: 40px;
     font-family: 'Roboto', sans-serif;
 }
 
-/* עיצוב הטופס */
 .login-form {
     display: flex;
     flex-direction: column;
     width: 100%;
 }
 
-/* רווח גדול יותר בין שדות האימייל והסיסמא */
 .form-group {
-    margin-bottom: 35px; /* הגדלת רווח בין השדות */
+    margin-bottom: 35px;
 }
 
 .form-label-right {
     display: block;
-    margin-bottom: 12px; /* הגדלת הרווח מתחת לתווית */
-    font-size: 18px; /* הגדלת גודל הגופן */
+    margin-bottom: 12px;
+    font-size: 18px;
     font-weight: bold;
-    color: #333; /* צבע כהה לקריאות טובה */
+    color: #333;
 }
 
 input {
     width: 100%;
-    padding: 20px; /* הגדלת הרוחב והגובה של השדה */
-    font-size: 28px; /* הגדלת גודל הטקסט */
+    padding: 20px;
+    font-size: 28px;
     border: 1px solid #ddd;
-    border-radius: 12px; /* פינות ריבועיות */
+    border-radius: 12px;
     box-sizing: border-box;
-    margin-bottom: 25px; /* רווח בין השדות */
-    height: 70px; /* הגדלת גובה השדה */
-    direction: ltr; /* כיוון טקסט באנגלית כברירת מחדל */
-    text-align: left; /* טקסט מימין לשמאל (ברירת מחדל) */
+    margin-bottom: 25px;
+    height: 70px;
+    direction: ltr;
+    text-align: left;
 }
 
-/* שינוי כיוון הטקסט בשדה קלט על פי השפה */
 input[dir="rtl"] {
-    direction: rtl; /* כיוון טקסט מימין לשמאל */
-    text-align: right; /* טקסט מיושר לימין */
+    direction: rtl;
+    text-align: right;
 }
 
 input:focus {
-    border-color: #d32f2f; /* צבע אדום בהפוקוס */
+    border-color: #d32f2f;
     outline: none;
 }
 
-/* עיצוב כפתור ההתחברות */
 button.submit-button {
-    padding: 20px; /* הגדלת גודל הכפתור */
-    background-color: #d32f2f; /* אדום בוהק */
+    padding: 20px;
+    background-color: #d32f2f;
     color: white;
     border: none;
     border-radius: 8px;
-    font-size: 20px; /* הגדלת גודל הפונט */
+    font-size: 20px;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.2s ease; /* שינוי צבע וריחוף */
+    transition: background-color 0.3s, transform 0.2s ease;
 }
 
 button.submit-button:hover {
-    background-color: #b71c1c; /* שינוי צבע בעת ריחוף */
-    transform: translateY(-2px); /* אפקט של הזזת כפתור מעט למעלה */
+    background-color: #b71c1c;
+    transform: translateY(-2px);
 }
 
 button:disabled {
@@ -129,11 +122,11 @@ button:disabled {
 
 .error-message {
     color: red;
-    font-size: 18px; /* הגדלת גודל הטקסט */
+    font-size: 18px;
 }
 
 .extra-options {
-    margin-top: 40px; /* הגדלת הרווח למעלה */
+    margin-top: 40px;
     text-align: center;
 }
 
