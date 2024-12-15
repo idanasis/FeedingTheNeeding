@@ -10,7 +10,7 @@ const handleDisableDate = (date: dayjs.Dayjs) => {
     return date.day() !== 5;
   }
   const handleDisableMonth = (date: dayjs.Dayjs) => {
-    const chose = dayjs(); // Get the current date once
+    const chose = dayjs(); 
     const isFutureYear = chose.year() > date.year();
     const isMoreThanOneMonthAhead =
       chose.year() === date.year() && chose.month() -date.month()  > 1;

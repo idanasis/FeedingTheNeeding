@@ -1,5 +1,6 @@
 export interface NeederTrackingModel {
     id: number;
+    neederTrackingId: number
     firstName: string;
     lastName: string;
     phoneNumber: string;

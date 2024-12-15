@@ -1,26 +1,27 @@
 package Project.Final.FeedingTheNeeding.User.Service;
 
-import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
+
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
-import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
+import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Service
 public class NeedyService {
 
     NeedyRepository needyRepository;
-    NeederTrackingRepository neederTrackingRepository;
+    NeederTrackingService neederTrackingService;
 
-    public NeedyService(NeedyRepository needyRepository) {
+    public NeedyService(NeedyRepository needyRepository,NeederTrackingService neederTrackingService) {
         this.needyRepository = needyRepository;
     }
 
@@ -56,28 +57,20 @@ public class NeedyService {
     public Optional<Needy> getNeedyByPhoneNumber(String phoneNumber) {
         return needyRepository.findByPhoneNumber(phoneNumber);
     }
-
+    @Transactional
     public List<NeederTracking> getNeedyUsersTrackingByData(LocalDate localDate) {
-        List<NeederTracking> allTracking = neederTrackingRepository.findByDate(localDate);
+        List<NeederTracking> allTracking = neederTrackingService.getAllNeedersTrackingsByDate(localDate);
         List<Needy> neeedyList = allTracking.stream()
                 .map(NeederTracking::getNeedy)
                 .toList();
         List<Needy> allNeedyList = needyRepository.findAll();
-
         List<Needy> diff = allNeedyList.stream()
                 .filter(item -> !neeedyList.contains(item))
                 .toList();
 
         for(Needy needy : diff) {
-            NeederTracking neederTracking = new NeederTracking();
-            neederTracking.setNeedy(needy);
-            neederTracking.setDate(localDate);
-            neederTracking.setDietaryPreferences(null);
-            neederTracking.setAdditionalNotes(null);
-            neederTrackingRepository.save(neederTracking);
-            allTracking.add(neederTracking);
+            neederTrackingService.addNeederTracking(needy, LocalDate.now());
         }
-
         return allTracking;
     }
 }
