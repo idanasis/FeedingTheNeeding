@@ -13,6 +13,7 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/driving")
+@CrossOrigin(origins = "*",allowedHeaders = "*") // Allow cross-origin requests from any source
 public class DrivingController {
 
     private final DrivingFascade drivingService;

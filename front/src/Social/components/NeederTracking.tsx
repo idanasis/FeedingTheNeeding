@@ -4,14 +4,17 @@ import CollapsibleTable from './CollapsibleTable';
 import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
-import { getAllNeederTracking } from '../../restapi';
+import { getAllNeederTracking } from '../../Restapi/socialRestapi';
 
 const NeederTracking = () => {
     const [currNeeders, setCurrNeeders] = useState<NeederTrackingModel[]>([]);
     useEffect(() => {
         async function fetchNeeders() {
             const data=await getAllNeederTracking(new Date());
-            setCurrNeeders(data)
+            if(data===null)
+                alert('אין נתונים להצגה')
+            else
+                setCurrNeeders(data)
         }
         fetchNeeders();
     }, []);
@@ -20,7 +23,10 @@ const NeederTracking = () => {
         console.log('Selected date:', newDate);
         async function fetchNeeders() {
             const data=await getAllNeederTracking(d as Date);
-            setCurrNeeders(data)
+            if(data===null)
+                alert('אין נתונים להצגה')
+            else
+                setCurrNeeders(data)
         }
         fetchNeeders();
       };
