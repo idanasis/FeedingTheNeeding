@@ -48,7 +48,7 @@ public class CookController {
     }
 
     @PutMapping("/constraints/update/{cookId}")
-    public ResponseEntity<?> updateCookConstraints(@PathVariable long cookId, @RequestParam CookConstraints newConstraints){
+    public ResponseEntity<?> updateCookConstraints(@PathVariable long cookId, @RequestBody CookConstraints newConstraints){
         try{
             cs.updateCookConstraints(cookId, newConstraints);
             return ResponseEntity.ok().build();

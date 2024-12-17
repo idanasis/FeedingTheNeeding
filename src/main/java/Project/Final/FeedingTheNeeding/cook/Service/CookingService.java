@@ -51,6 +51,12 @@ public class CookingService {
     public void updateCookConstraints(long cookId, CookConstraints newConstraints) {
         logger.info("Trying to update constraints of cook {}", cookId);
         CookConstraints constraints = getLastConstraints(cookId);
+
+        if (constraints == null) {
+            logger.error("No constraints found for cook {}", cookId);
+            throw new CookConstraintsNotExistException(LocalDate.now());
+        }
+
         logger.info("Got constraints from db");
         ccr.delete(constraints);
         logger.info("Deleted last constraints from db");
