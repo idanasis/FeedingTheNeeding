@@ -44,7 +44,7 @@ public class CookingService {
     }
 
     public List<CookConstraints> getCookConstraints(long cookId) {
-        logger.info("getCookConstraints of driver id {}", cookId);
+        logger.info("getCookConstraints of cook id= {}", cookId);
         return ccr.findConstraintsByCookId(cookId);
     }
 

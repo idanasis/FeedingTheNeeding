@@ -11,6 +11,7 @@ import lombok.Data;
 @Entity
 public class CookConstraints {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cookId;
 
     private LocalTime TakingTime; //the limit of when the drivers can take the food
