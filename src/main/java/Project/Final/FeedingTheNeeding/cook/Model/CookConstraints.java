@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Data;
 
@@ -19,7 +21,7 @@ public class CookConstraints {
 
     private String location;
     private LocalDate date;  
-    //TODO: later, add somehow different food types and food constraints like vegetarian or else
+    //TODO: later, add somehow different food types and food constraints like vegetarian or something else
 
     public CookConstraints(){}
 
