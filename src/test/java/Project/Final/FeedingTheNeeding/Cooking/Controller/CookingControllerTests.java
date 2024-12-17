@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Year;
 import java.util.Collections;
 
 @WebMvcTest(CookController.class)
@@ -45,23 +46,38 @@ public class CookingControllerTests {
     private CookConstraints invalidConstraints;
 
     private final long cookId = 1L;
+    private static final int HOURS = 14;
+    private static final int MINUTES = 30;
+    private static final int YEAR = 2024;
+    private static final int MONTH = 12;
+    private static final int DAY = 25;
+    private static final int PLATES_NUM = 5;
+    private static final String ADDR = "123 Main Street";
+
+    private static final int INVALID_HOURS = 18;
+    private static final int INVALID_MINUTES = 0;
+    private static final int INVALID_YEAR = 2024;
+    private static final int INVALID_MONTH = 12;
+    private static final int INVALID_DAY = 31;
+    private static final int INVALID_PLATES_NUM = 1;
+    private static final String INVALID_ADDR = "Invalid Location";
 
     @BeforeEach
     void setUp() {
         validConstraints = new CookConstraints(
                 cookId,
-                LocalTime.of(14, 30),
-                5,
-                "123 Main Street",
-                LocalDate.of(2024, 12, 25)
+                LocalTime.of(HOURS, MINUTES),
+                PLATES_NUM,
+                ADDR,
+                LocalDate.of(YEAR, MONTH, DAY)
         );
 
         invalidConstraints = new CookConstraints(
                 cookId,
-                LocalTime.of(18, 0), // Invalid for testing failure
-                1, // PlatesNum below minimum
-                "Invalid Location",
-                LocalDate.of(2024, 12, 31)
+                LocalTime.of(INVALID_HOURS, INVALID_MINUTES),
+                INVALID_PLATES_NUM,
+                INVALID_ADDR,
+                LocalDate.of(INVALID_YEAR, INVALID_MONTH, INVALID_DAY)
         );
     }
 
