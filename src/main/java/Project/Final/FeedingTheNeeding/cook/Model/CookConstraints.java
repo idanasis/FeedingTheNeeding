@@ -21,7 +21,7 @@ public class CookConstraints {
 
     private String location;
     private LocalDate date;  
-    //TODO: later, add somehow different food types and food constraints like vegetarian or something else
+    //TODO: later, add somehow different food types and food constraints like vegetarian or something
 
     public CookConstraints(){}
 
