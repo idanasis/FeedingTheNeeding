@@ -1,5 +1,6 @@
 export interface NeederTrackingModel {
     id: number;
+    date: string;
     needy:{
         id: number,
         firstName: string,
@@ -9,7 +10,7 @@ export interface NeederTrackingModel {
         city: string,
         familySize: number
     }
-    status: string;
-    foodPreference: string;
-    notes: string;
+    weekStatus?: string;
+    dietaryPreferences?: string;
+    additionalNotes?: string;
 }
