@@ -17,7 +17,8 @@ public class NeederTracking {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "needy_id", nullable = false)
     private Needy needy;
-
+    
+    @Enumerated(EnumType.STRING)
     private WeekStatus weekStatus;
     private String dietaryPreferences; // e.g., "Vegetable, No Sugar"
     private LocalDate date;

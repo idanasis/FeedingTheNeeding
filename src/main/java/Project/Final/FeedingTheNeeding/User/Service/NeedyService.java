@@ -70,7 +70,7 @@ public class NeedyService {
                 .toList();
 
         for(Needy needy : diff) {
-            neederTrackingService.addNeederTracking(needy, LocalDate.now());
+            neederTrackingService.addNeederTracking(needy, localDate);
         }
         return allTracking;
     }
