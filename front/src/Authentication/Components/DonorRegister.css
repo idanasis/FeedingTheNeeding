@@ -1,5 +1,5 @@
 .register-page {
-    background: url('./background.png') no-repeat center center fixed;
+    background: url('../Images/background.png') no-repeat center center fixed;
     background-size: cover;
     display: flex;
     justify-content: center;

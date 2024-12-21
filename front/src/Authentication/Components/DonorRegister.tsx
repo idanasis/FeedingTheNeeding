@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DonorRegister.css';
-import FeedingLogo from './logo.png';
+import FeedingLogo from '../Images/logo.png';
 
 const Register: React.FC = () => {
     const [email, setEmail] = useState('');

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { login } from './loginRestAPI';
 import './Login.css';
-import Logo from './logo.png';
-
-interface LoginResponse {
-    token: string;
-    expirationTime: number;
-}
+import Logo from '../Images/logo.png';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState<string>('');
@@ -22,12 +17,7 @@ const Login: React.FC = () => {
         setLoading(true); // Set loading to true when starting the request
 
         try {
-            const response = await axios.post<LoginResponse>('http://localhost:8080/auth/login', {
-                email,
-                password,
-            });
-
-            const { token } = response.data;
+            const { token } = await login(email, password);
             localStorage.setItem('token', token);
             navigate('/'); // Navigate to home page after successful login
         } catch (err) {
