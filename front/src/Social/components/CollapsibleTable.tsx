@@ -66,8 +66,6 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
   }
   const handleSave=async (index:number)=>{
     try{
-      console.log(row);
-      console.log(row.details[0].foodPreference);
       const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,city:row.city,familySize:row.details[0].familySize},weekStatus:row.weekStatus,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
       const res=await updateNeederTracking(index,neederTrackingModel);
       console.log(res.status);
@@ -78,7 +76,7 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
   }
   return (
     <React.Fragment>
-      <TableRow sx={{ borderBottom: 'unset' }}>
+      <TableRow sx={{ borderBottom: 'set' }}>
         <TableCell>
           <IconButton
             aria-label="expand row"
@@ -167,7 +165,7 @@ const NeederTrackingTable = ({ data }: { data: NeederTrackingModel[] }) => {
   const rows = data.map((item) => createData(item));
   
   return (
-    <TableContainer component={Paper}>
+    <TableContainer component={Paper} style={{ height: '100vh', width: '100%' }}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>

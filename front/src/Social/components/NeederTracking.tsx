@@ -32,11 +32,10 @@ const NeederTracking = () => {
       };
 
     return (
-        <div >
+        <div style={{ backgroundColor: "snow"}}>
             <h1 className='text-black md:text-4xl text-3xl font-bold' style={{ color: '#000' }}>טבלת מעקב נזקקים</h1>
             <ResponsiveDatePickers onDateChange={handleDateChange}/>  
         <CollapsibleTable data={currNeeders} /> 
-         
         </div>
     );
 };
