@@ -9,7 +9,7 @@ const Login: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false); // State for loading
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // Navigate function to handle routing
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
                         id="email"
                         type="email"
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)} // updates the email
                         required
                     />
                 </div>

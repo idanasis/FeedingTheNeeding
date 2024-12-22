@@ -11,7 +11,6 @@
     flex-direction: column;
 }
 
-
 .register-container {
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -63,13 +62,15 @@ h2 {
     white-space: nowrap;
 }
 
-.form-row input {
+input {
     flex: 1;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
     direction: rtl;
+    text-align: right;
+    width: 100%;
 }
 
 input:focus {
@@ -88,6 +89,7 @@ input:focus {
     width: 100%;
     margin-top: 15px;
     text-align: center;
+    transition: background-color 0.3s, transform 0.2s ease;
 }
 
 .submit-button:hover {
@@ -117,34 +119,61 @@ input:focus {
     color: #d32f2f;
 }
 
-/* התאמות למסכים קטנים */
-@media screen and (max-width: 600px) {
-    /* שינוי המבנה עבור מסכים קטנים */
+@media screen and (max-width: 768px) {
+    .register-container {
+        width: 95%;
+        padding: 15px;
+    }
+
     .form-row {
-        flex-direction: column; /* כל שדה יתפוס את כל הרוחב */
-        gap: 10px; /* רווח קטן יותר בין השדות */
+        flex-wrap: wrap;
+        gap: 20px;
     }
 
     .form-row .form-group {
-        flex: 1 1 100%; /* כל שדה יתפוס את כל הרוחב */
-    }
-
-    .register-container {
-        width: 100%;
-        padding: 15px; /* פחות רווח מסביב */
-    }
-
-    .logo-image {
-        width: 120px; /* התאמת גודל הלוגו */
+        flex: 1 1 45%;
     }
 
     h2 {
-        font-size: 1.25rem; /* צמצום גודל הכותרת במסכים קטנים */
+        font-size: 1.25rem;
     }
 
     .submit-button {
-        font-size: 14px; /* צמצום גודל כפתור במסכים קטנים */
-        padding: 8px; /* צמצום ריווח בכפתור */
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .logo-image {
+        width: 120px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .register-container {
+        width: 90%;
+        padding: 10px;
+    }
+
+    .form-row {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .form-row .form-group {
+        flex: 1 1 45%;
+    }
+
+    h2 {
+        font-size: 1rem;
+    }
+
+    .submit-button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .logo-image {
+        width: 100px;
     }
 }
 
@@ -182,10 +211,9 @@ input:focus {
     background-color: #f1f1f1;
 }
 
-/* תמיכה במסכים קטנים למודל קופץ */
 @media screen and (max-width: 600px) {
     .success-popup {
-        width: 80%; /* המודל יתפוס 80% מהמסך */
-        padding: 15px; /* פחות ריווח במודל */
+        width: 80%;
+        padding: 15px;
     }
 }

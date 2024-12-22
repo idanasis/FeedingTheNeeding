@@ -2,55 +2,60 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from './donorRegRestAPI';
 
-const Register: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
-    const [city, setCity] = useState('');
+const DonorRegister: React.FC = () => {
+    const [formData, setFormData] = useState<DonorRegistrationData>({
+        email: '',
+        password: '',
+        confirmPassword: '',
+        firstName: '',
+        lastName: '',
+        phone: '',
+        address: '',
+        city: ''
+    });
+
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
-    const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    const validatePhone = (phone: string) => /^05\d{8}$/.test(phone);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { id, value } = e.target;
+        setFormData((prevData) => ({ ...prevData, [id]: value }));
+    };
 
-    const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
 
-        if (!validateEmail(email)) {
+        if (formData.email && !validateEmail(formData.email)) {
             setError('כתובת האימייל אינה תקינה');
             return;
         }
 
-        if (password.length < 8) {
+        if (formData.password.length < 8) {
             setError('הסיסמה חייבת להיות לפחות 8 תווים');
             return;
         }
 
-        if (password !== confirmPassword) {
+        if (formData.password !== formData.confirmPassword) {
             setError('הסיסמאות אינן תואמות');
             return;
         }
 
-        if (!validatePhone(phone)) {
+        if (!validatePhone(formData.phone)) {
             setError('מספר הטלפון אינו תקין');
             return;
         }
 
-        // שליחה לשרת (לצורך הדוגמה נתוני הטופס נשלחים לקונסול)
-        console.log({ email, password, firstName, lastName, phone, address, city });
-
-        setSuccessMessage(true); // after registrarion
-
-        setTimeout(() => {
-            navigate('/login');
-        }, 2000);
+        try {
+            await registerDonor(formData);
+            setSuccessMessage(true);
+            setTimeout(() => navigate('/login'), 2000);
+        } catch {
+            setError('Registration failed. Please try again later.');
+        }
     };
 
     return (
@@ -68,9 +73,8 @@ const Register: React.FC = () => {
                             <input
                                 id="email"
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                required
+                                value={formData.email}
+                                onChange={handleChange}
                             />
                         </div>
 
@@ -79,8 +83,8 @@ const Register: React.FC = () => {
                             <input
                                 id="phone"
                                 type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                value={formData.phone}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -92,8 +96,8 @@ const Register: React.FC = () => {
                             <input
                                 id="password"
                                 type="password"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
+                                value={formData.password}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -103,8 +107,8 @@ const Register: React.FC = () => {
                             <input
                                 id="confirmPassword"
                                 type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -116,8 +120,8 @@ const Register: React.FC = () => {
                             <input
                                 id="lastName"
                                 type="text"
-                                value={lastName}
-                                onChange={(e) => setLastName(e.target.value)}
+                                value={formData.lastName}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -127,8 +131,8 @@ const Register: React.FC = () => {
                             <input
                                 id="firstName"
                                 type="text"
-                                value={firstName}
-                                onChange={(e) => setFirstName(e.target.value)}
+                                value={formData.firstName}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -140,8 +144,8 @@ const Register: React.FC = () => {
                             <input
                                 id="address"
                                 type="text"
-                                value={address}
-                                onChange={(e) => setAddress(e.target.value)}
+                                value={formData.address}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -151,8 +155,8 @@ const Register: React.FC = () => {
                             <input
                                 id="city"
                                 type="text"
-                                value={city}
-                                onChange={(e) => setCity(e.target.value)}
+                                value={formData.city}
+                                onChange={handleChange}
                                 required
                             />
                         </div>
@@ -180,4 +184,4 @@ const Register: React.FC = () => {
     );
 };
 
-export default Register;
+export default DonorRegister;
