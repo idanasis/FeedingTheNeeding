@@ -4,14 +4,17 @@ import CollapsibleTable from './CollapsibleTable';
 import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
-import { getAllNeederTracking } from '../../restapi';
+import { getAllNeederTracking } from '../../Restapi/socialRestapi';
 
 const NeederTracking = () => {
     const [currNeeders, setCurrNeeders] = useState<NeederTrackingModel[]>([]);
     useEffect(() => {
         async function fetchNeeders() {
             const data=await getAllNeederTracking(new Date());
-            setCurrNeeders(data)
+            if(data===null)
+                alert('אין נתונים להצגה')
+            else
+                setCurrNeeders(data)
         }
         fetchNeeders();
     }, []);
@@ -20,17 +23,19 @@ const NeederTracking = () => {
         console.log('Selected date:', newDate);
         async function fetchNeeders() {
             const data=await getAllNeederTracking(d as Date);
-            setCurrNeeders(data)
+            if(data===null)
+                alert('אין נתונים להצגה')
+            else
+                setCurrNeeders(data)
         }
         fetchNeeders();
       };
 
     return (
-        <div >
-            <h1 className='text-black md:text-4xl text-3xl font-bold'>טבלת מעקב נזקקים</h1>
+        <div style={{ backgroundColor: "snow"}}>
+            <h1 className='text-black md:text-4xl text-3xl font-bold' style={{ color: '#000' }}>טבלת מעקב נזקקים</h1>
             <ResponsiveDatePickers onDateChange={handleDateChange}/>  
         <CollapsibleTable data={currNeeders} /> 
-         
         </div>
     );
 };

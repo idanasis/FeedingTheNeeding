@@ -23,6 +23,7 @@ public class NeedyService {
 
     public NeedyService(NeedyRepository needyRepository,NeederTrackingService neederTrackingService) {
         this.needyRepository = needyRepository;
+        this.neederTrackingService = neederTrackingService;
     }
 
     public List<Needy> getPendingNeedy() {
@@ -69,7 +70,7 @@ public class NeedyService {
                 .toList();
 
         for(Needy needy : diff) {
-            neederTrackingService.addNeederTracking(needy, LocalDate.now());
+            neederTrackingService.addNeederTracking(needy, localDate);
         }
         return allTracking;
     }

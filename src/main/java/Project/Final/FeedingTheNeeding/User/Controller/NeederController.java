@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*",allowedHeaders = "*") // Allow cross-origin requests from any source
 @RequestMapping("/needer")
 public class NeederController {
 
@@ -97,7 +98,7 @@ public class NeederController {
 
             return ResponseEntity.ok(trackingList);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
     }
