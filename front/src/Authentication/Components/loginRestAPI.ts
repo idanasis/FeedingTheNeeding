@@ -7,9 +7,9 @@ interface LoginResponse {
     expirationTime: number;
 }
 
-export const login = async (email: string, password: string): Promise<LoginResponse> => {
+export const login = async (phoneNumber: string, password: string): Promise<LoginResponse> => {
     const response = await axios.post<LoginResponse>(`${API_BASE_URL}/auth/login`, {
-        email,
+        phoneNumber,
         password,
     });
     return response.data;

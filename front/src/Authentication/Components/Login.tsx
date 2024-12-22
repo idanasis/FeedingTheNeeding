@@ -5,7 +5,7 @@ import './Login.css';
 import Logo from '../Images/logo.png';
 
 const Login: React.FC = () => {
-    const [email, setEmail] = useState<string>('');
+    const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false); // State for loading
@@ -17,11 +17,11 @@ const Login: React.FC = () => {
         setLoading(true); // Set loading to true when starting the request
 
         try {
-            const { token } = await login(email, password);
+            const { token } = await login(phoneNumber, password);
             localStorage.setItem('token', token);
             navigate('/'); // Navigate to home page after successful login
         } catch (err) {
-            setError('אימייל או סיסמא לא נכונים');
+            setError('מספר טלפון או סיסמא לא נכונים');
             console.error('Login error:', err);
         } finally {
             setLoading(false); // Set loading to false when the request is finished
@@ -34,12 +34,12 @@ const Login: React.FC = () => {
             <img src={Logo} alt="Logo"/>
             <form onSubmit={handleLogin} className="login-form">
                 <div className="form-group">
-                    <label htmlFor="email" className="form-label-right">אימייל:</label>
+                    <label htmlFor="phoneNumber" className="form-label-right">מספר טלפון:</label>
                     <input
-                        id="email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)} // updates the email
+                        id="phoneNumber"
+                        type="tel"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)} // updates the phone number
                         required
                     />
                 </div>
