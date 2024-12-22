@@ -50,8 +50,8 @@ public class UserService {
         return needyRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 
-    public Donor getDonorByEmail(String email) {
-        logger.info("getDonorByEmail");
-        return donorRepository.findByEmail(email).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+    public Donor getDonorByPhoneNumber(String phoneNumber) {
+        logger.info("getDonorByPhoneNumber");
+        return donorRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 }

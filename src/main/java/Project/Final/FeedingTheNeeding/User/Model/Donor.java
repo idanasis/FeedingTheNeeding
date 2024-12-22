@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class Donor extends BaseUser{
-    @Column(nullable = false, unique = true)
+
     private String email;
     private double timeOfDonation;
 

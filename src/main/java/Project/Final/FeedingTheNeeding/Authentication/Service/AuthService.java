@@ -46,9 +46,9 @@ public class AuthService {
     }
 
     public UserCredentials authenticate(AuthenticationRequest authenticationRequest) {
-        logger.info("start-auth, email: {}", authenticationRequest.getEmail());
+        logger.info("start-auth, phone number: {}", authenticationRequest.getPhoneNumber());
 
-        UserCredentials user = userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail());
+        UserCredentials user = userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber());
         if (user == null)
             throw new InvalidCredentialException("Invalid credentials");
 
@@ -57,21 +57,19 @@ public class AuthService {
 
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
+                        authenticationRequest.getPhoneNumber(),
                         authenticationRequest.getPassword()
                 )
         );
 
-        logger.info("end-auth, email: {}", authenticationRequest.getEmail());
+        logger.info("end-auth, phone number: {}", authenticationRequest.getPhoneNumber());
         return user;
     }
 
     public void registerDonor(RegistrationRequest registrationRequest) {
-        logger.info("start-register donor,  email: {}", registrationRequest.getEmail());
-        if(donorRepository.findByEmail(registrationRequest.getEmail()).isPresent())
+        logger.info("start-register donor,  phone number: {}", registrationRequest.getPhoneNumber());
+        if(donorRepository.findByPhoneNumber(registrationRequest.getPhoneNumber()).isPresent())
             throw new UserAlreadyExistsException("Donor already exists");
-
-        // TODO: check for valid email, valid password, password == confirmPassword
 
         Donor donor = new Donor();
         donor.setEmail(registrationRequest.getEmail());
@@ -84,21 +82,23 @@ public class AuthService {
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
 
-        donor.setVerificationCode(generateVerificationCode());
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(false);
-        sendVerificationEmail(donor);
+        if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
+            donor.setVerificationCode(generateVerificationCode());
+            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+            donor.setVerified(false);
+            sendVerificationEmail(donor);
+        }
 
         Donor savedDonor = donorRepository.save(donor);
 
         UserCredentials credentials = new UserCredentials();
-        credentials.setEmail(registrationRequest.getEmail());
+        credentials.setPhoneNumber(registrationRequest.getPhoneNumber());
         credentials.setPasswordHash(passwordEncoder.encode(registrationRequest.getPassword()));
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
         credentials.setDonor(savedDonor);
 
         userCredentialsRepository.save(credentials);
-        logger.info("end-register donor, email: {}", registrationRequest.getEmail());
+        logger.info("end-register donor, phone number: {}", registrationRequest.getPhoneNumber());
     }
 
     public void registerNeedy(NeedyRegistrationRequest needyRegistrationRequest) {
@@ -120,9 +120,9 @@ public class AuthService {
         logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());
     }
 
-    public void resetPassword(String email, String newPassword) {
-        logger.info("start-reset password, for email: {}", email);
-        UserCredentials credentials = userCredentialsRepository.findCredentialsByEmail(email);
+    public void resetPassword(String phoneNumber, String newPassword) {
+        logger.info("start-reset password, for phoneNumber: {}", phoneNumber);
+        UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
         if(credentials == null)
             throw new UserDoesntExistsException("User not found");
 
@@ -130,7 +130,7 @@ public class AuthService {
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
 
         userCredentialsRepository.save(credentials);
-        logger.info("end-reset password, for email: {}", email);
+        logger.info("end-reset password, for phoneNumber: {}", phoneNumber);
     }
 
     public void sendVerificationEmail(Donor donor) {

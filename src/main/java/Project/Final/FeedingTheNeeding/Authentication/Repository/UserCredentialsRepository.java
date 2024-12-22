@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 public interface UserCredentialsRepository extends JpaRepository<UserCredentials, Long> {
-    Optional<UserCredentials> findByEmail(String email);
-    UserCredentials findCredentialsByEmail(String email);
-    boolean existsByEmail(String email);
+    Optional<UserCredentials> findByPhoneNumber(String phoneNumber);
+    UserCredentials findCredentialsByPhoneNumber(String phoneNumber);
+    boolean existsByPhoneNumber(String phoneNumber);
 }

@@ -45,7 +45,6 @@ public class UserControllerTest {
 
     final String NAME1 = "name1", NAME2 = "name2";
     final String PHONE1 = "0500000000", PHONE2 = "0500000001";
-    final String EMAIL1 = "email1@gmail.com", EMAIL2 = "email2@gmail.com";
 
 
 
@@ -68,17 +67,17 @@ public class UserControllerTest {
     @Test
     void testGetAllDonors() throws Exception {
         Donor donor1 = new Donor();
-        donor1.setEmail(EMAIL1);
+        donor1.setPhoneNumber(PHONE1);
         Donor donor2 = new Donor();
-        donor2.setEmail(EMAIL2);
+        donor2.setPhoneNumber(PHONE2);
 
         when(userService.getAllDonors()).thenReturn(Arrays.asList(donor1, donor2));
 
         mockMvc.perform(get("/user/donors")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].email").value(EMAIL1))
-                .andExpect(jsonPath("$[1].email").value(EMAIL2));
+                .andExpect(jsonPath("$[0].phoneNumber").value(PHONE1))
+                .andExpect(jsonPath("$[1].phoneNumber").value(PHONE2));
     }
 
     @Test
@@ -122,24 +121,24 @@ public class UserControllerTest {
     }
 
     @Test
-    void testGetDonorByEmail_Success() throws Exception {
+    void testGetDonorByPhoneNumber_Success() throws Exception {
         Donor donor = new Donor();
-        donor.setEmail(EMAIL1);
+        donor.setPhoneNumber(PHONE1);
 
-        when(userService.getDonorByEmail(EMAIL1)).thenReturn(donor);
+        when(userService.getDonorByPhoneNumber(PHONE1)).thenReturn(donor);
 
-        mockMvc.perform(get("/user/donor/{email}", EMAIL1)
+        mockMvc.perform(get("/user/donor/{phoneNumber}", PHONE1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value(EMAIL1));
+                .andExpect(jsonPath("$.phoneNumber").value(PHONE1));
     }
 
     @Test
-    void testGetDonorByEmail_NotFound() throws Exception {
-        when(userService.getDonorByEmail(EMAIL2))
+    void testGetDonorByPhoneNumber_NotFound() throws Exception {
+        when(userService.getDonorByPhoneNumber(PHONE2))
                 .thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get("/user/donor/{email}", EMAIL2)
+        mockMvc.perform(get("/user/donor/{phoneNumber}", PHONE2)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$").value("User not found"));

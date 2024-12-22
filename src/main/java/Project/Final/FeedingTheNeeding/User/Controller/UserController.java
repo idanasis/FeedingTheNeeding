@@ -76,10 +76,10 @@ public class UserController {
         }
     }
 
-    @GetMapping("/donor/{email}")
-    public ResponseEntity<?> getDonorByEmail(@PathVariable String email) {
+    @GetMapping("/donor/{phoneNumber}")
+    public ResponseEntity<?> getDonorByPhoneNumber(@PathVariable String phoneNumber) {
         try{
-            Donor donor = userService.getDonorByEmail(email);
+            Donor donor = userService.getDonorByPhoneNumber(phoneNumber);
             return ResponseEntity.ok(donor);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());

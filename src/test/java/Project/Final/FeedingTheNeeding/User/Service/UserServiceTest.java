@@ -113,18 +113,18 @@ public class UserServiceTest {
     }
 
     @Test
-    void testGetDonorByEmail_Success(){
-        when(donorRepository.findByEmail(DONOR1_EMAIL)).thenReturn(Optional.of(donor1));
-        Donor foundDonor = userService.getDonorByEmail(DONOR1_EMAIL);
+    void testGetDonorByPhoneNumber_Success(){
+        when(donorRepository.findByPhoneNumber(DONOR1_PHONE_NUMBER)).thenReturn(Optional.of(donor1));
+        Donor foundDonor = userService.getDonorByPhoneNumber(DONOR1_PHONE_NUMBER);
         assertNotNull(foundDonor);
-        assertEquals(DONOR1_EMAIL, foundDonor.getEmail());
-        verify(donorRepository, times(1)).findByEmail(DONOR1_EMAIL);
+        assertEquals(DONOR1_PHONE_NUMBER, foundDonor.getPhoneNumber());
+        verify(donorRepository, times(1)).findByPhoneNumber(DONOR1_PHONE_NUMBER);
     }
 
     @Test
-    void testGetDonorByEmail_NotFound(){
-        when(donorRepository.findByEmail(DONOR2_PHONE_NUMBER)).thenReturn(Optional.empty());
-        assertThrows(UserDoesntExistsException.class, () -> userService.getDonorByEmail(DONOR2_PHONE_NUMBER));
-        verify(donorRepository, times(1)).findByEmail(DONOR2_PHONE_NUMBER);
+    void testGetDonorByPhoneNumber_NotFound(){
+        when(donorRepository.findByPhoneNumber(DONOR2_PHONE_NUMBER)).thenReturn(Optional.empty());
+        assertThrows(UserDoesntExistsException.class, () -> userService.getDonorByPhoneNumber(DONOR2_PHONE_NUMBER));
+        verify(donorRepository, times(1)).findByPhoneNumber(DONOR2_PHONE_NUMBER);
     }
 }

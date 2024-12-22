@@ -52,9 +52,9 @@ public class AuthController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String email, @RequestParam String newPassword) {
+    public ResponseEntity<?> resetPassword(@RequestParam String phoneNumber, @RequestParam String newPassword) {
         try {
-            authService.resetPassword(email, newPassword);
+            authService.resetPassword(phoneNumber, newPassword);
             return ResponseEntity.ok("Password reset successfully");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
