@@ -23,10 +23,12 @@ export const validatePhone = (phone: string): boolean => {
 
 export const registerDonor = async (data: DonorRegistrationData): Promise<void> => {
     try {
+        console.log('Sending data:', data); // Log the payload
         const response = await axios.post(`${API_BASE_URL}/auth/register/donor`, data);
         console.log('Registration successful:', response.data);
-    } catch (error) {
-        console.error('Error during registration:', error);
-        throw new Error('Registration failed. Please try again later.');
+    } catch (error: any) {
+        console.error('Error during registration:', error.response?.data || error.message);
+        throw new Error(error.response?.data || 'Registration failed. Please try again later.');
     }
 };
+

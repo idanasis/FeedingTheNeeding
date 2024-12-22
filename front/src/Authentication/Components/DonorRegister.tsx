@@ -54,7 +54,7 @@ const DonorRegister: React.FC = () => {
             setSuccessMessage(true);
             setTimeout(() => navigate('/login'), 2000);
         } catch {
-            setError('Registration failed. Please try again later.');
+            setError('ההרשמה נכשלה. נסה שוב מאוחר יותר.');
         }
     };
 

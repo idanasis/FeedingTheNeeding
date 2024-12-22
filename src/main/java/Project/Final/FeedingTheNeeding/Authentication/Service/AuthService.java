@@ -72,6 +72,20 @@ public class AuthService {
             throw new UserAlreadyExistsException("Donor already exists");
 
         Donor donor = new Donor();
+        if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
+            donor.setEmail(registrationRequest.getEmail());
+            donor.setVerificationCode(generateVerificationCode());
+            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+            donor.setVerified(false);
+            sendVerificationEmail(donor);
+        }
+        else{
+            donor.setEmail(null);
+            donor.setVerificationCode(null);
+            donor.setVerificationCodeExpiresAt(null);
+            donor.setVerified(false);
+            sendVerificationEmail(null);
+        }
         donor.setEmail(registrationRequest.getEmail());
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
@@ -81,13 +95,6 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
-
-        if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
-            donor.setVerificationCode(generateVerificationCode());
-            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-            donor.setVerified(false);
-            sendVerificationEmail(donor);
-        }
 
         Donor savedDonor = donorRepository.save(donor);
 
