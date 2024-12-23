@@ -116,22 +116,22 @@ const DonorRegister: React.FC = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="lastName">שם משפחה:</label>
+                            <label htmlFor="firstName">שם פרטי:</label>
                             <input
-                                id="lastName"
+                                id="firstName"
                                 type="text"
-                                value={formData.lastName}
+                                value={formData.firstName}
                                 onChange={handleChange}
                                 required
                             />
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="firstName">שם פרטי:</label>
+                            <label htmlFor="lastName">שם משפחה:</label>
                             <input
-                                id="firstName"
+                                id="lastName"
                                 type="text"
-                                value={formData.firstName}
+                                value={formData.lastName}
                                 onChange={handleChange}
                                 required
                             />
