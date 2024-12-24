@@ -11,7 +11,7 @@ const DonorRegister: React.FC = () => {
         confirmPassword: '',
         firstName: '',
         lastName: '',
-        phone: '',
+        phoneNumber: '',
         address: '',
         city: ''
     });
@@ -44,7 +44,7 @@ const DonorRegister: React.FC = () => {
             return;
         }
 
-        if (!validatePhone(formData.phone)) {
+        if (!validatePhone(formData.phoneNumber)) {
             setError('מספר הטלפון אינו תקין');
             return;
         }
@@ -79,11 +79,11 @@ const DonorRegister: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="phone">מספר טלפון:</label>
+                            <label htmlFor="phoneNumber">מספר טלפון:</label>
                             <input
-                                id="phone"
+                                id="phoneNumber"
                                 type="tel"
-                                value={formData.phone}
+                                value={formData.phoneNumber}
                                 onChange={handleChange}
                                 required
                             />

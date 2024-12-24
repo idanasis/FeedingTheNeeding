@@ -8,7 +8,7 @@ export interface DonorRegistrationData {
     confirmPassword: string;
     firstName: string;
     lastName: string;
-    phone: string;
+    phoneNumber: string;
     address: string;
     city: string;
 }
@@ -17,8 +17,8 @@ export const validateEmail = (email: string): boolean => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
-export const validatePhone = (phone: string): boolean => {
-    return /^05\d{8}$/.test(phone);
+export const validatePhone = (phoneNumber: string): boolean => {
+    return /^05\d{8}$/.test(phoneNumber);
 };
 
 export const registerDonor = async (data: DonorRegistrationData): Promise<void> => {

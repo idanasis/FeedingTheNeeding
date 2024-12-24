@@ -40,12 +40,12 @@ public class JwtTokenService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        logger.info("start-generateToken to: {}", userDetails.getUsername());
+        logger.info("generate Token to: {}", userDetails.getUsername());
         return generateToken(new HashMap<>(), userDetails);
     }
 
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        logger.info("start-generateToken with Map to: {}", userDetails.getUsername());
+        logger.info("generate Token with Map to: {}", userDetails.getUsername());
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
@@ -58,7 +58,7 @@ public class JwtTokenService {
             UserDetails userDetails,
             long expiration
     ) {
-        logger.info("start-buildToken");
+        logger.info("buildToken");
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -70,7 +70,7 @@ public class JwtTokenService {
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        logger.info("start-isTokenValid token: {}", token);
+        logger.info("isTokenValid token: {}", token);
         if (userDetails == null || token == null)
             return false;
         final String username = extractUsername(token);
@@ -78,17 +78,17 @@ public class JwtTokenService {
     }
 
     private boolean isTokenExpired(String token) {
-        logger.info("start-isTokenExpired token: {}", token);
+        logger.info("isTokenExpired token: {}", token);
         return extractExpiration(token).before(new Date());
     }
 
     private Date extractExpiration(String token) {
-        logger.info("start-extractExpiration token: {}", token);
+        logger.info("extractExpiration token: {}", token);
         return extractClaim(token, Claims::getExpiration);
     }
 
     private Claims extractAllClaims(String token) {
-        logger.info("start-extractAllClaims token: {}", token);
+        logger.info("extractAllClaims token: {}", token);
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -98,7 +98,7 @@ public class JwtTokenService {
     }
 
     private Key getSignInKey() {
-        logger.info("start-getSignInKey");
+        logger.info("getSignInKey");
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
