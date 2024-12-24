@@ -13,11 +13,14 @@ const Introduce = () => {
     className='text-red-500 text-2xl'
     >
     </motion.h1>
-      <motion.h1 variants={slideUpVariants} className='text-red-500 text-[50px] font-bold' >
-          ארגון חסד
+      <motion.h1 variants={slideUpVariants} className='text-red-700 text-[50px] font-bold' >
+          להשביע את הלב
         </motion.h1>
-    <div className='w-[120px] h-[6px] bg-red-500'></div>
-    <p className='text-red-500 text-[20px]'>רוצים לעשות טוב? בואו להתנדב!</p>
+         <motion.h1 variants={slideUpVariants} className='text-red-700 text-[28px] font-bold' >
+          ארגון סיוע וחסד
+        </motion.h1>
+    <div className='w-[120px] h-[6px] bg-red-700'></div>
+    <p className='text-red-700 text-[22px] font-bold'>הצטרפו לנתינה לעוד עשרות מתנדבים!</p>
 <motion.div
  initial="hidden" whileInView="visible" variants={zoomInVariants} className='flex justify-center items-center gap-5'
 >
@@ -30,7 +33,7 @@ const Introduce = () => {
 קרא עוד!  </motion.button>
   <motion.button
   variants={zoomInVariants}
-  className='border-red-500 hover:border-red-500 hover:text-red-500 border-2 px-10 py-3 rounded-lg text-red-500 font-bold'
+  className='border-red-700 hover:border-red-700 hover:text-red-700 border-2 px-10 py-3 rounded-lg text-red-700 font-bold'
   style={{ fontSize: '20px' }}
   >
 בואו להתנדב!
