@@ -4,6 +4,8 @@ import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,9 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenService jwtTokenService;
+
+    private static final Logger logger = LogManager.getLogger(AuthService.class);
+
 
     public AuthController(AuthService authService, JwtTokenService jwtTokenService) {
         this.authService = authService;
@@ -25,6 +30,7 @@ public class AuthController {
             UserCredentials user = authService.authenticate(authenticationRequest);
             String jwtToken = jwtTokenService.generateToken(user);
             AuthenticationResponse response = new AuthenticationResponse(jwtToken, jwtTokenService.getExpirationTime());
+            logger.info("token created: {} with expiration time of {}", response.getToken(),response.getExpirationTime());
             return ResponseEntity.ok(response);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
