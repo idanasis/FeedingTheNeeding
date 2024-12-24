@@ -1,0 +1,237 @@
+/* Global Styles */
+.meal-planner-container {
+  direction: rtl;
+  display: flex;
+  gap: 20px;
+  max-width: 1400px;
+  margin: 20px auto;
+  padding: 20px;
+  align-items: flex-start; /* Ensures boxes align at the top */
+}
+
+.meal-planner {
+  flex: 1;
+  padding: 20px;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  min-height: 500px; /* Ensures minimum height regardless of content */
+}
+
+.header-container {
+  text-align: center;
+  margin-bottom: 30px;
+  background: #f5f5f5;
+  padding: 10px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-container h1 {
+  color: #7f8c8d;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.meals-input {
+  display: inline-block;
+}
+
+.meals-input input {
+  padding: 8px 12px;
+  width: 80px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 3px solid #ccc;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #7f8c8d;
+}
+
+.meals-input input:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
+}
+
+/* Days Container */
+.days-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.day-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+}
+
+.day-card {
+  width: 100%;
+  border: 2px solid #3498db;
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Time Slots Section */
+.time-slots-column {
+  width: 300px;
+  background-color: #f4f4f9;
+  border-radius: 10px;
+  padding: 20px;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px); /* Viewport height minus margins */
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.time-slots-column h3 {
+  color: #2c3e50;
+  font-size: 18px;
+  text-align: center;
+  margin-bottom: 20px;
+  position: sticky;
+  top: 0;
+  background-color: #f4f4f9;
+  padding: 10px 0;
+  margin-top: 0;
+}
+
+.time-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.time-slot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  background-color: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+}
+
+.time-slot-item span {
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.time-inputs {
+  display: flex;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.time-input-group label {
+  font-size: 14px;
+  color: #666;
+}
+
+.time-input-group select {
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+}
+
+.add-time,
+.remove-time {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.add-time {
+  color: #3498db;
+}
+
+.remove-time {
+  color: #e74c3c;
+}
+
+.add-time:hover {
+  color: #2980b9;
+}
+
+.remove-time:hover {
+  color: #c0392b;
+}
+
+/* Submit Container */
+.submit-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.submit-button {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.submit-button:hover {
+  background: #2980b9;
+}
+
+.visit-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.visit-buttons button {
+  width: 100%;
+  padding: 10px;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  background-color: #e0e0e0;
+  color: #666;
+  border: none;
+}
+
+.visit-buttons button.active {
+  color: white;
+}
+
+.visit-buttons button:first-child.active {
+  background-color: #e74c3c;
+}
+
+.visit-buttons button:last-child.active {
+  background-color: #2ecc71;
+}
+
+.visit-buttons button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}

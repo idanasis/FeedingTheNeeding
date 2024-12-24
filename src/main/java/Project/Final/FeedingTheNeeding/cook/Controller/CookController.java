@@ -19,7 +19,7 @@ public class CookController {
 
     public CookController(CookingService cs) {this.cs = cs;}
 
-    @PostMapping("/constraints")
+    @PostMapping("/submit/constraints")
     public ResponseEntity<?> submitConstraints(@RequestBody CookConstraints constraints){
         try{
             return ResponseEntity.ok(cs.submitConstraints(constraints));
@@ -28,7 +28,7 @@ public class CookController {
         }
     }
 
-    @DeleteMapping("/constraints")
+    @DeleteMapping("/remove/constraints")
     public ResponseEntity<?> removeConstraint(@RequestBody CookConstraints constraint) {
         try {
             cs.removeConstraint(constraint);
