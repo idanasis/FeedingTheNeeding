@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { login } from './loginRestAPI';
-import './Login.css';
+import { login } from '../RestAPI/loginRestAPI';
+import '../Styles/Login.css';
 import Logo from '../Images/logo.png';
 
 const Login: React.FC = () => {

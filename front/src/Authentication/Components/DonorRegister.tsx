@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './DonorRegister.css';
+import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from './donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from '../RestAPI/donorRegRestAPI';
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
