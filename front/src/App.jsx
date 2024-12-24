@@ -4,7 +4,7 @@ import NeederTracking from './Social/components/NeederTracking';
 import ResponsiveNeedyTable from './Social/components/needyPending';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from "./Authentication/Components/Login";
-import DonorRegister from "./Authentication/Components/donorRegister";
+import DonorRegister from "./Authentication/Components/DonorRegister";
 
 
 
