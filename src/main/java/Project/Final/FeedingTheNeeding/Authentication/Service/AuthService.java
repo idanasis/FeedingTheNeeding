@@ -65,7 +65,7 @@ public class AuthService {
             // Verify password using PasswordEncoder
             if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash())) {
                 logger.error("Invalid password for phone number: {}", authenticationRequest.getPhoneNumber());
-                throw new InvalidCredentialException("Invalid credentials");
+                throw new InvalidCredentialException("Invalid password");
             }
 
             // Authenticate using the AuthenticationManager

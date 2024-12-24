@@ -81,7 +81,7 @@ public class AuthServiceTest {
     void testAuthenticate_Success() {
         UserCredentials user = new UserCredentials();
         user.setPhoneNumber(authenticationRequest.getPhoneNumber());
-        user.setPasswordHash(authenticationRequest.getPassword());
+        user.setPasswordHash(passwordEncoder.encode(authenticationRequest.getPassword()));
         Donor donor = new Donor();
         donor.setPhoneNumber(authenticationRequest.getPhoneNumber());
         donor.setVerified(true);
@@ -90,12 +90,18 @@ public class AuthServiceTest {
         when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber()))
                 .thenReturn(user);
 
+        // Mock password encoder to return true for matching passwords
+        when(passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash()))
+                .thenReturn(true);
+
         // Mock authenticate to return null or a valid Authentication object
         when(authenticationManager.authenticate(any())).thenReturn(null);
 
         UserCredentials result = authService.authenticate(authenticationRequest);
 
         assertEquals(user, result);
+        verify(userCredentialsRepository, times(1)).findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber());
+        verify(passwordEncoder, times(1)).matches(authenticationRequest.getPassword(), user.getPasswordHash());
         verify(authenticationManager, times(1)).authenticate(any());
     }
 
@@ -132,9 +138,9 @@ public class AuthServiceTest {
         user.setDonor(donor);
 
         when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber())).thenReturn(user);
-        doThrow(BadCredentialsException.class).when(authenticationManager).authenticate(any());
+        doThrow(InvalidCredentialException.class).when(authenticationManager).authenticate(any());
 
-        assertThrows(BadCredentialsException.class, () -> authService.authenticate(authenticationRequest));
+        assertThrows(InvalidCredentialException.class, () -> authService.authenticate(authenticationRequest));
     }
 
     @Test
