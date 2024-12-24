@@ -32,7 +32,7 @@ public class UserCredentialsRepoTest {
     final String EMAIL = "email@gmail.com", PASSWORD = "password", EMAIL2 = "email2@gmail.com";
     private static final String FIRST_NAME = "firstName";
     private static final String LAST_NAME = "lastName";
-    private static final String PHONE_NUMBER = "0500000000";
+    private static final String PHONE_NUMBER = "0500000000", PHONE_NUMBER2 = "0510000000";
     private static final String ADDRESS = "address";
     private static final String CITY = "city";
     private static final RegistrationStatus REGISTRATION_STATUS = RegistrationStatus.AVAILABLE;
@@ -54,7 +54,7 @@ public class UserCredentialsRepoTest {
         donorRepository.save(donor);
 
         user = new UserCredentials();
-        user.setEmail(EMAIL);
+        user.setPhoneNumber(PHONE_NUMBER);
         user.setPasswordHash(PASSWORD);
         user.setLastPasswordChangeAt(LocalDateTime.now());
         user.setDonor(donor);
@@ -64,37 +64,37 @@ public class UserCredentialsRepoTest {
 
     @Test
     void shouldFindByEmail() {
-        Optional<UserCredentials> retrievedUser = userCredentialsRepository.findByEmail(EMAIL);
+        Optional<UserCredentials> retrievedUser = userCredentialsRepository.findByPhoneNumber(PHONE_NUMBER);
 
         assertThat(retrievedUser).isPresent();
-        assertThat(retrievedUser.get().getEmail()).isEqualTo(EMAIL);
+        assertThat(retrievedUser.get().getPhoneNumber()).isEqualTo(PHONE_NUMBER);
     }
 
     @Test
     void shouldReturnCredentialsByEmail() {
-        UserCredentials retrievedUser = userCredentialsRepository.findCredentialsByEmail(EMAIL);
+        UserCredentials retrievedUser = userCredentialsRepository.findCredentialsByPhoneNumber(PHONE_NUMBER);
 
         assertThat(retrievedUser).isNotNull();
-        assertThat(retrievedUser.getEmail()).isEqualTo(EMAIL);
+        assertThat(retrievedUser.getPhoneNumber()).isEqualTo(PHONE_NUMBER);
     }
 
     @Test
     void shouldCheckIfEmailExists() {
-        boolean exists = userCredentialsRepository.existsByEmail(EMAIL);
+        boolean exists = userCredentialsRepository.existsByPhoneNumber(PHONE_NUMBER);
 
         assertThat(exists).isTrue();
     }
 
     @Test
     void shouldReturnEmptyWhenEmailDoesNotExist() {
-        Optional<UserCredentials> retrievedUser = userCredentialsRepository.findByEmail(EMAIL2);
+        Optional<UserCredentials> retrievedUser = userCredentialsRepository.findByPhoneNumber(PHONE_NUMBER2);
 
         assertThat(retrievedUser).isNotPresent();
     }
 
     @Test
     void shouldReturnFalseIfEmailDoesNotExist() {
-        boolean exists = userCredentialsRepository.existsByEmail(EMAIL2);
+        boolean exists = userCredentialsRepository.existsByPhoneNumber(PHONE_NUMBER2);
 
         assertThat(exists).isFalse();
     }

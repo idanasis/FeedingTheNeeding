@@ -50,7 +50,7 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    final String EMAIL = "email@gmail.com", PASSWORD = "password", TOKEN = "token";
+    final String PHONE_NUMBER = "0501234567", PASSWORD = "password", TOKEN = "token";
     final String DONOR_FIRST_NAME = "Donor", DONOR_LAST_NAME = "Donor";
     final String NEEDY_FIRST_NAME = "Needy", NEEDY_LAST_NAME = "Needy";
     final String DONOR_PHONE_NUMBER = "0500000000", NEEDY_PHONE_NUMBER = "0500000001";
@@ -58,14 +58,15 @@ public class AuthControllerTest {
     final String DONOR_CITY = "city", NEEDY_CITY = "city";
     final int NEEDY_FAMILY_SIZE = 5;
     final String VERIFICATION_CODE = "123456";
+    final String EMAIL = "test@test.com";
 
 
 
     @Test
     void testLogin_Success() throws Exception {
-        AuthenticationRequest request = new AuthenticationRequest(EMAIL, PASSWORD);
+        AuthenticationRequest request = new AuthenticationRequest(PHONE_NUMBER, PASSWORD);
         UserCredentials userCredentials = new UserCredentials();
-        userCredentials.setEmail(EMAIL);
+        userCredentials.setPhoneNumber(PHONE_NUMBER);
         userCredentials.setPasswordHash(PASSWORD);
 
         when(authService.authenticate(request)).thenReturn(userCredentials);
@@ -82,7 +83,7 @@ public class AuthControllerTest {
 
     @Test
     void testLogin_Failure() throws Exception {
-        AuthenticationRequest request = new AuthenticationRequest(EMAIL, "wrongPassword");
+        AuthenticationRequest request = new AuthenticationRequest(PHONE_NUMBER, "wrongPassword");
 
         when(authService.authenticate(request)).thenThrow(new InvalidCredentialException("Invalid credentials"));
 
@@ -94,8 +95,8 @@ public class AuthControllerTest {
 
     @Test
     void testRegisterDonor_Success() throws Exception {
-        RegistrationRequest request = new RegistrationRequest(EMAIL, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
-                DONOR_PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
+        RegistrationRequest request = new RegistrationRequest(null, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
+                PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
 
         doNothing().when(authService).registerDonor(request);
 
@@ -108,8 +109,8 @@ public class AuthControllerTest {
 
     @Test
     void testRegisterDonor_Failure() throws Exception {
-        RegistrationRequest request = new RegistrationRequest(EMAIL, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
-                DONOR_PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
+        RegistrationRequest request = new RegistrationRequest(null, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
+                PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
 
         doThrow(new UserAlreadyExistsException("Donor already exists")).when(authService).registerDonor(request);
 
@@ -150,10 +151,10 @@ public class AuthControllerTest {
 
     @Test
     void testResetPassword_Success() throws Exception {
-        doNothing().when(authService).resetPassword(EMAIL, PASSWORD);
+        doNothing().when(authService).resetPassword(PHONE_NUMBER, PASSWORD);
 
         mockMvc.perform(post("/auth/reset-password")
-                        .param("email", EMAIL)
+                        .param("phoneNumber", PHONE_NUMBER)
                         .param("newPassword", PASSWORD))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Password reset successfully"));
@@ -161,10 +162,10 @@ public class AuthControllerTest {
 
     @Test
     void testResetPassword_Failure() throws Exception {
-        doThrow(new UserDoesntExistsException("User not found")).when(authService).resetPassword(EMAIL, PASSWORD);
+        doThrow(new UserDoesntExistsException("User not found")).when(authService).resetPassword(PHONE_NUMBER, PASSWORD);
 
         mockMvc.perform(post("/auth/reset-password")
-                        .param("email", EMAIL)
+                        .param("phoneNumber", PHONE_NUMBER)
                         .param("newPassword", PASSWORD))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));

@@ -72,7 +72,7 @@ public class AuthServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        authenticationRequest = new AuthenticationRequest(DONOR_EMAIL, PASSWORD);
+        authenticationRequest = new AuthenticationRequest(DONOR_PHONE_NUMBER, PASSWORD);
         donorRegistrationRequest = new RegistrationRequest(DONOR_EMAIL, PASSWORD, PASSWORD,DONOR_FIRST_NAME, DONOR_LAST_NAME, DONOR_PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
         needyRegistrationRequest = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME, NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_CITY, NEEDY_FAMILY_SIZE);
     }
@@ -80,16 +80,19 @@ public class AuthServiceTest {
     @Test
     void testAuthenticate_Success() {
         UserCredentials user = new UserCredentials();
-        user.setEmail(authenticationRequest.getEmail());
-        user.setPasswordHash(authenticationRequest.getPassword());
+        user.setPhoneNumber(authenticationRequest.getPhoneNumber());
+        user.setPasswordHash(passwordEncoder.encode(authenticationRequest.getPassword()));
         Donor donor = new Donor();
-        donor.setEmail(authenticationRequest.getEmail());
+        donor.setPhoneNumber(authenticationRequest.getPhoneNumber());
         donor.setVerified(true);
         user.setDonor(donor);
 
-        // Mock findCredentialsByEmail to return Optional.of(mockUser)
-        when(userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail()))
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber()))
                 .thenReturn(user);
+
+        // Mock password encoder to return true for matching passwords
+        when(passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash()))
+                .thenReturn(true);
 
         // Mock authenticate to return null or a valid Authentication object
         when(authenticationManager.authenticate(any())).thenReturn(null);
@@ -97,12 +100,14 @@ public class AuthServiceTest {
         UserCredentials result = authService.authenticate(authenticationRequest);
 
         assertEquals(user, result);
+        verify(userCredentialsRepository, times(1)).findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber());
+        verify(passwordEncoder, times(1)).matches(authenticationRequest.getPassword(), user.getPasswordHash());
         verify(authenticationManager, times(1)).authenticate(any());
     }
 
     @Test
     void authenticate_UserNotFound_ThrowsException() {
-        when(userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail())).thenReturn(null);
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber())).thenReturn(null);
 
         assertThrows(InvalidCredentialException.class, () -> authService.authenticate(authenticationRequest));
     }
@@ -110,14 +115,14 @@ public class AuthServiceTest {
     @Test
     void authenticate_AccountNotVerified_ThrowsException() {
         UserCredentials user = new UserCredentials();
-        user.setEmail(authenticationRequest.getEmail());
+        user.setPhoneNumber(authenticationRequest.getPhoneNumber());
         user.setPasswordHash(authenticationRequest.getPassword());
         Donor donor = new Donor();
-        donor.setEmail(authenticationRequest.getEmail());
+        donor.setPhoneNumber(authenticationRequest.getPhoneNumber());
         donor.setVerified(false);
         user.setDonor(donor);
 
-        when(userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail())).thenReturn(user);
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber())).thenReturn(user);
 
         assertThrows(AccountNotVerifiedException.class, () -> authService.authenticate(authenticationRequest));
     }
@@ -125,22 +130,22 @@ public class AuthServiceTest {
     @Test
     void authenticate_InvalidPassword_ThrowsException() {
         UserCredentials user = new UserCredentials();
-        user.setEmail(authenticationRequest.getEmail());
+        user.setPhoneNumber(authenticationRequest.getPhoneNumber());
         user.setPasswordHash(authenticationRequest.getPassword());
         Donor donor = new Donor();
-        donor.setEmail(authenticationRequest.getEmail());
+        donor.setPhoneNumber(authenticationRequest.getPhoneNumber());
         donor.setVerified(true);
         user.setDonor(donor);
 
-        when(userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail())).thenReturn(user);
-        doThrow(BadCredentialsException.class).when(authenticationManager).authenticate(any());
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber())).thenReturn(user);
+        doThrow(InvalidCredentialException.class).when(authenticationManager).authenticate(any());
 
-        assertThrows(BadCredentialsException.class, () -> authService.authenticate(authenticationRequest));
+        assertThrows(InvalidCredentialException.class, () -> authService.authenticate(authenticationRequest));
     }
 
     @Test
     void registerDonor_ValidRequest_Success() {
-        when(donorRepository.findByEmail(donorRegistrationRequest.getEmail())).thenReturn(Optional.empty());
+        when(donorRepository.findByPhoneNumber(donorRegistrationRequest.getPhoneNumber())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(donorRegistrationRequest.getPassword())).thenReturn("encodedPassword");
         when(donorRepository.save(any(Donor.class))).thenAnswer(i -> i.getArgument(0));
         when(userCredentialsRepository.save(any(UserCredentials.class))).thenAnswer(i -> i.getArgument(0));
@@ -153,7 +158,7 @@ public class AuthServiceTest {
 
     @Test
     void registerDonor_DonorAlreadyExists_ThrowsException() {
-        when(donorRepository.findByEmail(donorRegistrationRequest.getEmail())).thenReturn(Optional.of(new Donor()));
+        when(donorRepository.findByPhoneNumber(donorRegistrationRequest.getPhoneNumber())).thenReturn(Optional.of(new Donor()));
 
         assertThrows(UserAlreadyExistsException.class, () -> authService.registerDonor(donorRegistrationRequest));
     }
@@ -179,12 +184,12 @@ public class AuthServiceTest {
     @Test
     void resetPassword_ValidRequest_Success() {
         UserCredentials user = new UserCredentials();
-        user.setEmail(EMAIL);
+        user.setPhoneNumber(DONOR_PHONE_NUMBER);
 
-        when(userCredentialsRepository.findCredentialsByEmail(EMAIL)).thenReturn(user);
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER)).thenReturn(user);
         when(passwordEncoder.encode(PASSWORD)).thenReturn("encodedPassword");
 
-        authService.resetPassword(EMAIL, PASSWORD);
+        authService.resetPassword(DONOR_PHONE_NUMBER, PASSWORD);
 
         verify(userCredentialsRepository, times(1)).save(user);
         assertEquals("encodedPassword", user.getPasswordHash());
@@ -192,9 +197,9 @@ public class AuthServiceTest {
 
     @Test
     void resetPassword_UserNotFound_ThrowsException() {
-        when(userCredentialsRepository.findCredentialsByEmail(EMAIL)).thenReturn(null);
+        when(userCredentialsRepository.findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER)).thenReturn(null);
 
-        assertThrows(UserDoesntExistsException.class, () -> authService.resetPassword(EMAIL, PASSWORD));
+        assertThrows(UserDoesntExistsException.class, () -> authService.resetPassword(DONOR_PHONE_NUMBER, PASSWORD));
     }
 
     @Test

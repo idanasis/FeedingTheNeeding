@@ -46,35 +46,64 @@ public class AuthService {
     }
 
     public UserCredentials authenticate(AuthenticationRequest authenticationRequest) {
-        logger.info("start-auth, email: {}", authenticationRequest.getEmail());
+        logger.info("Start authentication for phone number: {}", authenticationRequest.getPhoneNumber());
 
-        UserCredentials user = userCredentialsRepository.findCredentialsByEmail(authenticationRequest.getEmail());
-        if (user == null)
+        // Retrieve user credentials from the database
+        UserCredentials user = userCredentialsRepository.findCredentialsByPhoneNumber(authenticationRequest.getPhoneNumber());
+        if (user == null) {
+            logger.error("User not found for phone number: {}", authenticationRequest.getPhoneNumber());
             throw new InvalidCredentialException("Invalid credentials");
+        }
 
-        if(!user.isEnabled())
+        // Check if the user account is enabled (if applicable)
+        if (!user.isEnabled()) {
+            logger.warn("Account not verified for phone number: {}", authenticationRequest.getPhoneNumber());
             throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
+        }
 
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationRequest.getEmail(),
-                        authenticationRequest.getPassword()
-                )
-        );
+        try {
+            // Verify password using PasswordEncoder
+            if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash())) {
+                logger.error("Invalid password for phone number: {}", authenticationRequest.getPhoneNumber());
+                throw new InvalidCredentialException("Invalid password");
+            }
 
-        logger.info("end-auth, email: {}", authenticationRequest.getEmail());
-        return user;
+            // Authenticate using the AuthenticationManager
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationRequest.getPhoneNumber(),
+                            authenticationRequest.getPassword()
+                    )
+            );
+
+            logger.info("Authentication successful for phone number: {}", authenticationRequest.getPhoneNumber());
+            return user;
+
+        } catch (Exception e) {
+            logger.error("Authentication failed for phone number: {}", authenticationRequest.getPhoneNumber(), e);
+            throw new InvalidCredentialException("Invalid credentials");
+        }
     }
 
+
     public void registerDonor(RegistrationRequest registrationRequest) {
-        logger.info("start-register donor,  email: {}", registrationRequest.getEmail());
-        if(donorRepository.findByEmail(registrationRequest.getEmail()).isPresent())
+        logger.info("start-register donor,  phone number: {}", registrationRequest.getPhoneNumber());
+        if(donorRepository.findByPhoneNumber(registrationRequest.getPhoneNumber()).isPresent())
             throw new UserAlreadyExistsException("Donor already exists");
 
-        // TODO: check for valid email, valid password, password == confirmPassword
-
         Donor donor = new Donor();
-        donor.setEmail(registrationRequest.getEmail());
+        if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
+            donor.setEmail(registrationRequest.getEmail());
+            donor.setVerificationCode(generateVerificationCode());
+            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+            sendVerificationEmail(donor);
+        }
+        else{
+            donor.setEmail(null);
+            donor.setVerificationCode(null);
+            donor.setVerificationCodeExpiresAt(null);
+        }
+        donor.setVerified(true);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
@@ -84,21 +113,16 @@ public class AuthService {
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
 
-        donor.setVerificationCode(generateVerificationCode());
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(false);
-        sendVerificationEmail(donor);
-
         Donor savedDonor = donorRepository.save(donor);
 
         UserCredentials credentials = new UserCredentials();
-        credentials.setEmail(registrationRequest.getEmail());
+        credentials.setPhoneNumber(registrationRequest.getPhoneNumber());
         credentials.setPasswordHash(passwordEncoder.encode(registrationRequest.getPassword()));
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
         credentials.setDonor(savedDonor);
 
         userCredentialsRepository.save(credentials);
-        logger.info("end-register donor, email: {}", registrationRequest.getEmail());
+        logger.info("end-register donor, phone number: {}", registrationRequest.getPhoneNumber());
     }
 
     public void registerNeedy(NeedyRegistrationRequest needyRegistrationRequest) {
@@ -120,9 +144,9 @@ public class AuthService {
         logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());
     }
 
-    public void resetPassword(String email, String newPassword) {
-        logger.info("start-reset password, for email: {}", email);
-        UserCredentials credentials = userCredentialsRepository.findCredentialsByEmail(email);
+    public void resetPassword(String phoneNumber, String newPassword) {
+        logger.info("start-reset password, for phoneNumber: {}", phoneNumber);
+        UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
         if(credentials == null)
             throw new UserDoesntExistsException("User not found");
 
@@ -130,21 +154,21 @@ public class AuthService {
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
 
         userCredentialsRepository.save(credentials);
-        logger.info("end-reset password, for email: {}", email);
+        logger.info("end-reset password, for phoneNumber: {}", phoneNumber);
     }
 
     public void sendVerificationEmail(Donor donor) {
         logger.info("start-send verification email, for email: {}", donor.getEmail());
         String subject = "Account Verification";
-        String verificationCode = "VERIFICATION CODE" + donor.getVerificationCode();
+        String verificationCode = donor.getVerificationCode();
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
                 + "<h2 style=\"color: #333;\">Welcome to Feeding The Needing</h2>"
                 + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
                 + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Verification Code:</h3>"
-                + "<p style=\"font-size: 18px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
+                + "<h3 style=\"color: #333;\">Verification Code: </h3>"
+                + "<p style=\"font-size: 30px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
                 + "</div>"
                 + "</div>"
                 + "</body>"
