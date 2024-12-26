@@ -5,6 +5,8 @@ import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
 import { getAllNeederTracking } from '../../Restapi/socialRestapi';
+import FeedingLogo from '../../Authentication/Images/logo.png';
+
 
 const NeederTracking = () => {
     const [currNeeders, setCurrNeeders] = useState<NeederTrackingModel[]>([]);
@@ -33,9 +35,17 @@ const NeederTracking = () => {
 
     return (
         <div style={{ backgroundColor: "snow"}}>
+            <img src={FeedingLogo} alt="Logo"style={{
+          position: "absolute",
+          top: "1px",
+          left: "5px",
+          height: "60px", // Adjust the size as needed
+        }}/>
             <h1 className='text-black md:text-4xl text-3xl font-bold' style={{ color: '#000' }}>טבלת מעקב נזקקים</h1>
+            <div style={{paddingRight:"1rem"}}>
             <ResponsiveDatePickers onDateChange={handleDateChange}/>  
-        <CollapsibleTable data={currNeeders} /> 
+            </div>
+        <CollapsibleTable data={currNeeders}/> 
         </div>
     );
 };
