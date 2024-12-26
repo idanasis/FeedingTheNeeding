@@ -1,11 +1,13 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,8 +44,10 @@ public class AuthController {
         try{
             authService.registerDonor(registrationRequest);
             return ResponseEntity.ok("Donor successfully registered");
+        }catch (UserAlreadyExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Registration failed. Please try again later.");
         }
     }
 
