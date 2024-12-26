@@ -153,6 +153,43 @@ input:focus {
     margin-left: 4px; /* Adds spacing between the label and the asterisk */
 }
 
+.success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f8f8f8;
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    width: 400px;
+}
+
+.success-popup p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.success-popup button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.success-popup button:hover {
+    background-color: #45a049;
+}
+
+
 @media screen and (max-width: 768px) {
     .register-container {
         width: 95%;
@@ -221,40 +258,6 @@ input:focus {
     .checkbox-group input[type="checkbox"] {
         transform: scale(1); /* שומר על גודל אחיד במכשירים קטנים */
     }
-}
-
-.success-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #d32f2f;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    width: 300px;
-}
-
-.success-popup p {
-    margin: 0;
-}
-
-.success-popup button {
-    margin-top: 10px;
-    background-color: #fff;
-    color: #d32f2f;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.success-popup button:hover {
-    background-color: #f1f1f1;
 }
 
 @media screen and (max-width: 600px) {

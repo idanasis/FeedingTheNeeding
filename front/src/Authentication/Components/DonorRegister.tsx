@@ -30,6 +30,11 @@ const DonorRegister: React.FC = () => {
         setHasNoCriminalRecord(e.target.checked);
     };
 
+    const handleSuccessConfirmation = () => {
+        setSuccessMessage(false);
+        navigate('/login');
+    };
+
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
@@ -62,7 +67,6 @@ const DonorRegister: React.FC = () => {
         try {
             await registerDonor(formData);
             setSuccessMessage(true);
-            setTimeout(() => navigate('/login'), 2000);
         } catch (error: any){
             if(error.message === "User already exists")
                 setError("מספר הטלפון כבר קיים במערכת")
@@ -218,9 +222,12 @@ const DonorRegister: React.FC = () => {
 
             {successMessage && (
                 <div className="success-popup">
-                    <p>ההרשמה בוצעה בהצלחה!</p>
+                    <p>הנתונים נקלטו במערכת בהצלחה!</p>
+                    <p>פרטיך הועברו לרכזת, ניצור איתך קשר לאחר אישורך.</p>
+                    <button onClick={handleSuccessConfirmation}>אישור</button>
                 </div>
             )}
+
         </div>
     );
 };
