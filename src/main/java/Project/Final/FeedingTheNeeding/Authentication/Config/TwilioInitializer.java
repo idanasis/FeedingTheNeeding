@@ -17,16 +17,11 @@ public class TwilioInitializer {
     public TwilioInitializer(TwilioSMSConfig twilioSMSConfig) {
         this.twilioSMSConfig = twilioSMSConfig;
 
-        // Log values to verify they are loaded correctly
-        System.out.println("Account SID: " + twilioSMSConfig.getAccountSid());
-        System.out.println("Auth Token: " + twilioSMSConfig.getAuthToken());
-        System.out.println("Phone Number: " + twilioSMSConfig.getTrialNumber());
-
         Twilio.init(
                 twilioSMSConfig.getAccountSid(),
                 twilioSMSConfig.getAuthToken()
         );
-        logger.info("Twilio initialized successfully");
-    }
 
+        logger.info("Twilio initialized with SID: {}", twilioSMSConfig.getAccountSid());
+    }
 }
