@@ -66,5 +66,12 @@ public class CookController {
         }
     }
 
-    //maybe add some function for actually submitting it? maybe later
+    @GetMapping("cook/getDate/{date}")
+    public ResponseEntity<?> getAllConstraintsByDate(@PathVariable LocalDate date){
+        try{
+            return ResponseEntity.ok(cs.getAllCookOnDate(date));
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }
