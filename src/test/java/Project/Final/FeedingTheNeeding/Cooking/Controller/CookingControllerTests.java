@@ -85,7 +85,7 @@ public class CookingControllerTests {
     void testSubmitConstraints() throws Exception {
         when(cookingService.submitConstraints(any(CookConstraints.class))).thenReturn(validConstraints);
 
-        mockMvc.perform(post("/cooking/constraints")
+        mockMvc.perform(post("/cooking/submit/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
@@ -97,7 +97,7 @@ public class CookingControllerTests {
     void testSubmitConstraintsFail() throws Exception {
         when(cookingService.submitConstraints(any(CookConstraints.class))).thenThrow(new IllegalArgumentException("Invalid constraints"));
 
-        mockMvc.perform(post("/cooking/constraints")
+        mockMvc.perform(post("/cooking/submit/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidConstraints)))
                 .andExpect(status().isBadRequest());
@@ -107,7 +107,7 @@ public class CookingControllerTests {
 
     @Test
     void testRemoveConstraint() throws Exception {
-        mockMvc.perform(delete("/cooking/constraints")
+        mockMvc.perform(delete("/cooking/remove/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
@@ -119,7 +119,7 @@ public class CookingControllerTests {
     void testRemoveConstraintFail() throws Exception {
         doThrow(new IllegalArgumentException("Constraint not found")).when(cookingService).removeConstraint(validConstraints);
 
-        mockMvc.perform(delete("/cooking/constraints")
+        mockMvc.perform(delete("/cooking/remove/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isBadRequest());
