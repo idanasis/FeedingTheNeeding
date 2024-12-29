@@ -2,7 +2,7 @@ import { NeederTrackingModel } from "../models/NeederTrackingModel";
 import axios from 'axios';
 import { Needy } from "../models/NeedyModel";
 const neederUrl="http://localhost:8080/needer"
-const socialUrl="http://localhost:8080/social/"
+export const socialUrl="http://localhost:8080/social/"
 export const getAllNeederTracking= async (date: Date) => {
     try{
         const response =  await axios.get(neederUrl+"/needy-tracking?date="+date.toISOString().split('T')[0],

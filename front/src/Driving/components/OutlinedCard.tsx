@@ -13,13 +13,13 @@ const OutlinedCard = ({ visit }: { visit: Visit }) => {
           <Typography gutterBottom sx={{ color: 'text.primary', fontSize: 12 }}>
             {visit.firstName} {visit.lastName}
           </Typography>
-          <Typography variant="h5" component="div" sx={{ color: 'text.secondary', fontSize: 10 }}>
+          <Typography variant="h5" component="div" sx={{ color: 'text.secondary', fontSize: 9 }}>
             {visit.phoneNumber}
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 10 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 9 }}>
             {visit.address}    
           </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 10 }}>
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontSize: 9 }}>
           {'שעת הגעה מקסימלית: ' + visit.maxHour}
           </Typography>
         </CardContent>

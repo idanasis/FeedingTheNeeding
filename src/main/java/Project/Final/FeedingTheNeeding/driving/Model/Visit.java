@@ -2,6 +2,8 @@ package Project.Final.FeedingTheNeeding.driving.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,6 +30,7 @@ public class Visit {
     private String lastName;
     private String phoneNumber;
     private int maxHour;
+    @Enumerated(EnumType.STRING)
     private VisitStatus status;
     private int priority;
     @Column(length = 1000)
