@@ -2,15 +2,15 @@ import axios from 'axios';
 
 const API_BASE_URL = 'http://localhost:8080';
 
+
 export interface CookConstraintsData {
     cookId: long;
-    TakingTime: LocalTime; //maybe change this, array of time ranges
+    startTime: string;
+    endTime: string;
     PlatesNum: int;
     location: string;
-    date: LocalDate; //maybe from enum of two days?
+    date: LocalDate;
 }
-
-
 
 export const submitConstraints = async (data : CookConstraintsData) : Promise<void> => {
     try{

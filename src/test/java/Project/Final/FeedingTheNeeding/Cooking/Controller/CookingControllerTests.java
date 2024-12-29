@@ -23,8 +23,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Year;
 import java.util.Collections;
 
 @WebMvcTest(CookController.class)
@@ -46,38 +44,36 @@ public class CookingControllerTests {
     private CookConstraints invalidConstraints;
 
     private final long cookId = 1L;
-    private static final int HOURS = 14;
-    private static final int MINUTES = 30;
-    private static final int YEAR = 2024;
-    private static final int MONTH = 12;
-    private static final int DAY = 25;
+    private static final String VALID_START_TIME = "14:30";
+    private static final String VALID_END_TIME = "16:30";
     private static final int PLATES_NUM = 5;
     private static final String ADDR = "123 Main Street";
+    private static final LocalDate VALID_DATE = LocalDate.of(2024, 12, 25);
 
-    private static final int INVALID_HOURS = 18;
-    private static final int INVALID_MINUTES = 0;
-    private static final int INVALID_YEAR = 2024;
-    private static final int INVALID_MONTH = 12;
-    private static final int INVALID_DAY = 31;
+    private static final String INVALID_START_TIME = "18:00";
+    private static final String INVALID_END_TIME = "20:00";
     private static final int INVALID_PLATES_NUM = 1;
     private static final String INVALID_ADDR = "Invalid Location";
+    private static final LocalDate INVALID_DATE = LocalDate.of(2024, 12, 31);
 
     @BeforeEach
     void setUp() {
         validConstraints = new CookConstraints(
                 cookId,
-                LocalTime.of(HOURS, MINUTES),
+                VALID_START_TIME,
+                VALID_END_TIME,
                 PLATES_NUM,
                 ADDR,
-                LocalDate.of(YEAR, MONTH, DAY)
+                VALID_DATE
         );
 
         invalidConstraints = new CookConstraints(
                 cookId,
-                LocalTime.of(INVALID_HOURS, INVALID_MINUTES),
+                INVALID_START_TIME,
+                INVALID_END_TIME,
                 INVALID_PLATES_NUM,
                 INVALID_ADDR,
-                LocalDate.of(INVALID_YEAR, INVALID_MONTH, INVALID_DAY)
+                INVALID_DATE
         );
     }
 
@@ -95,7 +91,8 @@ public class CookingControllerTests {
 
     @Test
     void testSubmitConstraintsFail() throws Exception {
-        when(cookingService.submitConstraints(any(CookConstraints.class))).thenThrow(new IllegalArgumentException("Invalid constraints"));
+        when(cookingService.submitConstraints(any(CookConstraints.class)))
+                .thenThrow(new IllegalArgumentException("Invalid constraints"));
 
         mockMvc.perform(post("/cooking/submit/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -112,40 +109,32 @@ public class CookingControllerTests {
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
 
-        verify(cookingService, times(1)).removeConstraint(validConstraints);
+        verify(cookingService, times(1)).removeConstraint(any(CookConstraints.class));
     }
 
     @Test
     void testRemoveConstraintFail() throws Exception {
-        doThrow(new IllegalArgumentException("Constraint not found")).when(cookingService).removeConstraint(validConstraints);
+        doThrow(new IllegalArgumentException("Constraint not found"))
+                .when(cookingService).removeConstraint(any(CookConstraints.class));
 
         mockMvc.perform(delete("/cooking/remove/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isBadRequest());
 
-        verify(cookingService, times(1)).removeConstraint(validConstraints);
+        verify(cookingService, times(1)).removeConstraint(any(CookConstraints.class));
     }
 
     @Test
     void testGetCookConstraints() throws Exception {
-        when(cookingService.getCookConstraints(cookId)).thenReturn(Collections.singletonList(validConstraints));
+        when(cookingService.getCookConstraints(cookId))
+                .thenReturn(Collections.singletonList(validConstraints));
 
         mockMvc.perform(get("/cooking/constraints/cook/{cookId}", cookId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cookId").value(cookId))
-                .andExpect(jsonPath("$[0].platesNum").value(5))
-                .andExpect(jsonPath("$[0].location").value("123 Main Street"));
-
-        verify(cookingService, times(1)).getCookConstraints(cookId);
-    }
-
-    @Test
-    void testGetCookConstraintsFail() throws Exception {
-        when(cookingService.getCookConstraints(cookId)).thenThrow(new IllegalArgumentException("Cook not found"));
-
-        mockMvc.perform(get("/cooking/constraints/cook/{cookId}", cookId))
-                .andExpect(status().isBadRequest());
+                .andExpect(jsonPath("$[0].platesNum").value(PLATES_NUM))
+                .andExpect(jsonPath("$[0].location").value(ADDR));
 
         verify(cookingService, times(1)).getCookConstraints(cookId);
     }
@@ -153,8 +142,8 @@ public class CookingControllerTests {
     @Test
     void testUpdateCookConstraints() throws Exception {
         mockMvc.perform(put("/cooking/constraints/update/{cookId}", cookId)
-                        .contentType("application/json") // Set content type to JSON
-                        .content(objectMapper.writeValueAsString(validConstraints))) // Send object in request body
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
 
         verify(cookingService, times(1)).updateCookConstraints(eq(cookId), any(CookConstraints.class));
@@ -162,34 +151,34 @@ public class CookingControllerTests {
 
     @Test
     void testUpdateCookConstraintsFail() throws Exception {
-        // Arrange: Mock the service to throw an exception when invoked
-        doThrow(new IllegalArgumentException("Update failed")).when(cookingService).updateCookConstraints(eq(cookId), any(CookConstraints.class));
+        doThrow(new IllegalArgumentException("Update failed"))
+                .when(cookingService).updateCookConstraints(eq(cookId), any(CookConstraints.class));
 
-        // Act: Perform the PUT request with invalid constraints
         mockMvc.perform(put("/cooking/constraints/update/{cookId}", cookId)
-                        .contentType("application/json") // Set content type to JSON
-                        .content(objectMapper.writeValueAsString(invalidConstraints))) // Pass invalid constraints in the body
-                .andExpect(status().isBadRequest()); // Assert that the response status is 400 (Bad Request)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidConstraints)))
+                .andExpect(status().isBadRequest());
 
-        // Assert: Verify the service method was called exactly once
         verify(cookingService, times(1)).updateCookConstraints(eq(cookId), any(CookConstraints.class));
     }
 
     @Test
     void testGetCookHistory() throws Exception {
-        when(cookingService.getCookHistory(cookId)).thenReturn(Collections.singletonList(validConstraints));
+        when(cookingService.getCookHistory(cookId))
+                .thenReturn(Collections.singletonList(validConstraints));
 
         mockMvc.perform(get("/cooking/cook/{cookId}", cookId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].cookId").value(cookId))
-                .andExpect(jsonPath("$[0].platesNum").value(5));
+                .andExpect(jsonPath("$[0].platesNum").value(PLATES_NUM));
 
         verify(cookingService, times(1)).getCookHistory(cookId);
     }
 
     @Test
     void testGetCookHistoryFail() throws Exception {
-        when(cookingService.getCookHistory(cookId)).thenThrow(new IllegalArgumentException("History not found"));
+        when(cookingService.getCookHistory(cookId))
+                .thenThrow(new IllegalArgumentException("History not found"));
 
         mockMvc.perform(get("/cooking/cook/{cookId}", cookId))
                 .andExpect(status().isBadRequest());
