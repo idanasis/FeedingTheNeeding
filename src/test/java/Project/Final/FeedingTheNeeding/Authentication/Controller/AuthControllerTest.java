@@ -117,7 +117,7 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/register/donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andExpect(content().string("Donor already exists"));
     }
 

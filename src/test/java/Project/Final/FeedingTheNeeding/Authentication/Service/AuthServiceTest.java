@@ -1,9 +1,6 @@
 package Project.Final.FeedingTheNeeding.Authentication.Service;
 
-import Project.Final.FeedingTheNeeding.Authentication.DTO.AuthenticationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.VerifyDonorDTO;
+import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.AccountNotVerifiedException;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
@@ -50,6 +47,9 @@ public class AuthServiceTest {
 
     @Mock
     private EmailService emailService;
+
+    @Mock
+    private TwilioSmsSender smsSender;
 
     @InjectMocks
     private AuthService authService;
@@ -145,6 +145,7 @@ public class AuthServiceTest {
 
     @Test
     void registerDonor_ValidRequest_Success() {
+        doNothing().when(smsSender).sendSms(any(SmsRequest.class));
         when(donorRepository.findByPhoneNumber(donorRegistrationRequest.getPhoneNumber())).thenReturn(Optional.empty());
         when(passwordEncoder.encode(donorRegistrationRequest.getPassword())).thenReturn("encodedPassword");
         when(donorRepository.save(any(Donor.class))).thenAnswer(i -> i.getArgument(0));

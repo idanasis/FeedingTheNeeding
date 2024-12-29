@@ -15,6 +15,7 @@ import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,16 +34,18 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private final SmsSender smsSender;
 
     private static final Logger logger = LogManager.getLogger(AuthService.class);
 
-    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService) {
+    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, @Qualifier("twilio") TwilioSmsSender smsSender) {
         this.donorRepository = donorRepository;
         this.needyRepository = needyRepository;
         this.userCredentialsRepository = userCredentialsRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
+        this.smsSender = smsSender;
     }
 
     public UserCredentials authenticate(AuthenticationRequest authenticationRequest) {
@@ -94,15 +97,13 @@ public class AuthService {
         Donor donor = new Donor();
         if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
             donor.setEmail(registrationRequest.getEmail());
-            donor.setVerificationCode(generateVerificationCode());
-            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
             sendVerificationEmail(donor);
         }
         else{
             donor.setEmail(null);
-            donor.setVerificationCode(null);
-            donor.setVerificationCodeExpiresAt(null);
         }
+        donor.setVerificationCode(generateVerificationCode());
+        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
         donor.setVerified(true);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
@@ -112,6 +113,7 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
+        sendSms(donor);
 
         Donor savedDonor = donorRepository.save(donor);
 
@@ -181,6 +183,17 @@ public class AuthService {
             logger.info("end-send verification email - failed, for email: {}", donor.getEmail());
             throw new UserDoesntExistsException("cant send verification email"); // change the error type
         }
+    }
+
+    public void sendSms(Donor donor) {
+        logger.info("start-send sms, for phoneNumber: {}", donor.getPhoneNumber());
+
+        String verificationCode = donor.getVerificationCode();
+        String message = verificationCode + "  :קוד האימות שלך הוא";
+        String phoneNumber = "+972" + donor.getPhoneNumber().substring(1);
+        SmsRequest smsRequest = new SmsRequest(phoneNumber, message);
+        smsSender.sendSms(smsRequest);
+        logger.info("end-send sms, for phoneNumber: {}", smsRequest.getPhoneNumber());
     }
 
     public String generateVerificationCode() {

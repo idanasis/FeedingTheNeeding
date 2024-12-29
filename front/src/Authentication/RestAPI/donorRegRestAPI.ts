@@ -28,6 +28,8 @@ export const registerDonor = async (data: DonorRegistrationData): Promise<void> 
         console.log('Registration successful:', response.data);
     } catch (error: any) {
         console.error('Error during registration:', error.response?.data || error.message);
+        if(error.response?.status === 409)
+            throw new Error("User already exists");
         throw new Error(error.response?.data || 'Registration failed. Please try again later.');
     }
 };

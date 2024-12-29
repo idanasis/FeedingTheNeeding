@@ -119,6 +119,77 @@ input:focus {
     color: #d32f2f;
 }
 
+.checkbox-group {
+    display: flex;
+    align-items: center; /* Ensures vertical alignment */
+    justify-content: flex-start; /* Aligns items to the right in RTL */
+    margin-top: 5px;
+    margin-bottom: 10px;
+    width: 100%;
+    direction: rtl; /* Right-to-left layout */
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-left: 10px; /* Adds space between the checkbox and the label */
+    transform: scale(1.2); /* Makes the checkbox smaller */
+    width: auto; /* Default size */
+    height: auto; /* Default size */
+    cursor: pointer; /* Adds a pointer cursor */
+}
+
+.checkbox-label {
+    font-size: 16px; /* Text size */
+    color: #333; /* Text color */
+    display: inline-block; /* Ensures label stays inline */
+    cursor: pointer; /* Adds a pointer cursor */
+    text-align: right; /* Aligns text to the right */
+}
+
+
+
+.required-asterisk {
+    color: red;
+    font-weight: bold;
+    margin-left: 4px; /* Adds spacing between the label and the asterisk */
+}
+
+.success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #f8f8f8;
+    color: #333;
+    padding: 20px;
+    border-radius: 8px;
+    font-size: 20px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 9999;
+    width: 400px;
+}
+
+.success-popup p {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.success-popup button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.success-popup button:hover {
+    background-color: #45a049;
+}
+
+
 @media screen and (max-width: 768px) {
     .register-container {
         width: 95%;
@@ -145,6 +216,10 @@ input:focus {
 
     .logo-image {
         width: 120px;
+    }
+
+    .checkbox-label {
+        font-size: 13px;
     }
 }
 
@@ -175,40 +250,14 @@ input:focus {
     .logo-image {
         width: 100px;
     }
-}
 
-.success-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #d32f2f;
-    color: white;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 16px;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    width: 300px;
-}
+    .checkbox-label {
+        font-size: 12px;
+    }
 
-.success-popup p {
-    margin: 0;
-}
-
-.success-popup button {
-    margin-top: 10px;
-    background-color: #fff;
-    color: #d32f2f;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.success-popup button:hover {
-    background-color: #f1f1f1;
+    .checkbox-group input[type="checkbox"] {
+        transform: scale(1); /* שומר על גודל אחיד במכשירים קטנים */
+    }
 }
 
 @media screen and (max-width: 600px) {
