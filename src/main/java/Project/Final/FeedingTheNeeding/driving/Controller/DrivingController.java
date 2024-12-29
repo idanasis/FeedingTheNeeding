@@ -41,7 +41,7 @@ public class DrivingController {
         }
     }
 
-    @GetMapping("/constraints/date/{date}")
+    @GetMapping("/constraints/{date}")
     public ResponseEntity<?> getDateConstraints(@PathVariable String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);

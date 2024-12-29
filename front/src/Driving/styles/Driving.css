@@ -1,0 +1,28 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      width: 100%;
+    }
+  }
+  /* Required for react-beautiful-dnd */
+.droppable {
+    display: flex;
+    flex-direction: column;
+    touch-action:none
+  }
+  
+  .draggable {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    touch-action:none
+  }
+  

@@ -5,6 +5,7 @@ import ResponsiveNeedyTable from './Social/components/needyPending';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from "./Authentication/Components/Login";
 import DonorRegister from "./Authentication/Components/DonorRegister";
+import DrivingManager from "./Driving/components/DrivingManagement";
 
 
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/neederPending" element={<ResponsiveNeedyTable />} />
             <Route path="/login" element={<Login />} />
             <Route path="/donorRegister" element={< DonorRegister />} />
+            <Route path="/driving" element={<DrivingManager />}/>
         </Routes>
       </Router>
   );
