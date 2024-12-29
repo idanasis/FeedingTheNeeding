@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -21,7 +21,7 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
-import { addRoute, getDriversConstraints } from '../../Restapi/DrivingRestapi';
+import { addRoute, getDriversConstraints, getNeedersHere, getRoutes, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
 import { getNearestFriday } from '../../commons/Commons';
@@ -29,9 +29,7 @@ import { getNearestFriday } from '../../commons/Commons';
 
 const initialData = {
   routes: [
-    {id:1, visit: [] ,status:"פורסם"},
-    {id:2, visit: [],status:"פורסם" },
-  ],
+  ] as Route[],
   pickup: [
     {
       address: '123 Main St',
@@ -39,6 +37,7 @@ const initialData = {
       lastName: 'Doe',
       phoneNumber: '123-456-7890',
       maxHour: 16,
+      status: "Pickup"
     },
     {
       address: '456 Park Ave',
@@ -46,6 +45,7 @@ const initialData = {
       lastName: 'Smith',
       phoneNumber: '987-654-3210',
       maxHour: 20,
+      status: "Pickup"
     },
     {
       address: '456 Park Ass',
@@ -53,6 +53,7 @@ const initialData = {
       lastName: 'mitchell',
       phoneNumber: '987-654-3210',
       maxHour: 19,
+      status: "Pickup"
     },
     {
       address: '123 exce',
@@ -60,17 +61,10 @@ const initialData = {
       lastName: 'relee',
       phoneNumber: '987-654-2340',
       maxHour: 18,
+      status: "Pickup"
     },
   ],
-  drop: [
-    {
-      address: '789 Elm St',
-      firstName: 'Alice',
-      lastName: 'Brown',
-      phoneNumber: '555-123-4567',
-      maxHour: 17,
-    },
-  ],
+  drop: [] as Visit[],
 };
 export interface Data {
   routes: Route[],
@@ -116,13 +110,28 @@ const DrivingManager = () => {
   
   useEffect(() => {
           async function fetchDrivers() {
+            try{
               const data=await getDriversConstraints(date);
-              if(data===null)
-                  alert('אין נתונים להצגה')
-              else
-                  setDrivers(data)
+              setDrivers(data)
+            }catch(err){
+              alert("תקלה בהצגת הנתונים");
+            }
+          }
+          async function getDrops(){
+            try{
+              const data=await getNeedersHere(date);
+                  const updatedData={...initialData};
+                  updatedData.drop=data;
+                const routes=await getRoutes(date);
+                updatedData.routes=routes;
+                setData(updatedData);
+              }catch(err){
+                alert("תקלה בהצגת הנתונים");
+                console.error(err);
+              }
           }
           fetchDrivers();
+          getDrops();
       }, []);
   const handleDateChange = (newDate:dayjs.Dayjs|null ) => {
           const d =newDate===null?dayjs(Date.now()).toDate():newDate.toDate();
@@ -205,12 +214,12 @@ const DrivingManager = () => {
         </Typography>
         <Typography variant="body2">{visit.address}</Typography>
         <Typography variant="body2">{visit.phoneNumber}</Typography>
-        <Typography variant="body2">הערות: {visit.notes}</Typography>
+        <Typography variant="body2">הערות: {visit.note}</Typography>
       </CardContent>
     </Card>
   );
   const upButton =(index:number,idx:number,route: Route)=>{
-    if(idx!==0){
+    if(idx!==0&&(idx!==1||route.driverId===undefined||route.driverId===0)){
       return <IconButton color="primary" aria-label="up" data-no-drag onClick={(e)=>{
         e.stopPropagation();
         handleUp(index,idx)}} >
@@ -220,7 +229,7 @@ const DrivingManager = () => {
     return null;
   }
   const downButton =(index:number,idx:number,route: Route)=>{
-    if(idx!==route.visit.length-1){
+    if(idx!==route.visit.length-1&&(idx!==0||route.driverId===undefined||route.driverId===0)){
       return <IconButton color="primary" aria-label="down" data-no-drag onClick={(e) => {
         e.stopPropagation();
         handleDown(index,idx)
@@ -285,10 +294,30 @@ const DrivingManager = () => {
       routes: updatedRoutes,
     });
   }
+  const handleDriverChange = async(e: React.ChangeEvent<{ value: unknown }>, index: number) => {
+    try{
+    const route=data.routes[index] as Route;
+    route.driverId=parseInt(e.target.value as string);
+    const updatedRoutes = [...data.routes];
+    route.driver = driver.find(d => d.id === parseInt(e.target.value as string)) as Donor;
+    route.driverId = parseInt(e.target.value as string);
+    const visit={address:updatedRoutes[index].driver?.address as string,firstName:updatedRoutes[index].driver?.firstName as string,lastName:updatedRoutes[index].driver?.lastName as string,phoneNumber:updatedRoutes[index].driver?.phoneNumber as string,maxHour:0,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0};
+    route.visit.unshift(visit);
+    await updateRoute(route);
+    updatedRoutes[index]=route;
+    setData({ ...data, routes: updatedRoutes });
+    }catch(err){
+      console.error(err);
+      alert('תקלה בשמירת הנתונים');
+    }
+  }
+  const handlePublish = async(index:number) => {
 
+  }
   return (
     <div style={{ marginTop: '50rem',overflowY: 'auto'}}>
     <ResponsiveDatePickers onDateChange={handleDateChange} />
+    <Button variant="contained" color="primary" sx={{marginRight:10}} >פרסם הכל</Button>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         <Box display="flex" justifyContent="space-between" gap={2}>
@@ -318,22 +347,15 @@ const DrivingManager = () => {
                 <Select
                   value={route.driverId||'לא נבחר'}
                   label="Driver"
-                  onChange={(e) => {
-                    const updatedRoutes = [...data.routes];
-                    console.log(e.target.value);
-                    updatedRoutes[index].driverId = parseInt(e.target.value as string);
-                    updatedRoutes[index].driver = driver.find(d => d.id === parseInt(e.target.value as string)) as Donor;
-                    const visit={address:updatedRoutes[index].driver?.address as string,firstName:updatedRoutes[index].driver?.firstName as string,lastName:updatedRoutes[index].driver?.lastName as string,phoneNumber:updatedRoutes[index].driver?.phoneNumber as string,maxHour:0,notes:updatedRoutes[index].driver.requests};
-                    updatedRoutes[index].visit.unshift(visit);
-                    setData({ ...data, routes: updatedRoutes });
+                  onChange={async(e:any) => {await handleDriverChange(e, index);        
                   }}
                 >
                   {driver.map((driver, index) => (
                     <MenuItem key={index} value={driver.id}>{driver.firstName+' '+driver.lastName}</MenuItem>
                   ))}
                 </Select>
-                <Typography variant="body2">פורסם: {route.status}</Typography>
-                <Button variant="contained" color="primary" >פרסם</Button>
+                <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
+                {!route.submitted?<Button variant="contained" color="primary" >פרסם</Button>:null}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}

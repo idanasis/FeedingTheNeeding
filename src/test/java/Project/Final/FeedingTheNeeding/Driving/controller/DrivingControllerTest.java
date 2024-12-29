@@ -25,6 +25,7 @@ import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
+import Project.Final.FeedingTheNeeding.driving.Model.Visit;
 import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import java.time.LocalDate;
@@ -49,11 +50,11 @@ public class DrivingControllerTest {
     final Long driverId=1L,routeId=1L,visitId = 1L;
     String status = VisitStatus.Deliver.name();
     LocalDate date = LocalDate.now();
-    private final int priority = 1;
-
+    private Visit visit;
     @BeforeEach
     void setUp() {
         route = new Route(date);
+        visit = new Visit("address", "firstName", "lastName", "phoneNumber", 1, VisitStatus.Deliver, "note", route, 1);
     }
 
     @Test
@@ -232,45 +233,42 @@ public class DrivingControllerTest {
         
         mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visitId))
-                .param("status", status)
-                .param("priority", String.valueOf(priority)))   
+                .content(objectMapper.writeValueAsString(visit))) 
                 .andExpect(status().isOk());
 
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
+        verify(drivingService, times(1)).addAddressToRoute(routeId, visit);
     }
     @Test
     void testAddAddressToRouteFail() throws Exception {
-        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
+        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visit);
 
         mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visitId))
-                .param("status", status)
-                .param("priority", String.valueOf(priority)))  
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(visit)))   
                 .andExpect(status().isBadRequest());
 
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
+        verify(drivingService, times(1)).addAddressToRoute(routeId, visit);
     }
     @Test
     void testRemoveAddressFromRoute() throws Exception {
         mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visitId)))
+                .content(objectMapper.writeValueAsString(visit)))
                 .andExpect(status().isOk());
 
-        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visitId);
+        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visit);
     }
     @Test
     void testRemoveAddressFromRouteFail() throws Exception {
-        doThrow(new IllegalArgumentException()).when(drivingService).removeAddressFromRoute(routeId, visitId);
+        doThrow(new IllegalArgumentException()).when(drivingService).removeAddressFromRoute(routeId, visit);
 
         mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visitId)))
+                .content(objectMapper.writeValueAsString(visit)))
                 .andExpect(status().isBadRequest());
 
-        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visitId);
+        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visit);
     }
     @Test
     void testGetRoute() throws Exception {

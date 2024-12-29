@@ -220,11 +220,11 @@ class DrivingFascadeTest {
         assertEquals(route.getDate(), result.getDate());
     }
     @Test
-    void testAddVisitDe() {
+    void testAddVisit() {
         when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
         when(neederTrackingService.getNeedyFromNeederTrackingId(anyLong())).thenReturn(needySimpleDTO);
         when(routeRepository.save(any(Route.class))).thenReturn(route);
-        drivingFascade.addAddressToRoute(routeId, visitId, VisitStatus.Deliver, priority);
+        drivingFascade.addAddressToRoute(routeId, visit);
         assertEquals(1, route.getVisit().size());
         assertEquals(note, route.getVisit().get(0).getNote());
         verify(routeRepository, times(1)).save(route);
@@ -234,17 +234,17 @@ class DrivingFascadeTest {
         when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
         when(routeRepository.save(route)).thenReturn(route);
         route.addVisit(visit);
-        drivingFascade.removeAddressFromRoute(routeId, route.getVisit().get(0).getVisitId());
+        drivingFascade.removeAddressFromRoute(routeId, visit);
         assertEquals(0, route.getVisit().size());
         verify(routeRepository, times(1)).save(route);
     }
     @Test
     void testRemoveVisitNotFound(){
         when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
-        route.addVisit(visit);
+
         assertThrows(
                 VisitNotExistException.class,
-                () -> drivingFascade.removeAddressFromRoute(routeId, visitId)
+                () -> drivingFascade.removeAddressFromRoute(routeId, visit)
         );
     }
 
