@@ -34,7 +34,7 @@ const NeederTracking = () => {
       };
 
     return (
-        <div style={{ backgroundColor: "snow"}}>
+        <div className='social-need-tracking' style={{ backgroundColor: "snow"}}>
             <img src={FeedingLogo} alt="Logo"style={{
           position: "absolute",
           top: "1px",

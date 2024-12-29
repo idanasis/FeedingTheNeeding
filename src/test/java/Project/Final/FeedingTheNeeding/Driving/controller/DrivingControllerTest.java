@@ -94,7 +94,7 @@ public class DrivingControllerTest {
     void testGetDateConstraints() throws Exception {
         when(drivingService.getDateConstraints(any(LocalDate.class))).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/driving/constraints/date/{date}", date.toString()))
+        mockMvc.perform(get("/driving/constraints/{date}", date.toString()))
                 .andExpect(status().isOk());
 
         verify(drivingService, times(1)).getDateConstraints(date);
@@ -103,7 +103,7 @@ public class DrivingControllerTest {
     void testGetDateConstraintsFail() throws Exception {
         when(drivingService.getDateConstraints(any(LocalDate.class))).thenThrow(new IllegalArgumentException());
 
-        mockMvc.perform(get("/driving/constraints/date/{date}", date.toString()))
+        mockMvc.perform(get("/driving/constraints/{date}", date.toString()))
                 .andExpect(status().isBadRequest());
 
         verify(drivingService, times(1)).getDateConstraints(date);
