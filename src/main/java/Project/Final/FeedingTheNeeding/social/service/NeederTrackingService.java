@@ -81,7 +81,7 @@ public class NeederTrackingService {
         NeederTracking neederTracking = new NeederTracking();
         neederTracking.setNeedy(needer);
         neederTracking.setDate(date);
-        neederTracking.setWeekStatus(WeekStatus.Here);
+        neederTracking.setWeekStatus(WeekStatus.NotHere);
         neederTrackingRepository.save(neederTracking);
         logger.info("NeederTracking added for Needy={} on date={}",needer.getId(),date);
     }

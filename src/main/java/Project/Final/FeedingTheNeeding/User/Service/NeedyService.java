@@ -72,6 +72,6 @@ public class NeedyService {
         for(Needy needy : diff) {
             neederTrackingService.addNeederTracking(needy, localDate);
         }
-        return allTracking;
+        return neederTrackingService.getAllNeedersTrackingsByDate(localDate);
     }
 }
