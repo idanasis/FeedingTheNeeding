@@ -5,5 +5,6 @@ export interface Visit {
     lastName: string;
     phoneNumber: string;
     maxHour: number;
+    notes?: string;
     
   }

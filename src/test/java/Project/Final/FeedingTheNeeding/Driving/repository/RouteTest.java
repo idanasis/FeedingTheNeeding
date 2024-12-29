@@ -33,14 +33,14 @@ public class RouteTest {
     final String firstName = "John";
     final String lastName = "Doe";
     final String phoneNumber = "0541234567";
-    final int maxHour = 14;
-    final String note = "some Note";
-    final long driverId = 1;
-    final LocalDate date = LocalDate.now();
+    final int maxHour = 14,maxHour2=15, priority = 1,priority2=2;
+    final String note = "some Note", note2 = "some another note";
+    final long driverId = 1,driverId2 = 2;
+    final LocalDate date = LocalDate.now(),date2 = LocalDate.now().plusDays(1);
     @BeforeEach
     void setUp() {
         route = new Route(driverId, date);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route);
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority);
     }
     @Test
     void testCreateFindRoute() {
@@ -103,6 +103,7 @@ public class RouteTest {
         assertEquals(maxHour,route2.getVisit().get(0).getMaxHour());
         assertEquals(VisitStatus.Deliver,route2.getVisit().get(0).getStatus());
         assertEquals(note,route2.getVisit().get(0).getNote());
+        assertEquals(priority, route2.getVisit().get(0).getPriority());
     }
     @Test
     public void testRemoveVisit() {
@@ -131,6 +132,37 @@ public class RouteTest {
         routeRepository.save(route2);
         Route route3 = routeRepository.findById(route.getRouteId()).get();
         assertEquals(0,route3.getVisit().size());
+    }
+    @Test
+    void testSetters(){
+        routeRepository.save(route);
+        Route route1 = routeRepository.findById(route.getRouteId()).get();
+        route1.setDate(date2); 
+        route1.setDriverId(driverId2);
+        Visit visit2=new Visit();
+        visit2.setAddress(address);
+        visit2.setFirstName(firstName);
+        visit2.setLastName(lastName);
+        visit2.setMaxHour(maxHour2);
+        visit2.setPhoneNumber(phoneNumber);
+        visit2.setPriority(priority2);
+        visit2.setRoute(route1);
+        visit2.setStatus(VisitStatus.Deliver);
+        visit2.setNote(note2);
+        route1.addVisit(visit2);
+        routeRepository.save(route1);
+        Route route2 = routeRepository.findById(route.getRouteId()).get();
+        assertEquals(date2,route2.getDate());
+        assertEquals(driverId2,route2.getDriverId());
+        assertEquals(1,route2.getVisit().size());
+        assertEquals(address,route2.getVisit().get(0).getAddress());
+        assertEquals(firstName,route2.getVisit().get(0).getFirstName());
+        assertEquals(lastName,route2.getVisit().get(0).getLastName());
+        assertEquals(phoneNumber,route2.getVisit().get(0).getPhoneNumber());
+        assertEquals(maxHour2,route2.getVisit().get(0).getMaxHour());
+        assertEquals(VisitStatus.Deliver,route2.getVisit().get(0).getStatus());
+        assertEquals(note2,route2.getVisit().get(0).getNote());
+        assertEquals(priority2, route2.getVisit().get(0).getPriority());
     }
 
 }

@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.Driving.controller;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,6 +49,7 @@ public class DrivingControllerTest {
     final Long driverId=1L,routeId=1L,visitId = 1L;
     String status = VisitStatus.Deliver.name();
     LocalDate date = LocalDate.now();
+    private final int priority = 1;
 
     @BeforeEach
     void setUp() {
@@ -231,22 +233,24 @@ public class DrivingControllerTest {
         mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(visitId))
-                .param("status", status))
+                .param("status", status)
+                .param("priority", String.valueOf(priority)))   
                 .andExpect(status().isOk());
 
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
     }
     @Test
     void testAddAddressToRouteFail() throws Exception {
-        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
 
         mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(visitId))
-                .param("status", status))
+                .param("status", status)
+                .param("priority", String.valueOf(priority)))  
                 .andExpect(status().isBadRequest());
 
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+        verify(drivingService, times(1)).addAddressToRoute(routeId, visitId, VisitStatus.Deliver,priority);
     }
     @Test
     void testRemoveAddressFromRoute() throws Exception {

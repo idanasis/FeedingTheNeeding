@@ -56,7 +56,6 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
       const value=event.target.value;
       const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,city:row.city,familySize:row.details[0].familySize},weekStatus:value,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
       const res=await updateNeederTracking(index,neederTrackingModel);
-      console.log(res.status);
       const updatedRow = { ...row, weekStatus: value };
       setRow(updatedRow);
       setOpen(false);

@@ -101,12 +101,12 @@ public class DrivingFascade {
         logger.info("submitAllRoutes with date {} done", date);
     }
 
-    public void addAddressToRoute(long routeId,long visitId,VisitStatus status){ 
+    public void addAddressToRoute(long routeId,long visitId,VisitStatus status,int priority){ 
         logger.info("addAddressToRoute with route id={} and visitId= {} and status", routeId, visitId,status);
         Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
         if(status==VisitStatus.Deliver){    
             NeedySimpleDTO needySimpleDTO=neederTrackingService.getNeedyFromNeederTrackingId(visitId);
-            Visit visit = new Visit(needySimpleDTO.getAddress(), needySimpleDTO.getFirstName(), needySimpleDTO.getLastName(), needySimpleDTO.getPhoneNumber(), 0, status, needySimpleDTO.getAdditionalNotes(),route);
+            Visit visit = new Visit(needySimpleDTO.getAddress(), needySimpleDTO.getFirstName(), needySimpleDTO.getLastName(), needySimpleDTO.getPhoneNumber(), 0, status, needySimpleDTO.getAdditionalNotes(),route,priority);
             route.addVisit(visit);
         }
         else if(status==VisitStatus.Pickup){
@@ -116,7 +116,7 @@ public class DrivingFascade {
         logger.info("addAddressToRoute with route id={} and visitId= {} and status={} done", routeId, visitId,status);
     }
     public void removeAddressFromRoute(long routeId,long visitId){
-        logger.info("removeAddressFromRoute with route id={} and visitId= {}", routeId, visitId);
+      logger.info("removeAddressFromRoute with route id={} and visitId= {}", routeId, visitId);
        Route route = routeRepository.findById(routeId).orElseThrow(() -> new RouteNotFoundException(routeId));
        Visit visitToRemove = route.getVisit().stream().filter(visit -> visit.getVisitId() == visitId).findFirst().orElseThrow(()->new VisitNotExistException(routeId,visitId));
        route.removeVisit(visitToRemove);

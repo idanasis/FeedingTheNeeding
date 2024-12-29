@@ -54,4 +54,8 @@ public class UserService {
         logger.info("getDonorByPhoneNumber");
         return donorRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
+    public Donor getDonorById(long id) {
+        logger.info("getDonorById");
+        return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+    }
 }
