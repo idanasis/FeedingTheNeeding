@@ -51,7 +51,7 @@ class DrivingFascadeTest {
 
     final LocalDate drivingDate = LocalDate.of(2023, 12, 1);
     final long driverId = 2L,routeId = 1L;
-    final int startHour = 9,endHour = 17,maxHour = 14,visitId = 1;
+    final int startHour = 9,endHour = 17,maxHour = 14,visitId = 1,priority = 1;
     final String location = "Downtown", request = "some description",note = "some Note",address = "Ringelbloom 24 Beer Sheva",
     lastName = "Doe",firstName = "John",phoneNumber = "0541234567";
     final Needy needy = new Needy();
@@ -70,7 +70,7 @@ class DrivingFascadeTest {
                 request
         );
         route = new Route(driverId, drivingDate);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route);
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority);
         routes.add(route);
     }
 
@@ -224,7 +224,7 @@ class DrivingFascadeTest {
         when(routeRepository.findById(routeId)).thenReturn(Optional.of(route));
         when(neederTrackingService.getNeedyFromNeederTrackingId(anyLong())).thenReturn(needySimpleDTO);
         when(routeRepository.save(any(Route.class))).thenReturn(route);
-        drivingFascade.addAddressToRoute(routeId, visitId, VisitStatus.Deliver);
+        drivingFascade.addAddressToRoute(routeId, visitId, VisitStatus.Deliver, priority);
         assertEquals(1, route.getVisit().size());
         assertEquals(note, route.getVisit().get(0).getNote());
         verify(routeRepository, times(1)).save(route);

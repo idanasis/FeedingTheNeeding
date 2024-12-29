@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DndContext,
   closestCenter,
@@ -21,12 +21,16 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
+import { addRoute, getDriversConstraints } from '../../Restapi/DrivingRestapi';
+import { Donor } from '../models/Donor';
+import dayjs from 'dayjs';
+import { getNearestFriday } from '../../commons/Commons';
 
 
 const initialData = {
   routes: [
-    {id:1, driverId: 101, visits: [] ,status:"פורסם"},
-    {id:2,  driverId: 102, visits: [],status:"פורסם" },
+    {id:1, visit: [] ,status:"פורסם"},
+    {id:2, visit: [],status:"פורסם" },
   ],
   pickup: [
     {
@@ -107,6 +111,32 @@ const Droppable = ({ id, children }: { id: string; children: React.ReactNode }) 
 
 const DrivingManager = () => {
   const [data, setData] = useState<Data>(initialData);
+  const [driver,setDrivers]=useState<Donor[]>([]);
+  const [date, setDate] = useState<Date>(getNearestFriday(dayjs(Date.now())).toDate());
+  
+  useEffect(() => {
+          async function fetchDrivers() {
+              const data=await getDriversConstraints(date);
+              if(data===null)
+                  alert('אין נתונים להצגה')
+              else
+                  setDrivers(data)
+          }
+          fetchDrivers();
+      }, []);
+  const handleDateChange = (newDate:dayjs.Dayjs|null ) => {
+          const d =newDate===null?dayjs(Date.now()).toDate():newDate.toDate();
+          console.log('Selected date:', newDate);
+          async function getDrivers() {
+              const data=await getDriversConstraints(d as Date);
+              if(data===null)
+                  alert('אין נתונים להצגה')
+              else
+                  setDrivers(data)
+          }
+          setDate(d);
+          getDrivers();
+        };
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -136,7 +166,7 @@ const DrivingManager = () => {
       const movedItem = sourceItems.splice(parseInt(sourceIndex), 1)[0];
 
       const updatedRoutes = [...data.routes];
-      updatedRoutes[routeIndex].visits.push(movedItem as Visit);
+      updatedRoutes[routeIndex].visit.push(movedItem as Visit);
 
       setData({
         ...data,
@@ -148,17 +178,17 @@ const DrivingManager = () => {
       const [sourceContainer, sourceIndex,visit,visitIndex] = active.id.split('-') as [keyof typeof data, string,string,string];
       const [targetContainer, targetIndex,visit2,visitIndex2] = over.id.split('-') as [keyof typeof data, string,string,string];
       const updatedRoutes = [...data.routes];
-      const curr=updatedRoutes[parseInt(sourceIndex)].visits.splice(parseInt(visitIndex), 1)[0];
+      const curr=updatedRoutes[parseInt(sourceIndex)].visit.splice(parseInt(visitIndex), 1)[0];
       const destRoute=updatedRoutes[parseInt(targetIndex)];
       const sourceRoute=updatedRoutes[parseInt(sourceIndex)];
-      const length=destRoute.visits.length+1;
+      const length=destRoute.visit.length+1;
       let newRoute: Visit[] = new Array(length);
       
       for(let i=0;i<length;i++){
-        newRoute[i]=destRoute.visits[i];
+        newRoute[i]=destRoute.visit[i];
       }
       newRoute[length-1]=curr;
-      updatedRoutes[parseInt(targetIndex)].visits=newRoute;
+      updatedRoutes[parseInt(targetIndex)].visit=newRoute;
  
       setData({
         ...data,
@@ -174,7 +204,8 @@ const DrivingManager = () => {
           {visit.firstName} {visit.lastName}
         </Typography>
         <Typography variant="body2">{visit.address}</Typography>
-        <Typography variant="body2">Phone: {visit.phoneNumber}</Typography>
+        <Typography variant="body2">{visit.phoneNumber}</Typography>
+        <Typography variant="body2">הערות: {visit.notes}</Typography>
       </CardContent>
     </Card>
   );
@@ -189,7 +220,7 @@ const DrivingManager = () => {
     return null;
   }
   const downButton =(index:number,idx:number,route: Route)=>{
-    if(idx!==route.visits.length-1){
+    if(idx!==route.visit.length-1){
       return <IconButton color="primary" aria-label="down" data-no-drag onClick={(e) => {
         e.stopPropagation();
         handleDown(index,idx)
@@ -201,11 +232,11 @@ const DrivingManager = () => {
   }
   const handleUp =(index:number,idx: number)=>{
     const updatedRoutes = [...data.routes];
-    const length=updatedRoutes[index].visits.length;
-    const currRoute=Array.from(updatedRoutes[index].visits);
-    const curr=updatedRoutes[index].visits.splice(idx, 1)[0];
+    const length=updatedRoutes[index].visit.length;
+    const currRoute=Array.from(updatedRoutes[index].visit);
+    const curr=updatedRoutes[index].visit.splice(idx, 1)[0];
     let newRoute: Visit[] = new Array(length);
-    let next=updatedRoutes[index].visits.splice(idx-1, 1)[0];
+    let next=updatedRoutes[index].visit.splice(idx-1, 1)[0];
     for(let i=0;i<length;i++){
       if (i===idx-1){
         newRoute[i]=curr;
@@ -216,7 +247,7 @@ const DrivingManager = () => {
       newRoute[i]=currRoute[i];
       }
     }
-    updatedRoutes[index].visits =newRoute;
+    updatedRoutes[index].visit =newRoute;
     setData({
       ...data,
       routes: updatedRoutes,
@@ -224,11 +255,11 @@ const DrivingManager = () => {
   }
   const handleDown =(index:number,idx: number)=>{
     const updatedRoutes = [...data.routes];
-    const length=updatedRoutes[index].visits.length;
-    const currRoute=Array.from(updatedRoutes[index].visits);
-    const curr=updatedRoutes[index].visits.splice(idx, 1)[0];
+    const length=updatedRoutes[index].visit.length;
+    const currRoute=Array.from(updatedRoutes[index].visit);
+    const curr=updatedRoutes[index].visit.splice(idx, 1)[0];
     let newRoute: Visit[] = new Array(length);
-    let next=updatedRoutes[index].visits.splice(idx, 1)[0];
+    let next=updatedRoutes[index].visit.splice(idx, 1)[0];
     for(let i=0;i<length;i++){
       if (i===idx+1){
         newRoute[i]=curr;
@@ -239,7 +270,16 @@ const DrivingManager = () => {
       newRoute[i]=currRoute[i];
       }
     }
-    updatedRoutes[index].visits =newRoute;
+    updatedRoutes[index].visit =newRoute;
+    setData({
+      ...data,
+      routes: updatedRoutes,
+    });
+  }
+  const handleAddRoute = async() => {
+    const route=await addRoute(date);
+    const updatedRoutes = [...data.routes];
+    updatedRoutes.push(route);
     setData({
       ...data,
       routes: updatedRoutes,
@@ -248,7 +288,7 @@ const DrivingManager = () => {
 
   return (
     <div style={{ marginTop: '50rem',overflowY: 'auto'}}>
-    <ResponsiveDatePickers onDateChange={(date) => console.log(date)} />
+    <ResponsiveDatePickers onDateChange={handleDateChange} />
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         <Box display="flex" justifyContent="space-between" gap={2}>
@@ -272,28 +312,33 @@ const DrivingManager = () => {
               מסלולים
             </Typography>
             {data.routes.map((route, index) => (
-              <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visits.length+1}`}>
+              <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
               <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px' }}>
-                <Typography variant="h6">סיבוב נהג {route.driverId}</Typography>
+                <Typography variant="h6">סיבוב {index+1}</Typography>
                 <Select
-                  value={route.driverId}
+                  value={route.driverId||'לא נבחר'}
                   label="Driver"
                   onChange={(e) => {
                     const updatedRoutes = [...data.routes];
+                    console.log(e.target.value);
                     updatedRoutes[index].driverId = parseInt(e.target.value as string);
+                    updatedRoutes[index].driver = driver.find(d => d.id === parseInt(e.target.value as string)) as Donor;
+                    const visit={address:updatedRoutes[index].driver?.address as string,firstName:updatedRoutes[index].driver?.firstName as string,lastName:updatedRoutes[index].driver?.lastName as string,phoneNumber:updatedRoutes[index].driver?.phoneNumber as string,maxHour:0,notes:updatedRoutes[index].driver.requests};
+                    updatedRoutes[index].visit.unshift(visit);
                     setData({ ...data, routes: updatedRoutes });
                   }}
                 >
-                  <MenuItem value={101}>101</MenuItem>
-                  <MenuItem value={102}>102</MenuItem>
+                  {driver.map((driver, index) => (
+                    <MenuItem key={index} value={driver.id}>{driver.firstName+' '+driver.lastName}</MenuItem>
+                  ))}
                 </Select>
                 <Typography variant="body2">פורסם: {route.status}</Typography>
                 <Button variant="contained" color="primary" >פרסם</Button>
                 <SortableContext
-                  items={route.visits.map((_, idx) => `route-${index}-visit-${idx}`)}
+                  items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}
                 >
-                  {route.visits.map((visit, idx) => (
+                  {route.visit.map((visit, idx) => (
                     <Draggable key={`route-${index}-visit-${idx}`} id={`route-${index}-visit-${idx}`}>
                       {renderVisit(visit)}
                   {upButton(index,idx,route)}
@@ -305,9 +350,9 @@ const DrivingManager = () => {
               
               </Droppable>
             ))}
-            <Fab color="primary" aria-label="add">
-  <AddIcon />
-</Fab>
+            <Fab color="primary" aria-label="add" onClick={handleAddRoute}>
+            <AddIcon />
+          </Fab>
           </Box>
 
           {/* Drop Container */}

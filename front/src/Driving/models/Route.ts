@@ -1,7 +1,9 @@
+import { Donor } from './Donor';
 import { Visit } from './Visit';
 export interface Route {
     id: number;
     driverId?: number;
-    visits: Visit[];
+    driver?: Donor;
+    visit: Visit[];
     status: string;
   }

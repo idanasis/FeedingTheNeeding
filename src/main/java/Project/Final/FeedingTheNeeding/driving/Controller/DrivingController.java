@@ -71,9 +71,10 @@ public class DrivingController {
     }
 
     @PostMapping("/routes/create")
-    public ResponseEntity<?> createRoute(@RequestParam LocalDate date) {
+    public ResponseEntity<?> createRoute(@RequestParam("date") String date) {
         try {
-            return ResponseEntity.ok(drivingService.createRoute(date));
+            LocalDate localDate = LocalDate.parse(date);
+            return ResponseEntity.ok(drivingService.createRoute(localDate));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -120,9 +121,9 @@ public class DrivingController {
     }
 
     @PatchMapping("/routes/addAddress/{routeId}")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody long visited, @RequestParam String status) {
+    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody long visited, @RequestParam String status, @RequestParam int priority) {
         try {
-            drivingService.addAddressToRoute(routeId,visited, VisitStatus.valueOf(status));
+            drivingService.addAddressToRoute(routeId,visited, VisitStatus.valueOf(status),priority);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());

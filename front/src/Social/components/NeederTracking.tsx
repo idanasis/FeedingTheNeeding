@@ -6,13 +6,14 @@ import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
 import { getAllNeederTracking } from '../../Restapi/socialRestapi';
 import FeedingLogo from '../../Authentication/Images/logo.png';
+import { getNearestFriday } from '../../commons/Commons';
 
 
 const NeederTracking = () => {
     const [currNeeders, setCurrNeeders] = useState<NeederTrackingModel[]>([]);
     useEffect(() => {
         async function fetchNeeders() {
-            const data=await getAllNeederTracking(new Date());
+            const data=await getAllNeederTracking(getNearestFriday(dayjs(Date.now())).toDate());;
             if(data===null)
                 alert('אין נתונים להצגה')
             else
