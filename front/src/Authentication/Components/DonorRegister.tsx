@@ -211,12 +211,12 @@ const DonorRegister: React.FC = () => {
 
                     <button type="submit" className="submit-button">הירשם</button>
 
-                    <p className="login-redirect">
-                        הצטרפת כבר אלינו?{' '}
-                        <span className="login-link" onClick={() => navigate('/login')}>
+                    <div className="extra-options">
+                        <span>הצטרפת כבר אלינו? </span>
+                        <a onClick={() => navigate('/login')}>
                             התחבר כאן
-                        </span>
-                    </p>
+                        </a>
+                    </div>
                 </form>
             </div>
 
