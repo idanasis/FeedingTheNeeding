@@ -1,4 +1,4 @@
-body {
+.login-page {
     margin: 0;
     display: flex;
     justify-content: center;
@@ -10,7 +10,7 @@ body {
     background-repeat: no-repeat;
 }
 
-body::after {
+.login-page::after {
     content: '';
     position: absolute;
     top: 0;
@@ -28,7 +28,7 @@ body::after {
     align-items: center;
     text-align: center;
     width: 95%;
-    max-width: 1200px;
+    max-width: 450px;
     height: auto;
     padding: 80px;
     background-color: rgba(255, 255, 255, 0.95);
@@ -97,7 +97,7 @@ input:focus {
     outline: none;
 }
 
-button.submit-button {
+.submit-button {
     padding: 15px;
     background-color: #d32f2f;
     color: white;
@@ -108,12 +108,12 @@ button.submit-button {
     transition: background-color 0.3s, transform 0.2s ease;
 }
 
-button.submit-button:hover {
+.submit-button:hover {
     background-color: #b71c1c;
     transform: translateY(-3px);
 }
 
-button:disabled {
+.submit-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
 }
@@ -126,12 +126,14 @@ button:disabled {
 .extra-options {
     margin-top: 50px;
     text-align: center;
+    font-size: 16px;
 }
 
 .extra-options a {
     color: #d32f2f;
     text-decoration: none;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .extra-options a:hover {
@@ -139,7 +141,7 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
-    body {
+    .login-page {
         background-position: top center;
         padding: 10px;
     }
@@ -149,7 +151,7 @@ button:disabled {
         padding: 60px;
     }
 
-    input, button.submit-button {
+    input, .submit-button {
         font-size: 20px;
         padding: 20px;
     }
@@ -168,7 +170,7 @@ button:disabled {
         padding: 50px;
     }
 
-    input, button.submit-button {
+    input, .submit-button {
         font-size: 24px;
         padding: 40px;
     }

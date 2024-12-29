@@ -17,7 +17,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px 30px;
     width: 90%;
-    max-width: 800px;
+    max-width: 600px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -74,12 +74,12 @@ input {
 }
 
 input:focus {
-    border-color: #4CAF50;
+    border-color: #d32f2f;
     outline: none;
 }
 
 .submit-button {
-    background-color: #4CAF50;
+    background-color: #d32f2f;
     color: white;
     font-size: 16px;
     padding: 10px;
@@ -93,7 +93,7 @@ input:focus {
 }
 
 .submit-button:hover {
-    background-color: #45a049;
+    background-color:#d32f2f;
 }
 
 .error-message {
@@ -103,20 +103,20 @@ input:focus {
     margin-top: 5px;
 }
 
-.login-redirect {
+.extra-options {
+    margin-top: 50px;
     text-align: center;
-    margin-top: 15px;
-    font-size: 14px;
 }
 
-.login-link {
+.extra-options a {
     color: #d32f2f;
+    text-decoration: none;
+    font-weight: bold;
     cursor: pointer;
-    text-decoration: underline;
 }
 
-.login-link:hover {
-    color: #d32f2f;
+.extra-options a:hover {
+    text-decoration: underline;
 }
 
 .checkbox-group {
@@ -144,8 +144,6 @@ input:focus {
     cursor: pointer; /* Adds a pointer cursor */
     text-align: right; /* Aligns text to the right */
 }
-
-
 
 .required-asterisk {
     color: red;
@@ -186,7 +184,7 @@ input:focus {
 }
 
 .success-popup button:hover {
-    background-color: #45a049;
+    background-color: #d32f2f;
 }
 
 
