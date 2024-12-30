@@ -104,7 +104,7 @@ public class AuthService {
         }
         donor.setVerificationCode(generateVerificationCode());
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(true);
+        donor.setVerified(false);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
@@ -254,7 +254,7 @@ public class AuthService {
 
             donor.setVerificationCode(generateVerificationCode());
             donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-            sendVerificationEmail(donor);
+            sendSms(donor);
             donorRepository.save(donor);
             logger.info("end-resend verification code, phoneNumber: {}", phoneNumber);
         }

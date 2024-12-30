@@ -173,6 +173,7 @@ input:focus {
     font-size: 14px;
 }
 
+/* GENERAL STYLING FOR BUTTONS IN success-popup */
 .success-popup button {
     background-color: #d32f2f;
     color: white;
@@ -181,10 +182,35 @@ input:focus {
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
+    margin: 0 5px; /* אם תרצה רווח קטן בין הכפתורים */
 }
 
 .success-popup button:hover {
     background-color: #d32f2f;
+}
+
+/* CONTAINER AROUND THE RESEND LINK */
+.resend-container {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+}
+
+/* "Resend link" without red background */
+.success-popup .resend-link {
+    background-color: transparent !important;
+    border: none !important;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 5px;
+    padding: 0;
+    color: #d32f2f;
+}
+
+.success-popup .resend-link:hover {
+    text-decoration: none;
 }
 
 @media screen and (max-width: 768px) {

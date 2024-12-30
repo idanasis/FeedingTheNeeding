@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor } from '../RestAPI/donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor, resendVerificationSMSCode } from '../RestAPI/donorRegRestAPI';
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
@@ -47,6 +47,16 @@ const DonorRegister: React.FC = () => {
             setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
         }
     }
+
+    const handleResendCode = async () => {
+        setError(null);
+        try {
+            await resendVerificationSMSCode(formData.phoneNumber);
+            console.log('Verification code resent successfully');
+        } catch (err: any) {
+            setError(err.message || 'שגיאה בשליחת קוד האימות מחדש. אנא נסה שוב.');
+        }
+    };
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -115,6 +125,7 @@ const DonorRegister: React.FC = () => {
                             <input
                                 id="phoneNumber"
                                 type="tel"
+                                maxLength={10}
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
                                 required
@@ -238,13 +249,28 @@ const DonorRegister: React.FC = () => {
                     <p>אנא הזן את קוד האימות שנשלח אליך:</p>
                     {error && <p className="error-message">{error}</p>}
                     <input
-                        type="tel"
+                        type="text"
+                        maxLength={6}
                         placeholder="הזן קוד אימות"
                         value={verificationCode}
-                        onChange={(e) => setVerificationCode(e.target.value)}
-                        style={{marginBottom: '10px'}}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, ''); // digits only
+                            setVerificationCode(val);
+                        }}
+                        style={{marginBottom: '10px', textAlign: 'center'}}
                     />
-                    <button onClick={handleVerification}>אמת קוד</button>
+
+                    <button onClick={handleVerification} style={{marginBottom: '10px'}}>
+                        אמת קוד
+                    </button>
+
+                    <p className="resend-container">
+                        לא קיבלת קוד אימות?
+                        <button className="resend-link" onClick={handleResendCode}>
+                            שלח שוב
+                        </button>
+                    </p>
+
                 </div>
             )}
 

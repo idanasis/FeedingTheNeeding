@@ -44,3 +44,12 @@ export const verifyDonor = async (phoneNumber: string, verificationCode: string)
     }
 }
 
+export const resendVerificationSMSCode = async (phoneNumber: string): Promise<void> => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/auth/resend-sms?phoneNumber=${phoneNumber}`);
+        console.log('Resend code successful:', response.data);
+    } catch (error: any) {
+        console.error('Error resending verification code:', error.response?.data || error.message);
+        throw new Error(error.response?.data || 'Failed to resend code. Please try again.');
+    }
+};
