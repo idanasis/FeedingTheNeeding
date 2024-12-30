@@ -84,7 +84,7 @@ public class CookingControllerTests {
         when(cookingService.submitConstraints(any(CookConstraints.class)))
                 .thenReturn(validConstraints);
 
-        mockMvc.perform(post("/cooking/submit/constraints")
+        mockMvc.perform(post("/cooking/submit/constraints")  // Changed from /cooking/constraints
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
@@ -107,7 +107,7 @@ public class CookingControllerTests {
     void testRemoveConstraint() throws Exception {
         doNothing().when(cookingService).removeConstraint(any(CookConstraints.class));
 
-        mockMvc.perform(delete("/cooking/remove/constraints")
+        mockMvc.perform(delete("/cooking/remove/constraints")  // Changed from /cooking/constraints
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(validConstraints)))
                 .andExpect(status().isOk());
