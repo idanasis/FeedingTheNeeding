@@ -113,7 +113,8 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
-        sendSms(donor);
+
+        //sendSms(donor);
 
         Donor savedDonor = donorRepository.save(donor);
 
@@ -254,7 +255,9 @@ public class AuthService {
 
             donor.setVerificationCode(generateVerificationCode());
             donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-            sendSms(donor);
+
+            //sendSms(donor);
+
             donorRepository.save(donor);
             logger.info("end-resend verification code, phoneNumber: {}", phoneNumber);
         }
