@@ -88,6 +88,13 @@ public class AuthService {
         }
     }
 
+    public void logout(String token) {
+        logger.info("start-logout, token: {}", token);
+        // TODO: implement a real blacklist or stored invalidation.
+        // just logout now, nothing really happen
+        logger.info("end-logout, token invalidated.");
+    }
+
 
     public void registerDonor(RegistrationRequest registrationRequest) {
         logger.info("start-register donor,  phone number: {}", registrationRequest.getPhoneNumber());

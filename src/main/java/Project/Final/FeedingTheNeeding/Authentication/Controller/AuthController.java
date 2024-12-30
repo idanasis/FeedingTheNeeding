@@ -39,6 +39,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try{
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
+                return ResponseEntity.ok("No token provided. nothing to invalidate");
+
+            String token = authorizationHeader.substring(7);
+            authService.logout(token);
+            return ResponseEntity.ok("logged out successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/register/donor")
     public ResponseEntity<?> registerDonor(@RequestBody RegistrationRequest registrationRequest) {
         try{
