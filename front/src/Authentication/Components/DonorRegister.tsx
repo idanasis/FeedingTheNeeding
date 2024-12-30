@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from '../RestAPI/donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor } from '../RestAPI/donorRegRestAPI';
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
@@ -18,6 +18,8 @@ const DonorRegister: React.FC = () => {
 
     const [hasNoCriminalRecord, setHasNoCriminalRecord] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showVerificationPopup, setShowVerificationPopup] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
     const [successMessage, setSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
@@ -34,6 +36,17 @@ const DonorRegister: React.FC = () => {
         setSuccessMessage(false);
         navigate('/login');
     };
+
+    const handleVerification = async () => {
+        setError(null);
+        try{
+            await verifyDonor(formData.phoneNumber, verificationCode);
+            setShowVerificationPopup(false);
+            setSuccessMessage(true)
+        }catch (err: any) {
+            setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
+        }
+    }
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -66,7 +79,7 @@ const DonorRegister: React.FC = () => {
 
         try {
             await registerDonor(formData);
-            setSuccessMessage(true);
+            setShowVerificationPopup(true)
         } catch (error: any){
             if(error.message === "User already exists")
                 setError("מספר הטלפון כבר קיים במערכת")
@@ -82,7 +95,7 @@ const DonorRegister: React.FC = () => {
                     <div className="form-logo">
                         <img src={FeedingLogo} alt="Logo" className="logo-image"/>
                     </div>
-                    <h2>הרשמה</h2>
+                    <h2>הצטרפות לעמותה</h2>
 
                     <div className="form-row">
                         <div className="form-group">
@@ -219,6 +232,21 @@ const DonorRegister: React.FC = () => {
                     </div>
                 </form>
             </div>
+
+            {showVerificationPopup && (
+                <div className="success-popup">
+                    <p>אנא הזן את קוד האימות שנשלח אליך:</p>
+                    {error && <p className="error-message">{error}</p>}
+                    <input
+                        type="tel"
+                        placeholder="הזן קוד אימות"
+                        value={verificationCode}
+                        onChange={(e) => setVerificationCode(e.target.value)}
+                        style={{marginBottom: '10px'}}
+                    />
+                    <button onClick={handleVerification}>אמת קוד</button>
+                </div>
+            )}
 
             {successMessage && (
                 <div className="success-popup">

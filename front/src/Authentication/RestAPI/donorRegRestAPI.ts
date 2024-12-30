@@ -34,3 +34,13 @@ export const registerDonor = async (data: DonorRegistrationData): Promise<void> 
     }
 };
 
+export const verifyDonor = async (phoneNumber: string, verificationCode: string): Promise<void> => {
+    try {
+        const response = await axios.post(`${API_BASE_URL}/auth/verify-donor`, {phoneNumber, verificationCode});
+        console.log('Verification successful:', response.data);
+    }catch (error: any){
+        console.error('Error during verification:', error.response?.data || error.message);
+        throw new Error(error.response?.data || 'Verification failed. Please try again later.');
+    }
+}
+

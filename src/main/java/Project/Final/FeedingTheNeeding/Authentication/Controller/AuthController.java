@@ -71,7 +71,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/verify")
+    @PostMapping("/verify-donor")
     public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
         try{
             authService.verifyDonor(verifyDonorDTO);
@@ -81,11 +81,21 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/resend")
+    @PostMapping("/resend-email")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try{
             authService.resendVerificationEmail(email);
             return ResponseEntity.ok("Email code resend successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-sms")
+    public ResponseEntity<?> resendVerificationSMSCode(@RequestParam String phoneNumber) {
+        try{
+            authService.resendVerificationSMSCode(phoneNumber);
+            return ResponseEntity.ok("Phone number code resend successfully");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -1,4 +1,4 @@
 package Project.Final.FeedingTheNeeding.Authentication.DTO;
 
-public record VerifyDonorDTO(String email, String verificationCode) {
+public record VerifyDonorDTO(String phoneNumber, String verificationCode) {
 }
