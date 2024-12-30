@@ -88,6 +88,13 @@ public class AuthService {
         }
     }
 
+    public void logout(String token) {
+        logger.info("start-logout, token: {}", token);
+        // TODO: implement a real blacklist or stored invalidation.
+        // just logout now, nothing really happen
+        logger.info("end-logout, token invalidated.");
+    }
+
 
     public void registerDonor(RegistrationRequest registrationRequest) {
         logger.info("start-register donor,  phone number: {}", registrationRequest.getPhoneNumber());
@@ -97,14 +104,14 @@ public class AuthService {
         Donor donor = new Donor();
         if (registrationRequest.getEmail() != null && !registrationRequest.getEmail().isEmpty()) {
             donor.setEmail(registrationRequest.getEmail());
-            sendVerificationEmail(donor);
+            //sendVerificationEmail(donor);
         }
         else{
             donor.setEmail(null);
         }
         donor.setVerificationCode(generateVerificationCode());
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(true);
+        donor.setVerified(false);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
@@ -113,7 +120,8 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
-        sendSms(donor);
+
+        //sendSms(donor);
 
         Donor savedDonor = donorRepository.save(donor);
 
@@ -205,8 +213,8 @@ public class AuthService {
     }
 
     public void verifyDonor(VerifyDonorDTO input) {
-        logger.info("start-verify donor, email: {}", input.email());
-        Optional<Donor> optionalDonor = donorRepository.findByEmail(input.email());
+        logger.info("start-verify donor, phoneNumber: {}", input.phoneNumber());
+        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(input.phoneNumber());
         if(optionalDonor.isPresent()){
             Donor donor = optionalDonor.get();
             if(donor.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
@@ -217,7 +225,7 @@ public class AuthService {
                 donor.setVerificationCode(null);
                 donor.setVerificationCodeExpiresAt(null);
                 donorRepository.save(donor);
-                logger.info("end-verify donor, email: {}", input.email());
+                logger.info("end-verify donor, phoneNumber: {}", input.phoneNumber());
             }
             else
                 throw new RuntimeException("Invalid verification code");
@@ -239,6 +247,26 @@ public class AuthService {
             sendVerificationEmail(donor);
             donorRepository.save(donor);
             logger.info("end-resend verification code, email: {}", email);
+        }
+        else
+            throw new UserDoesntExistsException("donor not found");
+    }
+
+    public void resendVerificationSMSCode(String phoneNumber) {
+        logger.info("start-resend verification code, phoneNumber: {}", phoneNumber);
+        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            if(donor.isVerified())
+                throw new RuntimeException("account is already verified");
+
+            donor.setVerificationCode(generateVerificationCode());
+            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
+
+            //sendSms(donor);
+
+            donorRepository.save(donor);
+            logger.info("end-resend verification code, phoneNumber: {}", phoneNumber);
         }
         else
             throw new UserDoesntExistsException("donor not found");

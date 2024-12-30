@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from '../RestAPI/donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor, resendVerificationSMSCode } from '../RestAPI/donorRegRestAPI';
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
@@ -18,6 +18,8 @@ const DonorRegister: React.FC = () => {
 
     const [hasNoCriminalRecord, setHasNoCriminalRecord] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showVerificationPopup, setShowVerificationPopup] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
     const [successMessage, setSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
@@ -33,6 +35,27 @@ const DonorRegister: React.FC = () => {
     const handleSuccessConfirmation = () => {
         setSuccessMessage(false);
         navigate('/login');
+    };
+
+    const handleVerification = async () => {
+        setError(null);
+        try{
+            await verifyDonor(formData.phoneNumber, verificationCode);
+            setShowVerificationPopup(false);
+            setSuccessMessage(true)
+        }catch (err: any) {
+            setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
+        }
+    }
+
+    const handleResendCode = async () => {
+        setError(null);
+        try {
+            await resendVerificationSMSCode(formData.phoneNumber);
+            console.log('Verification code resent successfully');
+        } catch (err: any) {
+            setError(err.message || 'שגיאה בשליחת קוד האימות מחדש. אנא נסה שוב.');
+        }
     };
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,7 +89,7 @@ const DonorRegister: React.FC = () => {
 
         try {
             await registerDonor(formData);
-            setSuccessMessage(true);
+            setShowVerificationPopup(true)
         } catch (error: any){
             if(error.message === "User already exists")
                 setError("מספר הטלפון כבר קיים במערכת")
@@ -82,7 +105,7 @@ const DonorRegister: React.FC = () => {
                     <div className="form-logo">
                         <img src={FeedingLogo} alt="Logo" className="logo-image"/>
                     </div>
-                    <h2>הרשמה</h2>
+                    <h2>הצטרפות לעמותה</h2>
 
                     <div className="form-row">
                         <div className="form-group">
@@ -102,6 +125,7 @@ const DonorRegister: React.FC = () => {
                             <input
                                 id="phoneNumber"
                                 type="tel"
+                                maxLength={10}
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
                                 required
@@ -219,6 +243,36 @@ const DonorRegister: React.FC = () => {
                     </div>
                 </form>
             </div>
+
+            {showVerificationPopup && (
+                <div className="success-popup">
+                    <p>אנא הזן את קוד האימות שנשלח אליך:</p>
+                    {error && <p className="error-message">{error}</p>}
+                    <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="הזן קוד אימות"
+                        value={verificationCode}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, ''); // digits only
+                            setVerificationCode(val);
+                        }}
+                        style={{marginBottom: '10px', textAlign: 'center'}}
+                    />
+
+                    <button onClick={handleVerification} style={{marginBottom: '10px'}}>
+                        אמת קוד
+                    </button>
+
+                    <p className="resend-container">
+                        לא קיבלת קוד אימות?
+                        <button className="resend-link" onClick={handleResendCode}>
+                            שלח שוב
+                        </button>
+                    </p>
+
+                </div>
+            )}
 
             {successMessage && (
                 <div className="success-popup">

@@ -39,6 +39,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try{
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
+                return ResponseEntity.ok("No token provided. nothing to invalidate");
+
+            String token = authorizationHeader.substring(7);
+            authService.logout(token);
+            return ResponseEntity.ok("logged out successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/register/donor")
     public ResponseEntity<?> registerDonor(@RequestBody RegistrationRequest registrationRequest) {
         try{
@@ -71,7 +85,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/verify")
+    @PostMapping("/verify-donor")
     public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
         try{
             authService.verifyDonor(verifyDonorDTO);
@@ -81,11 +95,21 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/resend")
+    @PostMapping("/resend-email")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try{
             authService.resendVerificationEmail(email);
             return ResponseEntity.ok("Email code resend successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-sms")
+    public ResponseEntity<?> resendVerificationSMSCode(@RequestParam String phoneNumber) {
+        try{
+            authService.resendVerificationSMSCode(phoneNumber);
+            return ResponseEntity.ok("Phone number code resend successfully");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
