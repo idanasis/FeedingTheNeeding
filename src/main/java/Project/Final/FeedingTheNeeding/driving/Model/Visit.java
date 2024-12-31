@@ -2,6 +2,8 @@ package Project.Final.FeedingTheNeeding.driving.Model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,11 +30,13 @@ public class Visit {
     private String lastName;
     private String phoneNumber;
     private int maxHour;
+    @Enumerated(EnumType.STRING)
     private VisitStatus status;
+    private int priority;
     @Column(length = 1000)
     private String note;
     
-    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route) {
+    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route,int priority) {
         this.address = address;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,6 +45,7 @@ public class Visit {
         this.status = status;
         this.note = note;
         this.route = route;
+        this.priority = priority;
     }
     public long getVisitId() {
         return visitId;
@@ -86,6 +91,12 @@ public class Visit {
     }
     public void setNote(String note) {
         this.note = note;
+    }
+    public int getPriority() {
+        return priority;
+    }
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 
 }

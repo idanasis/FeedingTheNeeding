@@ -117,7 +117,7 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/register/donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andExpect(content().string("Donor already exists"));
     }
 
@@ -173,11 +173,11 @@ public class AuthControllerTest {
 
     @Test
     void testVerifyDonor_Success() throws Exception {
-        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(EMAIL, VERIFICATION_CODE);
+        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(PHONE_NUMBER, VERIFICATION_CODE);
 
         doNothing().when(authService).verifyDonor(verifyDonorDTO);
 
-        mockMvc.perform(post("/auth/verify")
+        mockMvc.perform(post("/auth/verify-donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verifyDonorDTO)))
                 .andExpect(status().isOk())
@@ -191,7 +191,7 @@ public class AuthControllerTest {
         doThrow(new RuntimeException("Invalid verification code"))
                 .when(authService).verifyDonor(verifyDonorDTO);
 
-        mockMvc.perform(post("/auth/verify")
+        mockMvc.perform(post("/auth/verify-donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verifyDonorDTO)))
                 .andExpect(status().isBadRequest())

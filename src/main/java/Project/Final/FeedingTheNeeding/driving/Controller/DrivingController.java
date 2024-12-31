@@ -3,12 +3,17 @@ package Project.Final.FeedingTheNeeding.driving.Controller;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
+import Project.Final.FeedingTheNeeding.driving.Model.Route;
+import Project.Final.FeedingTheNeeding.driving.Model.Visit;
 import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 
 @RestController
@@ -41,7 +46,7 @@ public class DrivingController {
         }
     }
 
-    @GetMapping("/constraints/date/{date}")
+    @GetMapping("/constraints/{date}")
     public ResponseEntity<?> getDateConstraints(@PathVariable String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);
@@ -71,9 +76,10 @@ public class DrivingController {
     }
 
     @PostMapping("/routes/create")
-    public ResponseEntity<?> createRoute(@RequestParam LocalDate date) {
+    public ResponseEntity<?> createRoute(@RequestParam("date") String date) {
         try {
-            return ResponseEntity.ok(drivingService.createRoute(date));
+            LocalDate localDate = LocalDate.parse(date);
+            return ResponseEntity.ok(drivingService.createRoute(localDate));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -120,9 +126,9 @@ public class DrivingController {
     }
 
     @PatchMapping("/routes/addAddress/{routeId}")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody long visited, @RequestParam String status) {
+    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody Visit visit) {
         try {
-            drivingService.addAddressToRoute(routeId,visited, VisitStatus.valueOf(status));
+            drivingService.addAddressToRoute(routeId,visit);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -130,9 +136,9 @@ public class DrivingController {
     }
 
     @PatchMapping("/routes/removeAddress/{routeId}")
-    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody long visitId) {
+    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody Visit visit) {
         try {
-            drivingService.removeAddressFromRoute(routeId, visitId);
+            drivingService.removeAddressFromRoute(routeId, visit);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -156,11 +162,28 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    @GetMapping("/routes/getRoutes")
+    public ResponseEntity<?> getMethodName(@RequestParam("date") String date) {
+        try {
+            LocalDate localDate = LocalDate.parse(date);
+            return ResponseEntity.ok(drivingService.getRoutes(localDate));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    
     @GetMapping("/history")
     public ResponseEntity<?> viewHistory() {
         try {
             return ResponseEntity.ok(drivingService.viewHistory());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @PatchMapping("/routes/updateRoute")
+    public ResponseEntity<?> updateRoute(@RequestBody Route route) {
+        try {
+            return ResponseEntity.ok(drivingService.updateRoute(route));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -5,12 +5,15 @@ import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
 import { getAllNeederTracking } from '../../Restapi/socialRestapi';
+import FeedingLogo from '../../Authentication/Images/logo.png';
+import { getNearestFriday } from '../../commons/Commons';
+
 
 const NeederTracking = () => {
     const [currNeeders, setCurrNeeders] = useState<NeederTrackingModel[]>([]);
     useEffect(() => {
         async function fetchNeeders() {
-            const data=await getAllNeederTracking(new Date());
+            const data=await getAllNeederTracking(getNearestFriday(dayjs(Date.now())).toDate());;
             if(data===null)
                 alert('אין נתונים להצגה')
             else
@@ -32,10 +35,18 @@ const NeederTracking = () => {
       };
 
     return (
-        <div style={{ backgroundColor: "snow"}}>
+        <div className='social-need-tracking' style={{ backgroundColor: "snow"}}>
+            <img src={FeedingLogo} alt="Logo"style={{
+          position: "absolute",
+          top: "1px",
+          left: "5px",
+          height: "60px", // Adjust the size as needed
+        }}/>
             <h1 className='text-black md:text-4xl text-3xl font-bold' style={{ color: '#000' }}>טבלת מעקב נזקקים</h1>
+            <div style={{paddingRight:"1rem"}}>
             <ResponsiveDatePickers onDateChange={handleDateChange}/>  
-        <CollapsibleTable data={currNeeders} /> 
+            </div>
+        <CollapsibleTable data={currNeeders}/> 
         </div>
     );
 };

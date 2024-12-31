@@ -1,9 +1,13 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +17,9 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenService jwtTokenService;
+
+    private static final Logger logger = LogManager.getLogger(AuthService.class);
+
 
     public AuthController(AuthService authService, JwtTokenService jwtTokenService) {
         this.authService = authService;
@@ -25,7 +32,22 @@ public class AuthController {
             UserCredentials user = authService.authenticate(authenticationRequest);
             String jwtToken = jwtTokenService.generateToken(user);
             AuthenticationResponse response = new AuthenticationResponse(jwtToken, jwtTokenService.getExpirationTime());
+            logger.info("token created: {} with expiration time of {}", response.getToken(),response.getExpirationTime());
             return ResponseEntity.ok(response);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@RequestHeader(value = "Authorization", required = false) String authorizationHeader) {
+        try{
+            if(authorizationHeader == null || !authorizationHeader.startsWith("Bearer "))
+                return ResponseEntity.ok("No token provided. nothing to invalidate");
+
+            String token = authorizationHeader.substring(7);
+            authService.logout(token);
+            return ResponseEntity.ok("logged out successfully");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -36,8 +58,10 @@ public class AuthController {
         try{
             authService.registerDonor(registrationRequest);
             return ResponseEntity.ok("Donor successfully registered");
+        }catch (UserAlreadyExistsException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
         }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body("Registration failed. Please try again later.");
         }
     }
 
@@ -61,7 +85,7 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/verify")
+    @PostMapping("/verify-donor")
     public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
         try{
             authService.verifyDonor(verifyDonorDTO);
@@ -71,11 +95,21 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/resend")
+    @PostMapping("/resend-email")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try{
             authService.resendVerificationEmail(email);
             return ResponseEntity.ok("Email code resend successfully");
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-sms")
+    public ResponseEntity<?> resendVerificationSMSCode(@RequestParam String phoneNumber) {
+        try{
+            authService.resendVerificationSMSCode(phoneNumber);
+            return ResponseEntity.ok("Phone number code resend successfully");
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

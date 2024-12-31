@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { getNearestFriday } from '../../commons/Commons';
 
 
 const   ResponsiveDatePickers=({ onDateChange }: { onDateChange: (date: dayjs.Dayjs | null) => void })=> {
@@ -17,16 +18,7 @@ const handleDisableDate = (date: dayjs.Dayjs) => {
     return isFutureYear || isMoreThanOneMonthAhead;
   };
   
-  const getNearestFriday=(date: dayjs.Dayjs)=>{
-    const day = date.day();
-    if (day === 5) {
-      return date;
-    }
-    if (day < 5) {
-      return date.day(5);
-    }
-    return date.add(1, 'week').day(5);
-  }
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
      <DatePicker defaultValue={getNearestFriday(dayjs(Date.now()))} shouldDisableDate={handleDisableDate} shouldDisableMonth={handleDisableMonth}onChange={onDateChange}/>

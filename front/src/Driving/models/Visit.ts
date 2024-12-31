@@ -1,0 +1,14 @@
+import { Route } from "./Route";
+
+// Types
+export interface Visit {
+    visitId?: number;
+    address: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    maxHour: number;
+    note?: string;
+    status: string;
+    priority?: number;
+  }
