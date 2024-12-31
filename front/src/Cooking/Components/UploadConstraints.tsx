@@ -100,7 +100,7 @@ const CookConstraints: React.FC = () => {
       alert('הנתונים נשלחו בהצלחה!');
     } catch (error) {
       console.error('Error:', error);
-      alert(error);
+      alert('הייתה תקלה בעת שליחת הנתונים. אנא נסו שוב במועד מאוחר יותר');
     }
   };
 
