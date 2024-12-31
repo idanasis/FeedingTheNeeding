@@ -243,6 +243,27 @@ public class NeederTrackingControllerTest {
             public LocalDate getDate() {
                 return mockNeederTracking.getDate();
             }
+
+            @Override
+            public String getNeedyFirstName() {
+                return mockNeederTracking.getNeedy().getFirstName();
+            }
+
+            @Override
+            public String getNeedyLastName() {
+                return mockNeederTracking.getNeedy().getLastName();
+            }
+
+            @Override
+            public String getNeedyPhoneNumber() {
+                return mockNeederTracking.getNeedy().getPhoneNumber();
+            }
+
+            @Override
+            public String getNeedyAddress() {
+                return mockNeederTracking.getNeedy().getAddress();
+            }
+            
         };
 
         // Mock the service method to return a list with this projection

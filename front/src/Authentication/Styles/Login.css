@@ -1,4 +1,4 @@
-body {
+.login-page {
     margin: 0;
     display: flex;
     justify-content: center;
@@ -10,7 +10,7 @@ body {
     background-repeat: no-repeat;
 }
 
-body::after {
+.login-page::after {
     content: '';
     position: absolute;
     top: 0;
@@ -28,7 +28,7 @@ body::after {
     align-items: center;
     text-align: center;
     width: 95%;
-    max-width: 1200px;
+    max-width: 450px;
     height: auto;
     padding: 80px;
     background-color: rgba(255, 255, 255, 0.95);
@@ -97,7 +97,7 @@ input:focus {
     outline: none;
 }
 
-button.submit-button {
+.submit-button {
     padding: 15px;
     background-color: #d32f2f;
     color: white;
@@ -108,12 +108,12 @@ button.submit-button {
     transition: background-color 0.3s, transform 0.2s ease;
 }
 
-button.submit-button:hover {
+.submit-button:hover {
     background-color: #b71c1c;
     transform: translateY(-3px);
 }
 
-button:disabled {
+.submit-button:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
 }
@@ -126,20 +126,113 @@ button:disabled {
 .extra-options {
     margin-top: 50px;
     text-align: center;
+    font-size: 16px;
 }
 
 .extra-options a {
     color: #d32f2f;
     text-decoration: none;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .extra-options a:hover {
     text-decoration: underline;
 }
 
+/*************************************
+ * RESET PASSWORD POPUP STYLES
+ *************************************/
+.reset-password-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* semi-transparent overlay */
+    z-index: 9999; /* on top of everything */
+}
+
+.reset-popup-content {
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
+    direction: rtl;
+    text-align: center;
+}
+
+.reset-popup-content h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #d32f2f;
+}
+
+.reset-popup-content label {
+    display: block;
+    font-size: 18px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+    color: #333;
+    text-align: right;
+}
+
+.reset-popup-content input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    direction: ltr; /* If you want the text to align left for the phoneNumber and password input */
+    text-align: left;
+}
+
+.reset-popup-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.close-button {
+    background-color: #ccc;
+    color: #333;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.close-button:hover {
+    background-color: #bbb;
+    transform: translateY(-2px);
+}
+
+.success-message {
+    color: green;
+    font-size: 16px;
+    margin-bottom: 8px;
+}
+
+.forgot-password {
+    color: #d32f2f;
+    cursor: pointer;
+    display: inline-block;
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+
 @media (max-width: 768px) {
-    body {
+    .login-page {
         background-position: top center;
         padding: 10px;
     }
@@ -149,7 +242,7 @@ button:disabled {
         padding: 60px;
     }
 
-    input, button.submit-button {
+    input, .submit-button {
         font-size: 20px;
         padding: 20px;
     }
@@ -168,7 +261,7 @@ button:disabled {
         padding: 50px;
     }
 
-    input, button.submit-button {
+    input, .submit-button {
         font-size: 24px;
         padding: 40px;
     }

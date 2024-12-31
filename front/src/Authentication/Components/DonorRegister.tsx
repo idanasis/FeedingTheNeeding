@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData } from '../RestAPI/donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor, resendVerificationSMSCode } from '../RestAPI/donorRegRestAPI';
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
@@ -16,13 +16,46 @@ const DonorRegister: React.FC = () => {
         city: ''
     });
 
+    const [hasNoCriminalRecord, setHasNoCriminalRecord] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showVerificationPopup, setShowVerificationPopup] = useState(false);
+    const [verificationCode, setVerificationCode] = useState('');
     const [successMessage, setSuccessMessage] = useState(false);
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [id]: value }));
+    };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setHasNoCriminalRecord(e.target.checked);
+    };
+
+    const handleSuccessConfirmation = () => {
+        setSuccessMessage(false);
+        navigate('/login');
+    };
+
+    const handleVerification = async () => {
+        setError(null);
+        try{
+            await verifyDonor(formData.phoneNumber, verificationCode);
+            setShowVerificationPopup(false);
+            setSuccessMessage(true)
+        }catch (err: any) {
+            setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
+        }
+    }
+
+    const handleResendCode = async () => {
+        setError(null);
+        try {
+            await resendVerificationSMSCode(formData.phoneNumber);
+            console.log('Verification code resent successfully');
+        } catch (err: any) {
+            setError(err.message || 'שגיאה בשליחת קוד האימות מחדש. אנא נסה שוב.');
+        }
     };
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,12 +82,19 @@ const DonorRegister: React.FC = () => {
             return;
         }
 
+        if (!hasNoCriminalRecord) {
+            setError('עליך לאשר כי אינך בעל עבר פלילי כדי להצטרף אלינו');
+            return;
+        }
+
         try {
             await registerDonor(formData);
-            setSuccessMessage(true);
-            setTimeout(() => navigate('/login'), 2000);
-        } catch {
-            setError('ההרשמה נכשלה. נסה שוב מאוחר יותר.');
+            setShowVerificationPopup(true)
+        } catch (error: any){
+            if(error.message === "User already exists")
+                setError("מספר הטלפון כבר קיים במערכת")
+            else
+                setError('ההרשמה נכשלה. נסה שוב מאוחר יותר.');
         }
     };
 
@@ -63,13 +103,13 @@ const DonorRegister: React.FC = () => {
             <div className="register-container">
                 <form onSubmit={handleRegister} className="register-form">
                     <div className="form-logo">
-                        <img src={FeedingLogo} alt="Logo" className="logo-image" />
+                        <img src={FeedingLogo} alt="Logo" className="logo-image"/>
                     </div>
-                    <h2>הרשמה</h2>
+                    <h2>הצטרפות לעמותה</h2>
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="email">אימייל:</label>
+                            <label htmlFor="email">אימייל (אופציונלי)</label>
                             <input
                                 id="email"
                                 type="email"
@@ -79,10 +119,13 @@ const DonorRegister: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="phoneNumber">מספר טלפון:</label>
+                            <label htmlFor="phoneNumber">
+                                מספר טלפון <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="phoneNumber"
                                 type="tel"
+                                maxLength={10}
                                 value={formData.phoneNumber}
                                 onChange={handleChange}
                                 required
@@ -92,7 +135,9 @@ const DonorRegister: React.FC = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="password">סיסמא:</label>
+                            <label htmlFor="password">
+                                סיסמא <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="password"
                                 type="password"
@@ -103,7 +148,9 @@ const DonorRegister: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="confirmPassword">אישור סיסמא:</label>
+                            <label htmlFor="confirmPassword">
+                                אישור סיסמא <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="confirmPassword"
                                 type="password"
@@ -116,7 +163,9 @@ const DonorRegister: React.FC = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="firstName">שם פרטי:</label>
+                            <label htmlFor="firstName">
+                                שם פרטי <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="firstName"
                                 type="text"
@@ -127,7 +176,9 @@ const DonorRegister: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="lastName">שם משפחה:</label>
+                            <label htmlFor="lastName">
+                                שם משפחה <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="lastName"
                                 type="text"
@@ -140,7 +191,9 @@ const DonorRegister: React.FC = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="address">כתובת:</label>
+                            <label htmlFor="address">
+                                כתובת <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="address"
                                 type="text"
@@ -151,7 +204,9 @@ const DonorRegister: React.FC = () => {
                         </div>
 
                         <div className="form-group">
-                            <label htmlFor="city">עיר מגורים:</label>
+                            <label htmlFor="city">
+                                עיר מגורים <span className="required-asterisk">*</span>
+                            </label>
                             <input
                                 id="city"
                                 type="text"
@@ -162,24 +217,71 @@ const DonorRegister: React.FC = () => {
                         </div>
                     </div>
 
+                    <div className="form-group checkbox-group">
+                        <label htmlFor="noCriminalRecord" className="checkbox-label">
+                            <input
+                                id="noCriminalRecord"
+                                type="checkbox"
+                                checked={hasNoCriminalRecord}
+                                onChange={handleCheckboxChange}
+                                required
+                            />
+                            אני מאשר/ת שאיני בעל עבר פלילי <span className="required-asterisk">*</span>
+                        </label>
+                    </div>
+
+
                     {error && <p className="error-message">{error}</p>}
 
                     <button type="submit" className="submit-button">הירשם</button>
 
-                    <p className="login-redirect">
-                        הצטרפת כבר אלינו?{' '}
-                        <span className="login-link" onClick={() => navigate('/login')}>
+                    <div className="extra-options">
+                        <span>הצטרפת כבר אלינו? </span>
+                        <a onClick={() => navigate('/login')}>
                             התחבר כאן
-                        </span>
-                    </p>
+                        </a>
+                    </div>
                 </form>
             </div>
 
-            {successMessage && (
+            {showVerificationPopup && (
                 <div className="success-popup">
-                    <p>ההרשמה בוצעה בהצלחה!</p>
+                    <p>אנא הזן את קוד האימות שנשלח אליך:</p>
+                    {error && <p className="error-message">{error}</p>}
+                    <input
+                        type="text"
+                        maxLength={6}
+                        placeholder="הזן קוד אימות"
+                        value={verificationCode}
+                        onChange={(e) => {
+                            const val = e.target.value.replace(/\D/g, ''); // digits only
+                            setVerificationCode(val);
+                        }}
+                        style={{marginBottom: '10px', textAlign: 'center'}}
+                    />
+
+                    <button onClick={handleVerification} style={{marginBottom: '10px'}}>
+                        אמת קוד
+                    </button>
+
+                    <p className="resend-container">
+                        לא קיבלת קוד אימות?
+                        <button className="resend-link" onClick={handleResendCode}>
+                            שלח שוב
+                        </button>
+                    </p>
+
                 </div>
             )}
+
+            {successMessage && (
+                <div className="success-popup">
+                    <p>הנתונים נקלטו במערכת בהצלחה!</p>
+                    <p>פרטיך הועברו לרכזת, ניצור איתך קשר לאחר אישורך.</p>
+                    <button onClick={handleSuccessConfirmation}>אישור</button>
+                </div>
+            )}
+
         </div>
     );
 };

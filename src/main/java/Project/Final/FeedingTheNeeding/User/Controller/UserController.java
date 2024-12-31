@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @RequestMapping("/user")
@@ -85,5 +87,13 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
+    @GetMapping("/donor/donorId/{donorId}")
+    public ResponseEntity<?> getDonorById(@PathVariable long donorId) {
+       try{
+           Donor donor = userService.getDonorById(donorId);
+           return ResponseEntity.ok(donor);
+    }catch (Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 }
