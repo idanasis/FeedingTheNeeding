@@ -1,177 +1,153 @@
 package Project.Final.FeedingTheNeeding.Cooking.Service;
 
+import Project.Final.FeedingTheNeeding.cook.DTO.Status;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
-
 import Project.Final.FeedingTheNeeding.cook.Service.CookingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+
 public class CookingServiceTests {
 
     @Mock
-    private CookConstraintsRepository cookConstraintsRepository;
+    private CookConstraintsRepository ccr;
 
     @InjectMocks
     private CookingService cookingService;
 
-    private CookConstraints cookConstraint1;
-    private CookConstraints cookConstraint2;
+    private CookConstraints validConstraint;
     private List<CookConstraints> constraintsList;
 
-    private final long cookId = 1L;
-    private final LocalDate today = LocalDate.now();
-    private final LocalDate yesterday = today.minusDays(1);
-    private final LocalTime takingTime = LocalTime.of(15, 0);
-    private final int platesNum = 3;
-    private final String location = "123 Main St";
+    private static final long CONSTRAINT_ID = 1L;
+    private static final LocalDate VALID_DATE = LocalDate.now();
+    private static final String START_TIME = "15:00";
+    private static final String END_TIME = "17:00";
+    private static final int PLATES_NUM = 3;
+    private static final String LOCATION = "123 Main St";
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        cookConstraint1 = new CookConstraints(cookId, takingTime, platesNum, location, today);
-        cookConstraint2 = new CookConstraints(cookId, takingTime.plusHours(1), platesNum + 1, "456 Elm St", yesterday);
+        validConstraint = new CookConstraints(
+                CONSTRAINT_ID,
+                START_TIME,
+                END_TIME,
+                PLATES_NUM,
+                LOCATION,
+                VALID_DATE,
+                Status.Pending
+        );
 
         constraintsList = new ArrayList<>();
-        constraintsList.add(cookConstraint1);
-        constraintsList.add(cookConstraint2);
+        constraintsList.add(validConstraint);
     }
 
     @Test
     void testSubmitConstraints() {
-        when(cookConstraintsRepository.save(cookConstraint1)).thenReturn(cookConstraint1);
+        when(ccr.save(validConstraint)).thenReturn(validConstraint);
 
-        CookConstraints savedConstraint = cookingService.submitConstraints(cookConstraint1);
+        CookConstraints savedConstraint = cookingService.submitConstraints(validConstraint);
 
         assertNotNull(savedConstraint);
-        assertEquals(cookConstraint1.getCookId(), savedConstraint.getCookId());
-        assertEquals(cookConstraint1.getPlatesNum(), savedConstraint.getPlatesNum());
-        verify(cookConstraintsRepository, times(1)).save(cookConstraint1);
+        assertEquals(validConstraint.getConstraintId(), savedConstraint.getConstraintId());
+        assertEquals(validConstraint.getPlatesNum(), savedConstraint.getPlatesNum());
+        verify(ccr, times(1)).save(validConstraint);
     }
 
     @Test
     void testRemoveConstraint() {
-        when(cookConstraintsRepository.findByCookIdAndDate(cookId, today)).thenReturn(Optional.of(cookConstraint1));
+        when(ccr.findByConstraintIdAndDate(CONSTRAINT_ID, VALID_DATE))
+                .thenReturn(Optional.of(validConstraint));
 
-        cookingService.removeConstraint(cookConstraint1);
+        cookingService.removeConstraint(validConstraint);
 
-        verify(cookConstraintsRepository, times(1)).delete(cookConstraint1);
+        verify(ccr, times(1)).delete(validConstraint);
     }
 
     @Test
     void testRemoveConstraintNotFound() {
-        when(cookConstraintsRepository.findByCookIdAndDate(cookId, today)).thenReturn(Optional.empty());
+        when(ccr.findByConstraintIdAndDate(CONSTRAINT_ID, VALID_DATE))
+                .thenReturn(Optional.empty());
 
         assertThrows(
                 CookConstraintsNotExistException.class,
-                () -> cookingService.removeConstraint(cookConstraint1)
+                () -> cookingService.removeConstraint(validConstraint)
         );
     }
 
     @Test
     void testGetCookConstraints() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(constraintsList);
+        when(ccr.findConstraintsByConstraintId(CONSTRAINT_ID))
+                .thenReturn(constraintsList);
 
-        List<CookConstraints> result = cookingService.getCookConstraints(cookId);
+        List<CookConstraints> result = cookingService.getCookConstraints(CONSTRAINT_ID);
 
-        assertEquals(2, result.size());
+        assertEquals(1, result.size());
         assertEquals(constraintsList, result);
-    }
-
-    @Test
-    void testGetCookConstraintsEmpty() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(new ArrayList<>());
-
-        List<CookConstraints> result = cookingService.getCookConstraints(cookId);
-
-        assertEquals(0, result.size());
-    }
-
-    @Test
-    void testUpdateCookConstraints() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(constraintsList);
-        when(cookConstraintsRepository.save(cookConstraint1)).thenReturn(cookConstraint1);
-
-        ArgumentCaptor<CookConstraints> deleteCaptor = ArgumentCaptor.forClass(CookConstraints.class);
-        doNothing().when(cookConstraintsRepository).delete(deleteCaptor.capture());
-
-        cookingService.updateCookConstraints(cookId, cookConstraint1);
-
-        // Assert that the correct constraint was deleted
-        CookConstraints deletedConstraint = deleteCaptor.getValue();
-        assertEquals(cookConstraint1, deletedConstraint); // Validate expected behavior
-
-        // Verify save was called with the correct argument
-        verify(cookConstraintsRepository, times(1)).save(eq(cookConstraint1));
-    }
-
-    @Test
-    void testUpdateCookConstraintsFail() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(new ArrayList<>());
-
-        assertThrows(
-                CookConstraintsNotExistException.class,
-                () -> cookingService.updateCookConstraints(cookId, cookConstraint1)
-        );
-    }
-
-    @Test
-    void testGetLastConstraints() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(constraintsList);
-
-        CookConstraints result = cookingService.getLastConstraints(cookId);
-
-        assertEquals(today, result.getDate());
-        assertEquals(cookConstraint1, result);
-    }
-
-    @Test
-    void testGetLastConstraintsEmpty() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(new ArrayList<>());
-
-        CookConstraints result = cookingService.getLastConstraints(cookId);
-
-        assertNull(result);
     }
 
     @Test
     void testGetCookHistory() {
-        when(cookConstraintsRepository.findConstraintsByCookId(cookId)).thenReturn(constraintsList);
+        when(ccr.findConstraintsByConstraintId(CONSTRAINT_ID))
+                .thenReturn(constraintsList);
 
-        List<CookConstraints> result = cookingService.getCookHistory(cookId);
-
-        assertEquals(constraintsList, result);
-    }
-
-    @Test
-    void testGetAllCookOnDate() {
-        when(cookConstraintsRepository.findConstraintsByDate(today)).thenReturn(constraintsList);
-
-        List<CookConstraints> result = cookingService.getAllCookOnDate(today);
+        List<CookConstraints> result = cookingService.getCookHistory(CONSTRAINT_ID);
 
         assertEquals(constraintsList, result);
     }
 
     @Test
-    void testGetAllCookOnDateFail() {
-        when(cookConstraintsRepository.findConstraintsByDate(today)).thenReturn(new ArrayList<>());
+    void testGetAcceptedCookByDate() {
+        when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Accepted))
+                .thenReturn(constraintsList);
 
-        List<CookConstraints> result = cookingService.getAllCookOnDate(today);
+        List<CookConstraints> result = cookingService.getAcceptedCookByDate(VALID_DATE);
 
-        assertEquals(0, result.size());
+        assertEquals(constraintsList, result);
+    }
+
+    @Test
+    void testGetPendingConstraints() {
+        when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Pending))
+                .thenReturn(constraintsList);
+
+        List<CookConstraints> result = cookingService.getPendingConstraints(VALID_DATE);
+
+        assertEquals(constraintsList, result);
+    }
+
+    @Test
+    void testChangeStatusForConstraint() {
+        when(ccr.findById(CONSTRAINT_ID)).thenReturn(Optional.of(validConstraint));
+        when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
+
+        CookConstraints result = cookingService.changeStatusForConstraint(CONSTRAINT_ID, Status.Accepted);
+
+        assertNotNull(result);
+        assertEquals(Status.Accepted, result.getStatus());
+        verify(ccr, times(1)).save(any(CookConstraints.class));
+    }
+
+    @Test
+    void testChangeStatusForConstraintNotFound() {
+        when(ccr.findById(CONSTRAINT_ID)).thenReturn(Optional.empty());
+
+        assertThrows(
+                CookConstraintsNotExistException.class,
+                () -> cookingService.changeStatusForConstraint(CONSTRAINT_ID, Status.Accepted)
+        );
     }
 }
