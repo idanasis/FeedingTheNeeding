@@ -35,10 +35,11 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
     private final SmsSender smsSender;
+    private final JwtTokenService jwtTokenService;
 
     private static final Logger logger = LogManager.getLogger(AuthService.class);
 
-    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, @Qualifier("twilio") TwilioSmsSender smsSender) {
+    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, @Qualifier("twilio") TwilioSmsSender smsSender, JwtTokenService jwtTokenService) {
         this.donorRepository = donorRepository;
         this.needyRepository = needyRepository;
         this.userCredentialsRepository = userCredentialsRepository;
@@ -46,6 +47,7 @@ public class AuthService {
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
         this.smsSender = smsSender;
+        this.jwtTokenService = jwtTokenService;
     }
 
     public UserCredentials authenticate(AuthenticationRequest authenticationRequest) {
@@ -267,6 +269,23 @@ public class AuthService {
 
             donorRepository.save(donor);
             logger.info("end-resend verification code, phoneNumber: {}", phoneNumber);
+        }
+        else
+            throw new UserDoesntExistsException("donor not found");
+    }
+
+    public UserRole getUserRoleFromJWT(String token) {
+        logger.info("start-get user role from token: {}", token);
+        if(token == null || !token.startsWith("Bearer "))
+            throw new IllegalArgumentException("invalid token");
+
+        String phoneNumber = jwtTokenService.extractUsername(token);
+        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            UserRole role = donor.getRole();
+            logger.info("end-get user role {}", role);
+            return role;
         }
         else
             throw new UserDoesntExistsException("donor not found");
