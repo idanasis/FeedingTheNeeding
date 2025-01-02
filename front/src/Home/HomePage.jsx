@@ -6,6 +6,10 @@ import Projects from '../Home/components/Projects';
 import Pictures from '../Home/components/Pictures';
 import ThingsDo from '../Home/components/ThingsDo';
 import SayOnUs from '../Home/components/SayOnUs';
+import DonateUs from './components/DonateUs';
+import Contact from './components/Contact';
+import Footer from './components/Footer';
+
 import '../Home/styles/home.css';
 
 const HomePage = () => {
@@ -18,6 +22,10 @@ const HomePage = () => {
         <Pictures/>
         <ThingsDo/>
         <SayOnUs/>
+        <DonateUs/>
+        <Contact/>
+        <Footer/>
+
         </>
     );
 };
