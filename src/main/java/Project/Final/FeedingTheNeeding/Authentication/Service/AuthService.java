@@ -276,8 +276,10 @@ public class AuthService {
 
     public UserRole getUserRoleFromJWT(String token) {
         logger.info("start-get user role from token: {}", token);
-        if(token == null || !token.startsWith("Bearer "))
+        if(token == null)
             throw new IllegalArgumentException("invalid token");
+        if(token.startsWith("Bearer "))
+            token = token.substring(7);
 
         String phoneNumber = jwtTokenService.extractUsername(token);
         Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
