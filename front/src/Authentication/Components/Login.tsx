@@ -7,6 +7,7 @@ import Logo from '../Images/logo.png';
 const Login: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -62,6 +63,10 @@ const Login: React.FC = () => {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
+    };
+
     return (
         <div className="login-page">
             <div className="login-container">
@@ -78,22 +83,31 @@ const Login: React.FC = () => {
                             maxLength={10}
                             value={phoneNumber}
                             onChange={(e) => setPhoneNumber(e.target.value)}
-                            dir="rtl"
+                            dir="ltr"
                             required
                         />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group password-group">
                         <label htmlFor="password" className="form-label-right">
                             סיסמה:
                         </label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            dir="rtl"
-                            required
-                        />
+                        <div className="password-input-wrapper">
+                            <input
+                                id="password"
+                                type={showPassword ? 'text' : 'password'}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                dir="ltr"
+                                required
+                            />
+                            <button
+                                type="button"
+                                className="toggle-password-button"
+                                onClick={togglePasswordVisibility}
+                            >
+                                {showPassword ? '👁️‍🗨️' : '🗨️'}
+                            </button>
+                        </div>
                     </div>
 
                     {error && <p className="error-message">{error}</p>}

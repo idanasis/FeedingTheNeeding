@@ -21,12 +21,18 @@ const DonorRegister: React.FC = () => {
     const [showVerificationPopup, setShowVerificationPopup] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [successMessage, setSuccessMessage] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [id]: value }));
     };
+
+    const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+    const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setHasNoCriminalRecord(e.target.checked);
@@ -138,26 +144,44 @@ const DonorRegister: React.FC = () => {
                             <label htmlFor="password">
                                 סיסמא <span className="required-asterisk">*</span>
                             </label>
-                            <input
-                                id="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-button"
+                                    onClick={togglePasswordVisibility}
+                                >
+                                    {showPassword ? '👁️‍🗨️' : '🗨️'}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="form-group">
                             <label htmlFor="confirmPassword">
                                 אישור סיסמא <span className="required-asterisk">*</span>
                             </label>
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-button"
+                                    onClick={toggleConfirmPasswordVisibility}
+                                >
+                                    {showConfirmPassword ? '👁️‍🗨️' : '🗨️'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 

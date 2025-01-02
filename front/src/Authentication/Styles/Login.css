@@ -230,6 +230,37 @@ input:focus {
     margin-top: 20px;
 }
 
+.password-group {
+    position: relative;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+input {
+    direction: ltr;
+    text-align: left;
+    padding-right: 40px;
+}
+
+.toggle-password-button {
+    position: absolute;
+    left: 10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #555;
+}
+
+.toggle-password-button:hover {
+    color: #d32f2f;
+}
+
+
 
 @media (max-width: 768px) {
     .login-page {
