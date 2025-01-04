@@ -6,7 +6,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
-import Project.Final.FeedingTheNeeding.User.Exception.InvalidCredentialException;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.InvalidCredentialException;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
@@ -17,15 +17,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class AuthServiceTest {

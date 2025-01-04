@@ -6,7 +6,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
-import Project.Final.FeedingTheNeeding.User.Exception.InvalidCredentialException;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.InvalidCredentialException;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
