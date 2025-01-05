@@ -204,7 +204,7 @@ const CookConstraints: React.FC = () => {
 
           <div className="submit-container">
             <button
-              className="submit-button"
+              className="submit_button"
               onClick={handleSubmit}
               disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !mealCount}
             >

@@ -244,7 +244,7 @@
   text-align: center;
 }
 
-.submit-button {
+.submit_button {
   background: #4a5568;
   color: white;
   border: none;
@@ -257,13 +257,13 @@
   min-width: 160px;
 }
 
-.submit-button:hover:not(:disabled) {
+.submit_button:hover:not(:disabled) {
   background: #2d3748;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(74, 85, 104, 0.2);
 }
 
-.submit-button:disabled {
+.submit_button:disabled {
   background: #e2e8f0;
   cursor: not-allowed;
   transform: none;
