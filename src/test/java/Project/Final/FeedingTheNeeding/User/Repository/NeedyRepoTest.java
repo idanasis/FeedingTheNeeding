@@ -32,7 +32,7 @@ public class NeedyRepoTest {
     private static final String ADDRESS = "address";
     private static final String CITY = "city";
     private static final int FAMILY_SIZE = 4;
-    private static final NeedyStatus NEEDY_STATUS = NeedyStatus.COMPLETED;
+    private static final NeedyStatus NEEDY_STATUS = NeedyStatus.APPROVED;
 
     @Test
     public void testFindByPhoneNumber() {

@@ -17,68 +17,96 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px 30px;
     width: 90%;
-    max-width: 600px;
+    max-width: 650px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.form-logo {
+.register-container .form-logo {
     text-align: center;
     margin-bottom: 10px;
     width: 100%;
 }
 
-.logo-image {
+.register-container .logo-image {
     width: 150px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
-h2 {
+.register-container h2 {
     text-align: center;
     color: #333;
     font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
-.form-row {
+.register-container .form-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 25px;
     width: 100%;
 }
 
-.form-row .form-group {
+.register-container .form-row .form-group {
     flex: 1 1 45%;
+    margin-bottom: 20px;
 }
 
-.form-group label {
+.register-container .form-group label {
     font-size: 14px;
     color: #555;
     margin-left: 10px;
     white-space: nowrap;
 }
 
-input {
+.register-container input {
     flex: 1;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 16px;
     direction: rtl;
     text-align: right;
     width: 100%;
+    margin-bottom: 10px;
 }
 
-input:focus {
+.register-container input:focus {
     border-color: #d32f2f;
     outline: none;
 }
 
-.submit-button {
+.register-container .password-input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.register-container .password-input-wrapper input {
+    padding-right: 40px;
+    height: 40px;
+}
+
+.register-container .password-input-wrapper .toggle-password-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #555;
+}
+
+.register-container .password-input-wrapper .toggle-password-button:hover {
+    color: #d32f2f;
+}
+
+.register-container .submit-button {
     background-color: #d32f2f;
     color: white;
     font-size: 16px;
@@ -92,44 +120,42 @@ input:focus {
     transition: background-color 0.3s, transform 0.2s ease;
 }
 
-.submit-button:hover {
-    background-color: #d32f2f;
+.register-container .submit-button:hover {
+    background-color: #b71c1c;
 }
 
-.error-message {
+.register-container .error-message {
     color: red;
     text-align: center;
     font-size: 14px;
     margin-top: 5px;
 }
 
-.extra-options {
-    margin-top: 50px;
+.register-container .extra-options {
+    margin-top: 20px;
     text-align: center;
 }
 
-.extra-options a {
+.register-container .extra-options a {
     color: #d32f2f;
     text-decoration: none;
     font-weight: bold;
     cursor: pointer;
 }
 
-.extra-options a:hover {
+.register-container .extra-options a:hover {
     text-decoration: underline;
 }
 
-.checkbox-group {
+.register-container .checkbox-group {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    margin-top: 5px;
-    margin-bottom: 10px;
     width: 100%;
     direction: rtl;
 }
 
-.checkbox-group input[type="checkbox"] {
+.register-container .checkbox-group input[type="checkbox"] {
     margin-left: 10px;
     transform: scale(1.2);
     width: auto;
@@ -137,7 +163,7 @@ input:focus {
     cursor: pointer;
 }
 
-.checkbox-label {
+.register-container .checkbox-label {
     font-size: 16px;
     color: #333;
     display: inline-block;
@@ -145,7 +171,7 @@ input:focus {
     text-align: right;
 }
 
-.required-asterisk {
+.register-container .required-asterisk {
     color: red;
     font-weight: bold;
     margin-left: 4px;
@@ -156,61 +182,69 @@ input:focus {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #f8f8f8;
-    color: #333;
-    padding: 20px;
-    border-radius: 8px;
-    font-size: 20px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    z-index: 9999;
-    width: 400px;
+    z-index: 1000;
 }
 
 .success-popup p {
-    margin: 0;
-    margin-bottom: 10px;
-    font-size: 14px;
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.5;
 }
 
-/* GENERAL STYLING FOR BUTTONS IN success-popup */
 .success-popup button {
     background-color: #d32f2f;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
+    border-radius: 6px;
+    padding: 10px 20px;
     font-size: 14px;
-    margin: 0 5px; /* אם תרצה רווח קטן בין הכפתורים */
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+    margin-top: 10px;
 }
 
 .success-popup button:hover {
-    background-color: #d32f2f;
+    background-color: #b71c1c;
+    transform: translateY(-2px);
 }
 
-/* CONTAINER AROUND THE RESEND LINK */
 .resend-container {
     margin-top: 10px;
     font-size: 14px;
     color: #333;
-    text-align: center;
 }
 
-/* "Resend link" without red background */
-.success-popup .resend-link {
-    background-color: transparent !important;
-    border: none !important;
-    text-decoration: underline;
-    cursor: pointer;
-    font-size: 14px;
-    margin-left: 5px;
-    padding: 0;
+.resend-container button.resend-link {
+    background: none;
+    border: none;
     color: #d32f2f;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: 14px;
 }
 
-.success-popup .resend-link:hover {
+.resend-container button.resend-link:hover {
     text-decoration: none;
+    color: #b71c1c;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 }
 
 @media screen and (max-width: 768px) {
@@ -218,24 +252,26 @@ input:focus {
         width: 95%;
         padding: 15px;
     }
-    .form-row {
+
+    .register-container .form-row {
         flex-wrap: wrap;
         gap: 20px;
     }
-    .form-row .form-group {
-        flex: 1 1 45%;
-    }
-    h2 {
+
+    .register-container h2 {
         font-size: 1.25rem;
     }
-    .submit-button {
+
+    .register-container .submit-button {
         font-size: 14px;
         padding: 10px;
     }
-    .logo-image {
+
+    .register-container .logo-image {
         width: 120px;
     }
-    .checkbox-label {
+
+    .register-container .checkbox-label {
         font-size: 13px;
     }
 }
@@ -245,34 +281,30 @@ input:focus {
         width: 90%;
         padding: 10px;
     }
-    .form-row {
+
+    .register-container .form-row {
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 15px;
     }
-    .form-row .form-group {
-        flex: 1 1 45%;
-    }
-    h2 {
+
+    .register-container h2 {
         font-size: 1rem;
     }
-    .submit-button {
+
+    .register-container .submit-button {
         font-size: 12px;
         padding: 8px;
     }
-    .logo-image {
+
+    .register-container .logo-image {
         width: 100px;
     }
-    .checkbox-label {
+
+    .register-container .checkbox-label {
         font-size: 12px;
     }
-    .checkbox-group input[type="checkbox"] {
-        transform: scale(1);
-    }
-}
 
-@media screen and (max-width: 600px) {
-    .success-popup {
-        width: 80%;
-        padding: 15px;
+    .register-container .checkbox-group input[type="checkbox"] {
+        transform: scale(1);
     }
 }

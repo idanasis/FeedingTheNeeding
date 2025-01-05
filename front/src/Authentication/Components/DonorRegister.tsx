@@ -21,12 +21,18 @@ const DonorRegister: React.FC = () => {
     const [showVerificationPopup, setShowVerificationPopup] = useState(false);
     const [verificationCode, setVerificationCode] = useState('');
     const [successMessage, setSuccessMessage] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const navigate = useNavigate();
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { id, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [id]: value }));
     };
+
+    const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+    const toggleConfirmPasswordVisibility = () => setShowConfirmPassword((prev) => !prev);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setHasNoCriminalRecord(e.target.checked);
@@ -138,26 +144,44 @@ const DonorRegister: React.FC = () => {
                             <label htmlFor="password">
                                 סיסמא <span className="required-asterisk">*</span>
                             </label>
-                            <input
-                                id="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-button"
+                                    onClick={togglePasswordVisibility}
+                                >
+                                    {showPassword ? '👁️‍🗨️' : '🗨️'}
+                                </button>
+                            </div>
                         </div>
 
                         <div className="form-group">
                             <label htmlFor="confirmPassword">
                                 אישור סיסמא <span className="required-asterisk">*</span>
                             </label>
-                            <input
-                                id="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                            />
+                            <div className="password-input-wrapper">
+                                <input
+                                    id="confirmPassword"
+                                    type={showConfirmPassword ? 'text' : 'password'}
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    required
+                                />
+                                <button
+                                    type="button"
+                                    className="toggle-password-button"
+                                    onClick={toggleConfirmPasswordVisibility}
+                                >
+                                    {showConfirmPassword ? '👁️‍🗨️' : '🗨️'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -245,42 +269,52 @@ const DonorRegister: React.FC = () => {
             </div>
 
             {showVerificationPopup && (
-                <div className="success-popup">
-                    <p>אנא הזן את קוד האימות שנשלח אליך:</p>
-                    {error && <p className="error-message">{error}</p>}
-                    <input
-                        type="text"
-                        maxLength={6}
-                        placeholder="הזן קוד אימות"
-                        value={verificationCode}
-                        onChange={(e) => {
-                            const val = e.target.value.replace(/\D/g, ''); // digits only
-                            setVerificationCode(val);
-                        }}
-                        style={{marginBottom: '10px', textAlign: 'center'}}
-                    />
-
-                    <button onClick={handleVerification} style={{marginBottom: '10px'}}>
-                        אמת קוד
-                    </button>
-
-                    <p className="resend-container">
-                        לא קיבלת קוד אימות?
-                        <button className="resend-link" onClick={handleResendCode}>
-                            שלח שוב
-                        </button>
-                    </p>
-
-                </div>
+                <>
+                    <div className="overlay"></div>
+                    <div className="success-popup">
+                        <p>אנא הזן את קוד האימות שנשלח אליך:</p>
+                        {error && <p className="error-message">{error}</p>}
+                        <input
+                            type="text"
+                            maxLength={6}
+                            placeholder="הזן קוד אימות"
+                            value={verificationCode}
+                            onChange={(e) => {
+                                const val = e.target.value.replace(/\D/g, ''); // digits only
+                                setVerificationCode(val);
+                            }}
+                            style={{
+                                width: "100%",
+                                padding: "10px",
+                                border: "1px solid #ddd",
+                                borderRadius: "6px",
+                                marginBottom: "15px",
+                                fontSize: "14px",
+                                textAlign: "center"
+                            }}
+                        />
+                        <button onClick={handleVerification}>אמת קוד</button>
+                        <p className="resend-container">
+                            לא קיבלת קוד אימות?
+                            <button className="resend-link" onClick={handleResendCode}>
+                                שלח שוב
+                            </button>
+                        </p>
+                    </div>
+                </>
             )}
 
             {successMessage && (
-                <div className="success-popup">
-                    <p>הנתונים נקלטו במערכת בהצלחה!</p>
-                    <p>פרטיך הועברו לרכזת, ניצור איתך קשר לאחר אישורך.</p>
-                    <button onClick={handleSuccessConfirmation}>אישור</button>
-                </div>
+                <>
+                    <div className="overlay"></div>
+                    <div className="success-popup">
+                        <p>הנתונים נקלטו במערכת בהצלחה!</p>
+                        <p>פרטיך הועברו לרכזת, ניצור איתך קשר לאחר אישורך.</p>
+                        <button onClick={handleSuccessConfirmation}>אישור</button>
+                    </div>
+                </>
             )}
+
 
         </div>
     );

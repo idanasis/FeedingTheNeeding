@@ -7,6 +7,7 @@ import Logo from '../Images/logo.png';
 const Login: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -62,102 +63,71 @@ const Login: React.FC = () => {
         }
     };
 
+    const togglePasswordVisibility = () => {
+        setShowPassword((prev) => !prev);
+    };
+
     return (
-        <div className="login-page">
-            <div className="login-container">
-                <h2>התחברות למערכת</h2>
-                <img src={Logo} alt="Logo"/>
-                <form onSubmit={handleLogin} className="login-form">
-                    <div className="form-group">
-                        <label htmlFor="phoneNumber" className="form-label-right">
-                            מספר טלפון:
-                        </label>
-                        <input
-                            id="phoneNumber"
-                            type="tel"
-                            maxLength={10}
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            dir="rtl"
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password" className="form-label-right">
-                            סיסמה:
-                        </label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            dir="rtl"
-                            required
-                        />
-                    </div>
-
-                    {error && <p className="error-message">{error}</p>}
-
-                    <button type="submit" className="submit-button" disabled={loading}>
-                        {loading ? 'טוען...' : 'התחבר'}
-                    </button>
-                </form>
-
-                <div className="extra-options">
-                    <span>עדיין לא הצטרפת אלינו? </span>
-                    <a onClick={() => navigate('/donorRegister')}>
-                        הצטרף כאן
-                    </a>
-                    <br/>
-                    <span className="forgot-password" onClick={handleShowResetPopup}>
-                        שכחתי סיסמה
-                    </span>
-                </div>
-            </div>
-
-            {showResetPopup && (
-                <div className="reset-password-popup">
-                    <div className="reset-popup-content">
-                        <h3>איפוס סיסמה</h3>
-                        <form onSubmit={handleResetPassword}>
-                            <label htmlFor="resetPhoneNumber">מספר טלפון:</label>
+        <div className="login-page-wrapper">
+            <div className="login-page">
+                <div className="login-container">
+                    <h2>התחברות למערכת</h2>
+                    <img src={Logo} alt="Logo" style={{ maxWidth: '200px', marginBottom: '20px' }} />
+                    <form onSubmit={handleLogin} className="login-form">
+                        <div className="form-group">
+                            <label htmlFor="phoneNumber" className="form-label-right">
+                                מספר טלפון:
+                            </label>
                             <input
+                                id="phoneNumber"
                                 type="tel"
-                                id="resetPhoneNumber"
                                 maxLength={10}
-                                value={resetPhoneNumber}
-                                onChange={(e) => setResetPhoneNumber(e.target.value)}
+                                value={phoneNumber}
+                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                dir="ltr"
                                 required
                             />
-
-                            <label htmlFor="newPassword">סיסמה חדשה:</label>
-                            <input
-                                type="password"
-                                id="newPassword"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                required
-                            />
-
-                            {resetError && <p className="error-message">{resetError}</p>}
-                            {resetSuccess && <p className="success-message">{resetSuccess}</p>}
-
-                            <div className="reset-popup-buttons">
-                                <button type="submit" className="submit-button">
-                                    אפס סיסמה
-                                </button>
+                        </div>
+                        <div className="form-group password-group">
+                            <label htmlFor="password" className="form-label-right">
+                                סיסמה:
+                            </label>
+                            <div className="password-input-wrapper">
+                                <input
+                                    id="password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    dir="ltr"
+                                    required
+                                />
                                 <button
                                     type="button"
-                                    className="close-button"
-                                    onClick={handleCloseResetPopup}
+                                    className="toggle-password-button"
+                                    onClick={togglePasswordVisibility}
                                 >
-                                    בטל
+                                    {showPassword ? '👁️‍🗨️' : '🗨️'}
                                 </button>
                             </div>
-                        </form>
+                        </div>
+
+                        {error && <p className="error-message">{error}</p>}
+
+                        <button type="submit" className="submit-button" disabled={loading}>
+                            {loading ? 'טוען...' : 'התחבר'}
+                        </button>
+                    </form>
+
+                    <div className="extra-options">
+                        <span>עדיין לא הצטרפת אלינו? </span>
+                        <a onClick={() => navigate('/donorRegister')}>הצטרף כאן</a>
+                        <br />
+                        <span className="forgot-password" onClick={handleShowResetPopup}>
+                        שכחתי סיסמה
+                    </span>
                     </div>
                 </div>
-            )}
+            </div>
         </div>
     );
 };

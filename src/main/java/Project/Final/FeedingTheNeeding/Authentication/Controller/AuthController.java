@@ -5,6 +5,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExist
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
+import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
@@ -115,5 +116,14 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/user-role")
+    public ResponseEntity<?> getUserRoleFromJWT(@RequestParam String token) {
+        try{
+            UserRole role = authService.getUserRoleFromJWT(token);
+            return ResponseEntity.ok(role);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 }

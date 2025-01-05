@@ -54,7 +54,7 @@ public class NeedyControllerTest {
     private final String NEEDY1_LAST_NAME = "needy1", NEEDY2_LAST_NAME = "needy2";
     private final String NEEDY1_PHONE_NUMBER = "0510000000", NEEDY2_PHONE_NUMBER = "0520000000";
     private final NeedyStatus NEEDY1_STATUS = NeedyStatus.PENDING;
-    private final NeedyStatus NEEDY2_STATUS = NeedyStatus.COMPLETED;
+    private final NeedyStatus NEEDY2_STATUS = NeedyStatus.APPROVED;
 
     private Needy needy1;
     private Needy needy2;

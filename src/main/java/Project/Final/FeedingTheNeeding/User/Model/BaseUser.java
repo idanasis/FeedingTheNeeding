@@ -30,6 +30,4 @@ public abstract class BaseUser {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
-
-    public abstract String getUserTypeDescription();
 }

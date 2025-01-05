@@ -30,10 +30,4 @@ public class Donor extends BaseUser{
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
     private boolean verified;
-
-    @Override
-    public String getUserTypeDescription() {
-        return "Donator";
-    }
-
 }

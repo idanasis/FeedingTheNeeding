@@ -8,6 +8,7 @@ import DonorRegister from "./Authentication/Components/DonorRegister";
 
 import UploadConstraints from "./Cooking/Components/UploadConstraints";
 import DrivingManager from "./Driving/components/DrivingManagement";
+import Donation from "./Donations/Components/Donation";
 
 
 
@@ -22,6 +23,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/donorRegister" element={< DonorRegister />} />
             <Route path="/driving" element={<DrivingManager />}/>
+            <Route path="/donation" element={<Donation />}/>
         </Routes>
       </Router>
   );
