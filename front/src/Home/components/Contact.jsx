@@ -61,7 +61,7 @@ const Contact = () => {
     try {
       await createOrUpdateNeedy({
         ...formData,
-        city: 'Unknown', // Add default value if city is not included in the form
+        city: 'Beer-Sheva', // Add default value if city is not included in the form
         role: 'NEEDY', // Default role
         confirmStatus: 'PENDING', // Default status
       });
