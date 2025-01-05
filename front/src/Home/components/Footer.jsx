@@ -17,7 +17,7 @@ const Footer = () => {
         className='bg-red-500 text-black p-3 rounded-full hover:bg-black hover:text-white cursor-pointer fixed lg:bottom-2 bottom-2 right-6 flex justify-center items-center'
       >
         <Link
-          to='hero'
+          to='בית'
           spy={true}
           offset={-100}
           smooth={true}

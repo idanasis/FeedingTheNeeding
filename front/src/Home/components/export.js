@@ -6,6 +6,9 @@ import cooking from "../images/chef.svg";
 import give from "../images/give.svg";
 import share from "../images/share.svg";
 import avatar from "../images/avatar.webp";
+import hanuka from "../images/hanuka.png";
+import purim from "../images/purim.png";
+import build from "../images/repair.svg";
 
 
 export const allProjects = [
@@ -28,19 +31,19 @@ export const allProjects = [
       "כל שישי המתנדבים שלנו מכינים ומשנעים אוכל לחוסים",
   },
   {
-    icon: hotMealIcon,
+    icon: hanuka,
     title: "חנוכה",
     about:
       "חלוקה מטעם הארגון לכ-200 משפחות וקשישים.",
   },
   {
-    icon: hotMealIcon,
+    icon: purim,
     title: "פורים",
     about:
       "חלוקה מטעם הארגון לכ-200 משפחות וקשישים.",
   },
   {
-    icon: hotMealIcon,
+    icon: build,
     title: "שיפוץ בתים",
     about:
       "שיפוץ בתים לא ראויים למגורים ע\"י אנשי מקצוע, גיוס ריהוט, צבע וכו\'",
