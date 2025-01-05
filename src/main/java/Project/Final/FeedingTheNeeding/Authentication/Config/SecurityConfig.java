@@ -42,6 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/cooking/**").permitAll()
                         .requestMatchers("/driving/**").permitAll()
                         .requestMatchers("/social/**").permitAll()
+                        .requestMatchers("/needer/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

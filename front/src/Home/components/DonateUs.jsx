@@ -65,7 +65,7 @@ const DonateUs = () => {
           <motion.button
             variants={slideUpVariants}
             className='mt-[30px] px-6 py-3 bg-red-500 text-white text-lg font-semibold rounded-lg hover:bg-red-600 transition duration-300'
-            onClick={() => window.location.href = '/donation-page'}
+            onClick={() => window.location.href = '/donation'}
           >
             לתרומה עכשיו
           </motion.button>
