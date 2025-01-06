@@ -80,13 +80,13 @@
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.3s ease-in-out, top 0.3s ease-in-out, left 0.3s ease-in-out;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), top 0.2s ease, left 0.2s ease;
 }
 
 .qr-container img {
     width: 200px;
     height: auto;
-    transition: transform 0.3s ease-in-out;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .qr-container.enlarged {
@@ -99,7 +99,23 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
     background-color: white;
     padding: 10px;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), top 0.2s ease, left 0.2s ease;
 }
+
+.bit-guide {
+    text-align: right;
+    font-size: 1.0em;
+    color: #555;
+    margin-bottom: 15px;
+    padding: 0;
+    list-style-type: none;
+}
+
+.bit-guide li strong {
+    color: #0078d4;
+    font-weight: bold;
+}
+
 
 .paybox-link {
     font-size: 1.1em;
