@@ -308,7 +308,6 @@ public class NeederTrackingControllerTest {
                 .andExpect(jsonPath("$.lastName").value(needy.getLastName()))  // Expecting the last name
                 .andExpect(jsonPath("$.phoneNumber").value(needy.getPhoneNumber()))  // Expecting the phone number
                 .andExpect(jsonPath("$.address").value(needy.getAddress()))  // Expecting the address
-                .andExpect(jsonPath("$.city").value(needy.getCity()))  // Expecting the city
                 .andExpect(jsonPath("$.additionalNotes").value(ADDITIONAL_NOTES));  // Expecting the additional notes
     }
 

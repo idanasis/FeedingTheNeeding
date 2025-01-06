@@ -30,7 +30,6 @@ public class NeederTrackingRepositoryTest {
     private static final String LAST_NAME = "Doe";
     private static final String PHONE_NUMBER = "123456789";
     private static final String ADDRESS = "123 Street";
-    private static final String CITY = "City";
     private static final int FAMILY_SIZE = 4;
     private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
@@ -50,7 +49,6 @@ public class NeederTrackingRepositoryTest {
         user.setLastName(LAST_NAME);
         user.setPhoneNumber(PHONE_NUMBER);
         user.setAddress(ADDRESS);
-        user.setCity(CITY);
         user.setFamilySize(FAMILY_SIZE);
         needyRepository.save(user);
 
@@ -80,7 +78,6 @@ public class NeederTrackingRepositoryTest {
         assertEquals(LAST_NAME, foundNeederTracking.getNeedy().getLastName());
         assertEquals(PHONE_NUMBER, foundNeederTracking.getNeedy().getPhoneNumber());
         assertEquals(ADDRESS, foundNeederTracking.getNeedy().getAddress());
-        assertEquals(CITY, foundNeederTracking.getNeedy().getCity());
         assertEquals(FAMILY_SIZE, foundNeederTracking.getNeedy().getFamilySize());
         assertEquals(DIETARY_PREFERENCES, foundNeederTracking.getDietaryPreferences());
         assertEquals(ADDITIONAL_NOTES, foundNeederTracking.getAdditionalNotes());
@@ -173,7 +170,6 @@ public class NeederTrackingRepositoryTest {
             user.setLastName(LAST_NAME);
             user.setPhoneNumber(PHONE_NUMBER);
             user.setAddress(ADDRESS);
-            user.setCity(CITY);
             user.setFamilySize(FAMILY_SIZE);
             return user;
         }
