@@ -29,7 +29,6 @@ public class DonorRepoTest {
     private static final String LAST_NAME = "lastName";
     private static final String PHONE_NUMBER = "0500000000";
     private static final String ADDRESS = "address";
-    private static final String CITY = "city";
     private static final RegistrationStatus REGISTRATION_STATUS = RegistrationStatus.AVAILABLE;
     private static final String VERIFICATION_CODE = "123456";
 
@@ -42,7 +41,6 @@ public class DonorRepoTest {
         donor.setLastName(LAST_NAME);
         donor.setPhoneNumber(PHONE_NUMBER);
         donor.setAddress(ADDRESS);
-        donor.setCity(CITY);
         donor.setStatus(REGISTRATION_STATUS);
         donorRepository.save(donor);
 
@@ -55,7 +53,6 @@ public class DonorRepoTest {
         assertEquals(LAST_NAME, foundDonor.get().getLastName());
         assertEquals(PHONE_NUMBER, foundDonor.get().getPhoneNumber());
         assertEquals(ADDRESS, foundDonor.get().getAddress());
-        assertEquals(CITY, foundDonor.get().getCity());
     }
 
     @Test
@@ -67,7 +64,6 @@ public class DonorRepoTest {
         donor.setLastName(LAST_NAME);
         donor.setPhoneNumber(PHONE_NUMBER);
         donor.setAddress(ADDRESS);
-        donor.setCity(CITY);
         donor.setStatus(REGISTRATION_STATUS);
         donor.setVerificationCode(VERIFICATION_CODE);
         donorRepository.save(donor);
@@ -81,7 +77,6 @@ public class DonorRepoTest {
         assertEquals(LAST_NAME, foundDonor.get().getLastName());
         assertEquals(PHONE_NUMBER, foundDonor.get().getPhoneNumber());
         assertEquals(ADDRESS, foundDonor.get().getAddress());
-        assertEquals(CITY, foundDonor.get().getCity());
     }
 
 }

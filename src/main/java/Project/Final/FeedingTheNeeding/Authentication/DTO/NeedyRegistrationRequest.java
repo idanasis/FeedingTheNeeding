@@ -14,6 +14,5 @@ public class NeedyRegistrationRequest {
     private String lastName;
     private String phoneNumber;
     private String address;
-    private String city;
     private int familySize;
 }

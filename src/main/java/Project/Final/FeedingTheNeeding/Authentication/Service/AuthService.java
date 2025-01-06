@@ -118,7 +118,6 @@ public class AuthService {
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
         donor.setAddress(registrationRequest.getAddress());
-        donor.setCity(registrationRequest.getCity());
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
@@ -147,7 +146,6 @@ public class AuthService {
         needy.setLastName(needyRegistrationRequest.getLastName());
         needy.setPhoneNumber(needyRegistrationRequest.getPhoneNumber());
         needy.setAddress(needyRegistrationRequest.getAddress());
-        needy.setCity(needyRegistrationRequest.getCity());
         needy.setRole(UserRole.NEEDY);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(needyRegistrationRequest.getFamilySize());
