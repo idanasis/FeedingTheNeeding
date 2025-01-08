@@ -136,4 +136,16 @@ public class DrivingFascade {
        logger.info("viewHistory");
        return routeRepository.findAll();
     }
+    public List<Route> getRoutesByDriverId(long driverId){
+        logger.info("getRoutesByDriverId with driver id {}", driverId);
+        return routeRepository.findRoutesByDriverId(driverId);
+    }
+    public List<DriverConstraint> getDriverFutureConstraintsHaventConfirmed(long driverId){
+        logger.info("getDriverConstraintsHaventConfirmed with driver id {}", driverId);
+        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId).stream().filter(constraint -> constraint.getDate().isBefore(LocalDate.now())).toList();
+        List<Route> routes = routeRepository.findRoutesByDriverId(driverId);
+        constraints.removeIf(constraint -> routes.stream().anyMatch(route -> route.getDate().equals(constraint.getDate())));
+        logger.info("getDriverConstraintsHaventConfirmed with driver id {} done", driverId);
+        return constraints;
+    }
 }

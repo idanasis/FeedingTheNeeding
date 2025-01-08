@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -188,4 +186,13 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("/constraints/driver/futureNotApproved/{driverId}")
+    public ResponseEntity<?> getDriverFutureConstraintsHaventConfirmed(@RequestParam long driverId) {
+        try {
+            return ResponseEntity.ok(drivingService.getDriverFutureConstraintsHaventConfirmed(driverId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    
 }
