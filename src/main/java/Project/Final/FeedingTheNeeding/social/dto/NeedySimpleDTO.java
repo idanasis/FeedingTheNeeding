@@ -23,7 +23,6 @@ public class NeedySimpleDTO {
         this.lastName = needy.getLastName();
         this.phoneNumber = needy.getPhoneNumber();
         this.address = needy.getAddress();
-        this.city = needy.getCity();
         this.additionalNotes=additionalNotes;
         // Map other fields as needed
     }

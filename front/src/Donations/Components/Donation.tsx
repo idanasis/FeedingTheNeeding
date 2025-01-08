@@ -10,14 +10,25 @@ import BitImg from '../Images/bitPhoto.png';
 const DonationPage: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
     const [isQrCodeEnlarged, setIsQrCodeEnlarged] = useState<boolean>(false);
+    const [clickTimeout, setClickTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);
 
     const handleOptionClick = (option: string) => {
         setSelectedOption(option);
         setIsQrCodeEnlarged(false);
     };
 
-    const toggleQrCodeSize = () => {
-        setIsQrCodeEnlarged((prev) => !prev);
+    const handleQrCodeClick = () => {
+        if (clickTimeout) {
+            clearTimeout(clickTimeout);
+            setClickTimeout(null);
+            window.open("https://www.bitpay.co.il/app/me/64C912E7-D77C-F924-1DC3-AECC163BAE41FA3E", "_blank");
+        } else {
+            const timeout = setTimeout(() => {
+                setIsQrCodeEnlarged((prev) => !prev);
+                setClickTimeout(null);
+            }, 250); // 250ms timeout to differentiate single and double clicks
+            setClickTimeout(timeout);
+        }
     };
 
     return (
@@ -32,10 +43,14 @@ const DonationPage: React.FC = () => {
                     {selectedOption === 'bit' && (
                         <div className="donation-method bit-method">
                             <h2>תרומה באמצעות ביט</h2>
-                            <p className="bit-instructions">אנא סרקו את הקוד כדי לתרום</p>
+                            <p className="bit-instructions">אנא סרקו את הקוד או לחצו עליו לפי ההנחיות:</p>
+                            <ul className="bit-guide">
+                                <li><strong>לחיצה אחת:</strong> להגדלת הקוד לצפייה נוחה.</li>
+                                <li><strong>לחיצה כפולה:</strong> מעבר ישיר לתרומה באפליקציית ביט.</li>
+                            </ul>
                             <div
                                 className={`qr-container ${isQrCodeEnlarged ? 'enlarged' : ''}`}
-                                onClick={toggleQrCodeSize}
+                                onClick={handleQrCodeClick}
                             >
                                 <img src={QRCodeImg} alt="Bit QR Code" className="qr-code" />
                             </div>
