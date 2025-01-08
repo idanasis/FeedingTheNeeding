@@ -149,7 +149,7 @@ public class AuthServiceTest {
 
         authService.registerDonor(donorRegistrationRequest);
 
-        verify(donorRepository, times(1)).save(any(Donor.class));
+        verify(donorRepository, times(2)).save(any(Donor.class));
         verify(userCredentialsRepository, times(1)).save(any(UserCredentials.class));
     }
 
