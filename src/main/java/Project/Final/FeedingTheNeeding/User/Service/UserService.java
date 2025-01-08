@@ -72,7 +72,6 @@ public class UserService {
         upDonor.setFirstName(donor.getFirstName());
         upDonor.setLastName(donor.getLastName());
         upDonor.setAddress(donor.getAddress());
-        upDonor.setCity(donor.getCity());
         upDonor.setStatus(donor.getStatus());
         upDonor.setEmail(donor.getEmail());
         donorRepository.save(upDonor);

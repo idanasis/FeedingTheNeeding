@@ -79,7 +79,6 @@ const DonorPendingTable = () => {
       { width: '14%', label: 'שם', dataKey: 'firstName' },
       { width: '22%', label: 'טלפון', dataKey: 'phoneNumber' },
       { width:'13%', label: 'כתובת', dataKey: 'address' },
-      { width: '9%', label: 'עיר', dataKey: 'city' },
       { width: '18%', label: 'אימייל', dataKey: 'email'},
     ];
     // Header Content
@@ -109,7 +108,6 @@ const DonorPendingTable = () => {
           <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.firstName} {row.lastName}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.phoneNumber}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.address}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.city}</TableCell>
           <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' }, paddingRight: '30px'}}>{row.email}</TableCell>
           <TableCell align="center">
           <Box gap={1} justifyContent="center" marginRight={1} sx={{ paddingRight: '30px'}}>

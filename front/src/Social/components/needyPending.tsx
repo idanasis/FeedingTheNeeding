@@ -78,7 +78,6 @@ const NeedyPendingTable = () => {
       { width: '20%', label: 'שם', dataKey: 'firstName' },
       { width: '21%', label: 'טלפון', dataKey: 'phoneNumber' },
       { width:'16%', label: 'כתובת', dataKey: 'address' },
-      { width: '16%', label: 'עיר', dataKey: 'city' },
       { width: '14%', label: 'גודל משפחה', dataKey: 'familySize', numeric: true },
     ];
     // Header Content
@@ -108,7 +107,6 @@ const NeedyPendingTable = () => {
           <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.firstName}{row.lastName}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.phoneNumber}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.city}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.familySize}</TableCell>
           <TableCell align="center">
           <Box gap={1} justifyContent="center" marginRight={1}>
