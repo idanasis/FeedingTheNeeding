@@ -4,12 +4,12 @@ const API_BASE_URL = 'http://localhost:8080';
 
 
 export interface CookConstraintsData {
-    cookId: long;
+    cookId: number;
     startTime: string;
     endTime: string;
-    PlatesNum: int;
+    PlatesNum: number;
     location: string;
-    date: LocalDate;
+    date: string;
 }
 
 export const submitConstraints = async (data : CookConstraintsData) : Promise<void> => {
