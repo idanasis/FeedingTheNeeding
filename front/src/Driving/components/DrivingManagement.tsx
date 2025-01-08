@@ -315,8 +315,10 @@ const DrivingManager = () => {
 
   }
   return (
-    <div style={{ marginTop: '50rem',overflowY: 'auto'}}>
-    <ResponsiveDatePickers onDateChange={handleDateChange} />
+    <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
+     <div style={{marginTop: "20px",backgroundColor: "snow"}}>
+    <ResponsiveDatePickers onDateChange={handleDateChange}/>
+    </div>
     <Button variant="contained" color="primary" sx={{marginRight:10}} >פרסם הכל</Button>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>

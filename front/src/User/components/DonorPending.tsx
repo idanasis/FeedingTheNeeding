@@ -7,48 +7,49 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { TableVirtuoso, TableComponents } from 'react-virtuoso';
-import { Needy } from '@/src/models/NeedyModel';
-import { Box, Button, IconButton } from '@mui/material';
-import { LoadingButton } from '@mui/lab';
-import { deleteNeedy, getNeedyPending, updateNeedy } from '../../Restapi/socialRestapi';
+import { Box, Button } from '@mui/material';
+import { Donor } from '../../models/DonorModel';
+import { deleteDonor, getPendingDonors, updateDonor } from '../../Restapi/DonorRestapi';
 
 
 
-const NeedyPendingTable = () => {
-  const [currNeeders, setCurrNeeders] = useState<Needy[]>([]);
-  async function fetchNeeders() {
+const DonorPendingTable = () => {
+  const [currNeeders, setCurrNeeders] = useState<Donor[]>([]);
+  async function fetchDonors() {
     try{
-      const data=await getNeedyPending();
+      const data=await getPendingDonors();
+      console.log(data)
       setCurrNeeders(data)
     }catch(err){
+        console.log(err)
       alert('אין נתונים להצגה')
       }
     }
 
   useEffect(() => {
-      fetchNeeders();
+    fetchDonors();
   }, []);
 
-    const handleAccept = async(needy:Needy) => {
+    const handleAccept = async(donor:Donor) => {
       try{
-        needy.confirmStatus="APPROVED";
-        await updateNeedy(needy);
-        await fetchNeeders();
+        donor.status="AVAILABLE";
+        await updateDonor(donor);
+        await fetchDonors();
     
       }catch(err){
         alert('אירעה שגיאה')
       }
     }
-    const handleReject = async(needy:Needy) => {
+    const handleReject = async(donor:Donor) => {
       try{
-        await deleteNeedy(needy);
-        await fetchNeeders();
+        await deleteDonor(donor);
+        await fetchDonors();
     
       }catch(err){
         alert('אירעה שגיאה')
       }
     }
-    const VirtuosoTableComponents: TableComponents<Needy> = {
+    const VirtuosoTableComponents: TableComponents<Donor> = {
       Scroller: React.forwardRef<HTMLDivElement>((props, ref) => (
         <TableContainer component={Paper} {...props} ref={ref} />
       )),
@@ -65,7 +66,7 @@ const NeedyPendingTable = () => {
     };
     // Columns Configuration
   interface ColumnData {
-    dataKey: keyof Needy;
+    dataKey: keyof Donor;
     label: string;
     numeric?: boolean;
     width?: string;
@@ -75,11 +76,11 @@ const NeedyPendingTable = () => {
 
   // Columns Configuration
     const columns: ColumnData[] = [
-      { width: '20%', label: 'שם', dataKey: 'firstName' },
-      { width: '21%', label: 'טלפון', dataKey: 'phoneNumber' },
-      { width:'16%', label: 'כתובת', dataKey: 'address' },
-      { width: '16%', label: 'עיר', dataKey: 'city' },
-      { width: '14%', label: 'גודל משפחה', dataKey: 'familySize', numeric: true },
+      { width: '14%', label: 'שם', dataKey: 'firstName' },
+      { width: '22%', label: 'טלפון', dataKey: 'phoneNumber' },
+      { width:'13%', label: 'כתובת', dataKey: 'address' },
+      { width: '9%', label: 'עיר', dataKey: 'city' },
+      { width: '18%', label: 'אימייל', dataKey: 'email'},
     ];
     // Header Content
     function fixedHeaderContent() {
@@ -91,7 +92,7 @@ const NeedyPendingTable = () => {
               variant="head"
               align={'right'}
               style={{ width: column.width }}
-              sx={{ backgroundColor: 'background.paper', fontWeight: 'bold', fontSize:11 }}
+              sx={{ backgroundColor: 'background.paper', fontWeight: 'bold', fontSize:11}}
             >
               {column.label}
             </TableCell>
@@ -101,17 +102,17 @@ const NeedyPendingTable = () => {
     }
     
     // Row Content
-    function rowContent(_index: number, row: Needy) {
+    function rowContent(_index: number, row: Donor) {
       
       return (
         <>
-          <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.firstName}{row.lastName}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.phoneNumber}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.city}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.familySize}</TableCell>
+          <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.firstName} {row.lastName}</TableCell>
+          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.phoneNumber}</TableCell>
+          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.address}</TableCell>
+          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' } }}>{row.city}</TableCell>
+          <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '10px', md: '12px' }, paddingRight: '30px'}}>{row.email}</TableCell>
           <TableCell align="center">
-          <Box gap={1} justifyContent="center" marginRight={1}>
+          <Box gap={1} justifyContent="center" marginRight={1} sx={{ paddingRight: '30px'}}>
           <Button variant="contained" color="success" onClick={async()=>await handleAccept(row)}>
             אשר
           </Button>
@@ -126,7 +127,7 @@ const NeedyPendingTable = () => {
   return (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,backgroundColor: "snow"}}>
     <h1 style={{ fontSize: '3rem', fontWeight: 'bold', margin: '20px'}}>
-      אישור נזקקים
+      אישור מתנדבים
     </h1>
     <Paper style={{ height: '100vh', width: '100%' }}>
       <TableVirtuoso
@@ -140,4 +141,4 @@ const NeedyPendingTable = () => {
   );
 };
 
-export default NeedyPendingTable;
+export default DonorPendingTable;

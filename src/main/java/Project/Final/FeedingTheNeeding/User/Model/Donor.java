@@ -8,14 +8,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
+@ToString(exclude = "userCredentials")
 public class Donor extends BaseUser{
     @Column(nullable = true)
     private String email;
@@ -24,7 +28,8 @@ public class Donor extends BaseUser{
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private RegistrationStatus status;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
+    @JsonIgnore
     private UserCredentials userCredentials;
 
     private String verificationCode;

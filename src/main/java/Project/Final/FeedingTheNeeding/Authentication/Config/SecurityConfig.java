@@ -43,6 +43,7 @@ public class SecurityConfig {
                         .requestMatchers("/driving/**").permitAll()
                         .requestMatchers("/social/**").permitAll()
                         .requestMatchers("/needer/**").permitAll()
+                        .requestMatchers("/user/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
