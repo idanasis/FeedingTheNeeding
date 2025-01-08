@@ -27,7 +27,7 @@ public class UserCredentials implements UserDetails {
     @Column(nullable = false)
     private LocalDateTime lastPasswordChangeAt = LocalDateTime.now();
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "base_user_id", nullable = false)
     private Donor donor;
 

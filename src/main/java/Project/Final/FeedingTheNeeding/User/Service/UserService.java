@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Service;
 
+import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
@@ -7,6 +8,8 @@ import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
+import jakarta.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
@@ -57,5 +60,35 @@ public class UserService {
     public Donor getDonorById(long id) {
         logger.info("getDonorById");
         return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+    }
+    public List<Donor> getDonorsPending(){
+        logger.info("getDonorsPending");
+        return donorRepository.findByStatus(RegistrationStatus.PENDING);
+    }
+    public void updateDonor(Donor donor){
+        logger.info("updateDonor");
+        Donor upDonor = donorRepository.findById(donor.getId()).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+        upDonor.setPhoneNumber(donor.getPhoneNumber());
+        upDonor.setFirstName(donor.getFirstName());
+        upDonor.setLastName(donor.getLastName());
+        upDonor.setAddress(donor.getAddress());
+        upDonor.setStatus(donor.getStatus());
+        upDonor.setEmail(donor.getEmail());
+        donorRepository.save(upDonor);
+        logger.info("Donor "+donor.getId()+" updated");
+    }
+    @Transactional
+    public void deleteDonor(long id){
+        logger.info("deleteDonor");
+        if (donorRepository.existsById(id)) {
+            Donor donor = donorRepository.findById(id).get();
+            donor.setUserCredentials(null);
+            donorRepository.save(donor);
+            donorRepository.deleteById(id);
+            logger.info("Donor "+id+" deleted");
+        } else {
+            logger.error("User "+id+" not found");
+            throw new UserDoesntExistsException("User "+id+" not found");
+        }
     }
 }

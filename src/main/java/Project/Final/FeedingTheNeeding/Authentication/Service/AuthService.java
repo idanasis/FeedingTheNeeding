@@ -13,6 +13,8 @@ import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
+import jakarta.transaction.Transactional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -97,7 +99,7 @@ public class AuthService {
         logger.info("end-logout, token invalidated.");
     }
 
-
+    @Transactional
     public void registerDonor(RegistrationRequest registrationRequest) {
         logger.info("start-register donor,  phone number: {}", registrationRequest.getPhoneNumber());
         if(donorRepository.findByPhoneNumber(registrationRequest.getPhoneNumber()).isPresent())
@@ -131,8 +133,9 @@ public class AuthService {
         credentials.setPasswordHash(passwordEncoder.encode(registrationRequest.getPassword()));
         credentials.setLastPasswordChangeAt(LocalDateTime.now());
         credentials.setDonor(savedDonor);
-
         userCredentialsRepository.save(credentials);
+        donor.setUserCredentials(credentials);
+        donorRepository.save(donor);
         logger.info("end-register donor, phone number: {}", registrationRequest.getPhoneNumber());
     }
 

@@ -4,7 +4,6 @@ export interface Needy{
     lastName: string,
     phoneNumber: string,
     address: string,
-    city: string,
     familySize: number,
     confirmStatus?: string,
 }

@@ -107,44 +107,36 @@ const DrivingManager = () => {
   const [data, setData] = useState<Data>(initialData);
   const [driver,setDrivers]=useState<Donor[]>([]);
   const [date, setDate] = useState<Date>(getNearestFriday(dayjs(Date.now())).toDate());
-  
+  async function fetchDrivers(currentDate:Date=date) {
+    try{
+      const data=await getDriversConstraints(currentDate);
+      setDrivers(data)
+    }catch(err){
+      alert("תקלה בהצגת הנתונים");
+    }
+  }
+  async function getDrops(currentDate:Date=date){
+    try{
+      const data=await getNeedersHere(currentDate);
+          const updatedData={...initialData};
+          updatedData.drop=data;
+        const routes=await getRoutes(date);
+        updatedData.routes=routes;
+        setData(updatedData);
+      }catch(err){
+        alert("תקלה בהצגת הנתונים");
+        console.error(err);
+      }
+  }
   useEffect(() => {
-          async function fetchDrivers() {
-            try{
-              const data=await getDriversConstraints(date);
-              setDrivers(data)
-            }catch(err){
-              alert("תקלה בהצגת הנתונים");
-            }
-          }
-          async function getDrops(){
-            try{
-              const data=await getNeedersHere(date);
-                  const updatedData={...initialData};
-                  updatedData.drop=data;
-                const routes=await getRoutes(date);
-                updatedData.routes=routes;
-                setData(updatedData);
-              }catch(err){
-                alert("תקלה בהצגת הנתונים");
-                console.error(err);
-              }
-          }
           fetchDrivers();
           getDrops();
-      }, []);
+      }, [date]);
   const handleDateChange = (newDate:dayjs.Dayjs|null ) => {
           const d =newDate===null?dayjs(Date.now()).toDate():newDate.toDate();
-          console.log('Selected date:', newDate);
-          async function getDrivers() {
-              const data=await getDriversConstraints(d as Date);
-              if(data===null)
-                  alert('אין נתונים להצגה')
-              else
-                  setDrivers(data)
-          }
           setDate(d);
-          getDrivers();
+          fetchDrivers(d);
+          getDrops(d);
         };
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -315,8 +307,10 @@ const DrivingManager = () => {
 
   }
   return (
-    <div style={{ marginTop: '50rem',overflowY: 'auto'}}>
-    <ResponsiveDatePickers onDateChange={handleDateChange} />
+    <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
+     <div style={{marginTop: "20px",backgroundColor: "snow"}}>
+    <ResponsiveDatePickers onDateChange={handleDateChange}/>
+    </div>
     <Button variant="contained" color="primary" sx={{marginRight:10}} >פרסם הכל</Button>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
