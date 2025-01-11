@@ -123,26 +123,6 @@ public class DrivingController {
         }
     }
 
-    @PatchMapping("/routes/addAddress/{routeId}")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody Visit visit) {
-        try {
-            drivingService.addAddressToRoute(routeId,visit);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/routes/removeAddress/{routeId}")
-    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody Visit visit) {
-        try {
-            drivingService.removeAddressFromRoute(routeId, visit);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("/routes/{routeId}")
     public ResponseEntity<?> getRoute(@PathVariable long routeId) {
         try {
