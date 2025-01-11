@@ -7,8 +7,10 @@ export interface Visit {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    maxHour: number;
+    maxHour?: number;
     note?: string;
     status: string;
     priority?: number;
+    notes?: string;
+
   }

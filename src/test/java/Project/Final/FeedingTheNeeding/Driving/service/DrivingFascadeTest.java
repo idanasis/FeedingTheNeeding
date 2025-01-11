@@ -1,9 +1,12 @@
 package Project.Final.FeedingTheNeeding.Driving.service;
 
+import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
+import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
+import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintsDTO;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
 import Project.Final.FeedingTheNeeding.driving.Model.Visit;
 import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
@@ -21,6 +24,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 class DrivingFascadeTest {
@@ -39,6 +44,8 @@ class DrivingFascadeTest {
     private RouteRepository routeRepository;
     @Mock
     private NeederTrackingService neederTrackingService;
+    @Mock
+    private UserService userService;
 
     @InjectMocks
     private DrivingFascade drivingFascade;
@@ -55,6 +62,7 @@ class DrivingFascadeTest {
     final String location = "Downtown", request = "some description",note = "some Note",address = "Ringelbloom 24 Beer Sheva",
     lastName = "Doe",firstName = "John",phoneNumber = "0541234567";
     final Needy needy = new Needy();
+    final Donor donor = new Donor();
     final NeedySimpleDTO needySimpleDTO= new NeedySimpleDTO(needy,note);
 
     @BeforeEach
@@ -72,6 +80,8 @@ class DrivingFascadeTest {
         route = new Route(driverId, drivingDate);
         visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority);
         routes.add(route);
+        when(userService.getDonorById(driverId)).thenReturn(donor);
+
     }
 
     @Test
@@ -106,9 +116,10 @@ class DrivingFascadeTest {
         List<DriverConstraint> constraints = new ArrayList<>();
         constraints.add(driverConstraint);
         when(driverConstraintsRepository.findConstraintsByDate(drivingDate)).thenReturn(constraints);
-        List<DriverConstraint> result = drivingFascade.getDateConstraints(drivingDate);
+        List<DriverConstraintsDTO> result = drivingFascade.getDateConstraints(drivingDate);
+        DriverConstraintsDTO dto= new DriverConstraintsDTO(driverConstraint,donor);
         assertEquals(1, result.size());
-        assertEquals(driverConstraint, result.get(0));
+        assertEquals(dto, result.get(0));
     }
 
     @Test

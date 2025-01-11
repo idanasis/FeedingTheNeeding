@@ -161,7 +161,7 @@ public class DrivingController {
         }
     }
     @GetMapping("/routes/getRoutes")
-    public ResponseEntity<?> getMethodName(@RequestParam("date") String date) {
+    public ResponseEntity<?> getRoutes(@RequestParam("date") String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);
             return ResponseEntity.ok(drivingService.getRoutes(localDate));
