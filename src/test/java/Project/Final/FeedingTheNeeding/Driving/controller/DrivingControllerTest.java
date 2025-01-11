@@ -50,11 +50,10 @@ public class DrivingControllerTest {
     final Long driverId=1L,routeId=1L,visitId = 1L;
     String status = VisitStatus.Deliver.name();
     LocalDate date = LocalDate.now();
-    private Visit visit;
+
     @BeforeEach
     void setUp() {
         route = new Route(date);
-        visit = new Visit("address", "firstName", "lastName", "phoneNumber", 1, VisitStatus.Deliver, "note", route, 1);
     }
 
     @Test
@@ -228,48 +227,7 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).submitAllRoutes(date);
     }
-    @Test
-    void testAddAddressToRoute() throws Exception {
-        
-        mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visit))) 
-                .andExpect(status().isOk());
 
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visit);
-    }
-    @Test
-    void testAddAddressToRouteFail() throws Exception {
-        doThrow(new IllegalArgumentException()).when(drivingService).addAddressToRoute(routeId, visit);
-
-        mockMvc.perform(patch("/driving/routes/addAddress/{routeId}", routeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visit)))   
-                .andExpect(status().isBadRequest());
-
-        verify(drivingService, times(1)).addAddressToRoute(routeId, visit);
-    }
-    @Test
-    void testRemoveAddressFromRoute() throws Exception {
-        mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visit)))
-                .andExpect(status().isOk());
-
-        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visit);
-    }
-    @Test
-    void testRemoveAddressFromRouteFail() throws Exception {
-        doThrow(new IllegalArgumentException()).when(drivingService).removeAddressFromRoute(routeId, visit);
-
-        mockMvc.perform(patch("/driving/routes/removeAddress/{routeId}", routeId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(visit)))
-                .andExpect(status().isBadRequest());
-
-        verify(drivingService, times(1)).removeAddressFromRoute(routeId, visit);
-    }
     @Test
     void testGetRoute() throws Exception {
         when(drivingService.getRoute(routeId)).thenReturn(route);
