@@ -10,7 +10,7 @@ import UploadConstraints from "./Cooking/Components/UploadConstraints";
 import DrivingManager from "./Driving/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
 import DonorPendingTable  from "./User/components/DonorPending"
-
+import GoPage from "./GoPage/GoPage";
 
 
 
@@ -26,6 +26,7 @@ function App() {
             <Route path="/driving" element={<DrivingManager />}/>
             <Route path="/donation" element={<Donation />}/>
             <Route path="/donorPending" element={<DonorPendingTable  />} />
+            <Route path="/go" element={<GoPage />} />
         </Routes>
       </Router>
   );
