@@ -16,9 +16,7 @@ const DonorListPopup = ({ donors, onClose,onClick}: DonorListPopupProps) => {
     <div className="popup-overlay">
       <div className="popup-content">
         <h2>רשימת מתנדבים</h2>
-        <button className="close-btn" onClick={onClose}>
-          סגור
-        </button>
+
         <div className="donor-list">
           {donors.map((donor) => (
             <div key={donor.id} className="donor-card" onClick={()=>{onClick(donor);onClose()}}>
@@ -26,19 +24,18 @@ const DonorListPopup = ({ donors, onClose,onClick}: DonorListPopupProps) => {
                 {donor.firstName} {donor.lastName}
               </h4>
               <p>
-                <strong>Phone:</strong> {donor.phoneNumber}
+                <strong>טלפון:</strong> {donor.phoneNumber}
               </p>
               <p>
-                <strong>Address:</strong> {donor.address}
+                <strong>כתובת:</strong> {donor.address}
               </p>
-              {donor.email && (
-                <p>
-                  <strong>Email:</strong> {donor.email}
-                </p>
-              )}
             </div>
           ))}
+          <button className="close-btn" onClick={onClose} justify-self="center" align-self="center">
+          סגור
+        </button>
         </div>
+
       </div>
     </div>
   );

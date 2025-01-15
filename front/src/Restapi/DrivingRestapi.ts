@@ -81,3 +81,8 @@ export const addDriverConstraints = async (driverConstraints: DriverConstraints)
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
     return response.data as DriverConstraints;
 }
+
+export const deleteRoute = async (routeId: number) => {
+    await axios.delete(drivingUrl+"/routes/"+routeId,
+    {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+}

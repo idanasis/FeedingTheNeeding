@@ -21,7 +21,7 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
-import { addDriverConstraints, addRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
+import { addDriverConstraints, addRoute, deleteRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
 import { getNearestFriday } from '../../commons/Commons';
@@ -117,7 +117,8 @@ const DrivingManager = () => {
       const data=await getDriversConstraints(currentDate);
       setDrivers(data)
       let donors=await getDonorApproved();
-      donors=donors.filter(donor=>data.some(driver=>driver.driverId!==donor.id));
+      console.log(donors);
+      donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
       setDonors(donors);
     }catch(err){
       alert("תקלה בהצגת הנתונים");
@@ -353,8 +354,13 @@ const DrivingManager = () => {
   }
   const handlePublishAll = async() => {
     try{
-    await submitAllRoutes(date);
+    
     const updatedData={...data};
+    if(updatedData.routes.some(route=>route.driverId===0)){
+      alert('נא לבחור נהגים לכל המסלולים או למחוק אותם');
+      return;
+    }
+    await submitAllRoutes(date);
     updatedData.routes.forEach(route=>route.submitted=true);
     setData(updatedData);
     alert('מסלולים פורסמו בהצלחה');
@@ -365,6 +371,12 @@ const DrivingManager = () => {
 const addConstraint = async (donor:Donor) => {
   await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: 20, requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:0});
   fetchDrivers();
+}
+const removeRoute = async(index:number)=>{
+  const updatedRoutes = [...data.routes];
+  const route=updatedRoutes[index];
+  await deleteRoute(route.routeId);
+  await getDrops()
 }
   return (
     <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
@@ -413,6 +425,7 @@ const addConstraint = async (donor:Donor) => {
                 </Select>
                 <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
                 {!route.submitted?<Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>:null}
+                {!route.submitted?<Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>:null}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}
