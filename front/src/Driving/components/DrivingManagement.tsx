@@ -21,11 +21,13 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
-import { addRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
+import { addDriverConstraints, addRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
 import { getNearestFriday } from '../../commons/Commons';
 import { DriverConstraints } from '../models/DriverConstraints';
+import AddDriverOption from './AddDriverOption';
+import { getDonorApproved } from '../../Restapi/DrivingRestapi';
 
 
 const initialData = {
@@ -108,10 +110,15 @@ const DrivingManager = () => {
   const [data, setData] = useState<Data>(initialData);
   const [driver,setDrivers]=useState<DriverConstraints[]>([]);
   const [date, setDate] = useState<Date>(getNearestFriday(dayjs(Date.now())).toDate());
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [visible,setVisible]=useState(false);
   async function fetchDrivers(currentDate:Date=date) {
     try{
       const data=await getDriversConstraints(currentDate);
       setDrivers(data)
+      let donors=await getDonorApproved();
+      donors=donors.filter(donor=>data.some(driver=>driver.driverId!==donor.id));
+      setDonors(donors);
     }catch(err){
       alert("תקלה בהצגת הנתונים");
     }
@@ -334,6 +341,10 @@ const DrivingManager = () => {
     try{
     await submitRoute(data.routes[index]);
     const updatedData={...data};
+    if(updatedData.routes[index].driverId===0){
+      alert('נא לבחור נהג');
+      return;
+    }
     updatedData.routes[index].submitted=true;
     setData(updatedData);
     }catch(err){
@@ -351,11 +362,17 @@ const DrivingManager = () => {
       alert('תקלה בשמירת הנתונים');
   }
 }
+const addConstraint = async (donor:Donor) => {
+  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: 20, requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:0});
+  fetchDrivers();
+}
   return (
     <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
-     <div style={{marginTop: "20px",backgroundColor: "snow"}}>
+     <div style={{marginTop: "20px",backgroundColor: "snow",justifySelf: "center",display: "flex",flexDirection: "row",justifyContent: "space-between",  gap: "10px"}}>
     <ResponsiveDatePickers onDateChange={handleDateChange}/>
     {!data.routes.every((route)=>route.submitted)?<Button variant="contained" color="primary" sx={{marginRight:10}} onClick={handlePublishAll} >פרסם הכל</Button>:null}
+    <Button variant="contained" color="primary" onClick={()=>{setVisible(true)}}>הוסף נהג</Button>
+    {visible?<AddDriverOption donors={donors} onClose={()=>{setVisible(false)}} onClick={addConstraint}/>:null}
     </div>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>

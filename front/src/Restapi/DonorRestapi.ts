@@ -15,3 +15,4 @@ export const updateDonor = async (donor:Donor): Promise<void> => {
 export const deleteDonor = async (donor:Donor): Promise<void> => {
     await axios.delete(`${apiUrl}/donor/${donor.id}`,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
 }
+
