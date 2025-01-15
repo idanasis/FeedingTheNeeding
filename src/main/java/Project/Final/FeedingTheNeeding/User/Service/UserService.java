@@ -65,6 +65,10 @@ public class UserService {
         logger.info("getDonorsPending");
         return donorRepository.findByStatus(RegistrationStatus.PENDING);
     }
+    public List<Donor> getDonorsApproved(){
+        logger.info("getDonorsPending");
+        return donorRepository.findByStatus(RegistrationStatus.AVAILABLE);
+    }
     public void updateDonor(Donor donor){
         logger.info("updateDonor");
         Donor upDonor = donorRepository.findById(donor.getId()).orElseThrow(() -> new UserDoesntExistsException("User not found"));

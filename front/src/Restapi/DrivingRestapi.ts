@@ -53,7 +53,7 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         address:neederTracking.needyAddress,
         notes:neederTracking.additionalNotes,
         maxHour:0,
-        status:"Pickup"
+        status:"Deliver"
     }
 }
 export const updateRoute=async(route:Route)=>{
@@ -69,4 +69,15 @@ export const submitRoute=async(route:Route)=>{
 export const submitAllRoutes=async(date:Date)=>{
     await axios.post(drivingUrl+"/routes/submitAll/"+date.toISOString().split('T')[0],{},
      {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+}
+
+export const getDonorApproved = async (): Promise<Donor[]> => {
+    const response=await axios.get(`${userUrl}/donor/approved`,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    return await response.data as Donor[];
+}
+
+export const addDriverConstraints = async (driverConstraints: DriverConstraints) => {
+    const response = await axios.post(drivingUrl+"/constraints", driverConstraints,
+    {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    return response.data as DriverConstraints;
 }

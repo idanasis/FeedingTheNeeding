@@ -109,6 +109,15 @@ public ResponseEntity<?> getDonorPending() {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
+@GetMapping("/donor/approved")
+public ResponseEntity<?> getDonorApproved() {
+    try{
+        List<Donor> donors = userService.getDonorsApproved();
+        return ResponseEntity.ok(donors);
+    }catch (Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
 @PutMapping("/donor")
 public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
     try{
@@ -127,5 +136,6 @@ public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
     return ResponseEntity.badRequest().body(e.getMessage());
 }
 }
+
 
 }
