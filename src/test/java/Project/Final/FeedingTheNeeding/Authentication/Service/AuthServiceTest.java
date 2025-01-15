@@ -57,7 +57,6 @@ public class AuthServiceTest {
     final String NEEDY_FIRST_NAME = "Needy", NEEDY_LAST_NAME = "Needy";
     final String DONOR_PHONE_NUMBER = "0500000000", NEEDY_PHONE_NUMBER = "0500000001";
     final String DONOR_ADDRESS = "address", NEEDY_ADDRESS = "address";
-    final String DONOR_CITY = "city", NEEDY_CITY = "city";
     final String DONOR_EMAIL = "donor1Email@gmail.com";
     final int NEEDY_FAMILY_SIZE = 5;
     final String VERIFICATION_CODE = "123456";
@@ -70,8 +69,8 @@ public class AuthServiceTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         authenticationRequest = new AuthenticationRequest(DONOR_PHONE_NUMBER, PASSWORD);
-        donorRegistrationRequest = new RegistrationRequest(DONOR_EMAIL, PASSWORD, PASSWORD,DONOR_FIRST_NAME, DONOR_LAST_NAME, DONOR_PHONE_NUMBER, DONOR_ADDRESS, DONOR_CITY);
-        needyRegistrationRequest = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME, NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_CITY, NEEDY_FAMILY_SIZE);
+        donorRegistrationRequest = new RegistrationRequest(DONOR_EMAIL, PASSWORD, PASSWORD,DONOR_FIRST_NAME, DONOR_LAST_NAME, DONOR_PHONE_NUMBER, DONOR_ADDRESS);
+        needyRegistrationRequest = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME, NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE);
     }
 
     @Test
@@ -150,7 +149,7 @@ public class AuthServiceTest {
 
         authService.registerDonor(donorRegistrationRequest);
 
-        verify(donorRepository, times(1)).save(any(Donor.class));
+        verify(donorRepository, times(2)).save(any(Donor.class));
         verify(userCredentialsRepository, times(1)).save(any(UserCredentials.class));
     }
 

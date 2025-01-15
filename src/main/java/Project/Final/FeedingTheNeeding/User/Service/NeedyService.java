@@ -58,13 +58,14 @@ public class NeedyService {
     public Optional<Needy> getNeedyByPhoneNumber(String phoneNumber) {
         return needyRepository.findByPhoneNumber(phoneNumber);
     }
+
     @Transactional
-    public List<NeederTracking> getNeedyUsersTrackingByData(LocalDate localDate) {
+    public synchronized List<NeederTracking> getNeedyUsersTrackingByData(LocalDate localDate) {
         List<NeederTracking> allTracking = neederTrackingService.getAllNeedersTrackingsByDate(localDate);
         List<Needy> neeedyList = allTracking.stream()
                 .map(NeederTracking::getNeedy)
                 .toList();
-        List<Needy> allNeedyList = needyRepository.findAll();
+        List<Needy> allNeedyList = needyRepository.findAll().stream().filter((needy) -> needy.getConfirmStatus().equals(NeedyStatus.APPROVED)).toList();
         List<Needy> diff = allNeedyList.stream()
                 .filter(item -> !neeedyList.contains(item))
                 .toList();

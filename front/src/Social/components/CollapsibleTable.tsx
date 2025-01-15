@@ -26,7 +26,6 @@ function createData(neederTrackingModel: NeederTrackingModel) {
     lastName: neederTrackingModel.needy.lastName,
     phoneNumber: neederTrackingModel.needy.phoneNumber,
     address: neederTrackingModel.needy.address,
-    city: neederTrackingModel.needy.city,
     weekStatus: neederTrackingModel.weekStatus==="Here"?"זמין":"לא זמין",
     needyId: neederTrackingModel.needy.id,
     date: neederTrackingModel.date,
@@ -54,7 +53,7 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
   const handleAvailableChange = async (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
     try{
       const value=event.target.value;
-      const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,city:row.city,familySize:row.details[0].familySize},weekStatus:value,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
+      const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,familySize:row.details[0].familySize},weekStatus:value,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
       const res=await updateNeederTracking(index,neederTrackingModel);
       const updatedRow = { ...row, weekStatus: value };
       setRow(updatedRow);
@@ -65,7 +64,7 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
   }
   const handleSave=async (index:number)=>{
     try{
-      const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,city:row.city,familySize:row.details[0].familySize},weekStatus:row.weekStatus,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
+      const neederTrackingModel:NeederTrackingModel={id:row.id,date:row.date,needy:{id:row.needyId,firstName:row.firstName,lastName:row.lastName,phoneNumber:row.phoneNumber,address:row.address,familySize:row.details[0].familySize},weekStatus:row.weekStatus,dietaryPreferences:row.details[0].foodPreference,additionalNotes:row.details[0].notes};
       const res=await updateNeederTracking(index,neederTrackingModel);
       console.log(res.status);
       alert("הפרטים נשמרו בהצלחה");
@@ -95,7 +94,6 @@ const handleNotesChange=(event: React.ChangeEvent<HTMLInputElement>,id:number) =
         <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' }, whiteSpace: 'nowrap',
     overflow: 'hidden',textOverflow: 'ellipsis'}}>{row.phoneNumber}</TableCell>
         <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
-        <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.city}</TableCell>
         <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>
          <select
             id={`${row.id}`}
@@ -172,7 +170,6 @@ const NeederTrackingTable = ({ data }: { data: NeederTrackingModel[] }) => {
             <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>שם</TableCell>
             <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>טלפון</TableCell>
             <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>כתובת</TableCell>
-            <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>עיר</TableCell>
             <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>סטטוס</TableCell>
           </TableRow>
         </TableHead>

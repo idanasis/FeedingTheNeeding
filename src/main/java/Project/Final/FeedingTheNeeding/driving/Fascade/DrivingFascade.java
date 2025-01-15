@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.driving.Fascade;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,8 @@ import Project.Final.FeedingTheNeeding.driving.exception.DriverConstraintsNotExi
 import Project.Final.FeedingTheNeeding.driving.exception.RouteNotFoundException;
 import Project.Final.FeedingTheNeeding.driving.exception.VisitNotExistException;
 import jakarta.transaction.Transactional;
+import Project.Final.FeedingTheNeeding.User.Model.Donor;
+import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import Project.Final.FeedingTheNeeding.driving.Model.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,12 +23,14 @@ public class DrivingFascade {
     private final DriverConstraintsRepository driverConstraintsRepository;
 
     private final RouteRepository routeRepository;
+    private final UserService userService;
     private static final Logger logger = LogManager.getLogger(DrivingFascade.class);
 
-    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository) {
+    public DrivingFascade(DriverConstraintsRepository driverConstraintsRepository, RouteRepository routeRepository,UserService userService) {
         logger.info("DrivingFascade create");
         this.driverConstraintsRepository = driverConstraintsRepository;
         this.routeRepository = routeRepository;
+        this.userService = userService;
         logger.info("DrivingFascade created");
     }
 
@@ -41,9 +46,16 @@ public class DrivingFascade {
         driverConstraintsRepository.delete(driverConstraint);
         logger.info("removeConstraint of driver {} to date {} done", constraint.getDriverId(), constraint.getDate());
     }
-    public List<DriverConstraint> getDateConstraints(LocalDate date){
+    public List<DriverConstraintsDTO> getDateConstraints(LocalDate date){
         logger.info("getDateConstraints of date {}", date);
-        return driverConstraintsRepository.findConstraintsByDate(date);
+        List<DriverConstraint> driverConstraints= driverConstraintsRepository.findConstraintsByDate(date);
+        List<DriverConstraintsDTO> driverConstraintsDTOs = new ArrayList<>();
+        for (DriverConstraint driverConstraint : driverConstraints) {
+            Donor donor = userService.getDonorById(driverConstraint.getDriverId());
+            DriverConstraintsDTO driverConstraintsDTO = new DriverConstraintsDTO(driverConstraint, donor);
+            driverConstraintsDTOs.add(driverConstraintsDTO);
+        }
+        return driverConstraintsDTOs;
     }
     public List<DriverConstraint> getDriverConstraints(long driverId){
         logger.info("getDriverConstraints of driver id {}", driverId);
@@ -135,5 +147,17 @@ public class DrivingFascade {
     public List<Route> viewHistory(){
        logger.info("viewHistory");
        return routeRepository.findAll();
+    }
+    public List<Route> getRoutesByDriverId(long driverId){
+        logger.info("getRoutesByDriverId with driver id {}", driverId);
+        return routeRepository.findRoutesByDriverId(driverId);
+    }
+    public List<DriverConstraint> getDriverFutureConstraintsHaventConfirmed(long driverId){
+        logger.info("getDriverConstraintsHaventConfirmed with driver id {}", driverId);
+        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId).stream().filter(constraint -> constraint.getDate().isBefore(LocalDate.now())).toList();
+        List<Route> routes = routeRepository.findRoutesByDriverId(driverId);
+        constraints.removeIf(constraint -> routes.stream().anyMatch(route -> route.getDate().equals(constraint.getDate())));
+        logger.info("getDriverConstraintsHaventConfirmed with driver id {} done", driverId);
+        return constraints;
     }
 }

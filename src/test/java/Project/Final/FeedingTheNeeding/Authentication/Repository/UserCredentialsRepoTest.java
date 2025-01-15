@@ -34,7 +34,6 @@ public class UserCredentialsRepoTest {
     private static final String LAST_NAME = "lastName";
     private static final String PHONE_NUMBER = "0500000000", PHONE_NUMBER2 = "0510000000";
     private static final String ADDRESS = "address";
-    private static final String CITY = "city";
     private static final RegistrationStatus REGISTRATION_STATUS = RegistrationStatus.AVAILABLE;
     private static final String VERIFICATION_CODE = "123456";
     @Autowired
@@ -48,7 +47,6 @@ public class UserCredentialsRepoTest {
         donor.setLastName(LAST_NAME);
         donor.setPhoneNumber(PHONE_NUMBER);
         donor.setAddress(ADDRESS);
-        donor.setCity(CITY);
         donor.setStatus(REGISTRATION_STATUS);
         donor.setVerificationCode(VERIFICATION_CODE);
         donorRepository.save(donor);

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 
 @RestController
@@ -96,4 +100,42 @@ public class UserController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
+@GetMapping("/donor/pending")
+public ResponseEntity<?> getDonorPending() {
+    try{
+        List<Donor> donors = userService.getDonorsPending();
+        return ResponseEntity.ok(donors);
+    }catch (Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+@GetMapping("/donor/approved")
+public ResponseEntity<?> getDonorApproved() {
+    try{
+        List<Donor> donors = userService.getDonorsApproved();
+        return ResponseEntity.ok(donors);
+    }catch (Exception e){
+        return ResponseEntity.badRequest().body(e.getMessage());
+    }
+}
+@PutMapping("/donor")
+public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
+    try{
+        userService.updateDonor(entity);
+        return ResponseEntity.noContent().build();
+}catch (Exception e){
+    return ResponseEntity.badRequest().body(e.getMessage());
+}
+}
+@DeleteMapping("/donor/{id}")
+public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
+    try{
+        userService.deleteDonor(id);
+        return ResponseEntity.noContent().build();
+}catch (Exception e){
+    return ResponseEntity.badRequest().body(e.getMessage());
+}
+}
+
+
 }

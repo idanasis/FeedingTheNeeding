@@ -1,7 +1,7 @@
 import React from 'react';
 import HomePage from './Home/HomePage';
 import NeederTracking from './Social/components/NeederTracking';
-import ResponsiveNeedyTable from './Social/components/needyPending';
+import NeedyPendingTable from './Social/components/needyPending';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from "./Authentication/Components/Login";
 import DonorRegister from "./Authentication/Components/DonorRegister";
@@ -12,6 +12,9 @@ import Donation from "./Donations/Components/Donation";
 import DriverConstraints from "./Driving/components/DriverConstraints";
 import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
+import DonorPendingTable  from "./User/components/DonorPending"
+import GoPage from "./GoPage/GoPage";
+
 
 
 function App() {
@@ -20,7 +23,7 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/social" element={<NeederTracking />} />
-          <Route path="/neederPending" element={<ResponsiveNeedyTable />} />
+          <Route path="/neederPending" element={<NeedyPendingTable />} />
             <Route path="/login" element={<Login />} />
             <Route path="/donorRegister" element={< DonorRegister />} />
             <Route path="/driving" element={<DrivingManager />}/>
@@ -29,6 +32,8 @@ function App() {
             <Route path = "/driversConstraints" element = {<DriverConstraints />} />
             <Route path = "/donorConstraints" element = {<ConstraintsView />} />
             <Route path = "/cookManager" element = {<CookManager />} />
+            <Route path="/donorPending" element={<DonorPendingTable  />} />
+            <Route path="/go" element={<GoPage />} />
         </Routes>
       </Router>
   );

@@ -1,5 +1,7 @@
 package Project.Final.FeedingTheNeeding.driving.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,6 +26,7 @@ public class Visit {
 
     @ManyToOne
     @JoinColumn(name = "route_id", nullable = false)
+    @JsonIgnore
     private Route route;
     private String address;
     private String firstName;
