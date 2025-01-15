@@ -4,15 +4,11 @@ import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
-import Project.Final.FeedingTheNeeding.driving.Model.Visit;
-import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 
@@ -125,26 +121,6 @@ public class DrivingController {
         }
     }
 
-    @PatchMapping("/routes/addAddress/{routeId}")
-    public ResponseEntity<?> addAddressToRoute(@PathVariable long routeId, @RequestBody Visit visit) {
-        try {
-            drivingService.addAddressToRoute(routeId,visit);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PatchMapping("/routes/removeAddress/{routeId}")
-    public ResponseEntity<?> removeAddressFromRoute(@PathVariable long routeId, @RequestBody Visit visit) {
-        try {
-            drivingService.removeAddressFromRoute(routeId, visit);
-            return ResponseEntity.ok().build();
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("/routes/{routeId}")
     public ResponseEntity<?> getRoute(@PathVariable long routeId) {
         try {
@@ -163,7 +139,7 @@ public class DrivingController {
         }
     }
     @GetMapping("/routes/getRoutes")
-    public ResponseEntity<?> getMethodName(@RequestParam("date") String date) {
+    public ResponseEntity<?> getRoutes(@RequestParam("date") String date) {
         try {
             LocalDate localDate = LocalDate.parse(date);
             return ResponseEntity.ok(drivingService.getRoutes(localDate));
@@ -188,4 +164,13 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @GetMapping("/constraints/driver/futureNotApproved/{driverId}")
+    public ResponseEntity<?> getDriverFutureConstraintsHaventConfirmed(@RequestParam long driverId) {
+        try {
+            return ResponseEntity.ok(drivingService.getDriverFutureConstraintsHaventConfirmed(driverId));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    
 }

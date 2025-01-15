@@ -21,10 +21,13 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
-import { addRoute, getDriversConstraints, getNeedersHere, getRoutes, updateRoute } from '../../Restapi/DrivingRestapi';
+import { addDriverConstraints, addRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
 import { getNearestFriday } from '../../commons/Commons';
+import { DriverConstraints } from '../models/DriverConstraints';
+import AddDriverOption from './AddDriverOption';
+import { getDonorApproved } from '../../Restapi/DrivingRestapi';
 
 
 const initialData = {
@@ -105,46 +108,48 @@ const Droppable = ({ id, children }: { id: string; children: React.ReactNode }) 
 
 const DrivingManager = () => {
   const [data, setData] = useState<Data>(initialData);
-  const [driver,setDrivers]=useState<Donor[]>([]);
+  const [driver,setDrivers]=useState<DriverConstraints[]>([]);
   const [date, setDate] = useState<Date>(getNearestFriday(dayjs(Date.now())).toDate());
-  
+  const [donors, setDonors] = useState<Donor[]>([]);
+  const [visible,setVisible]=useState(false);
+  async function fetchDrivers(currentDate:Date=date) {
+    try{
+      const data=await getDriversConstraints(currentDate);
+      setDrivers(data)
+      let donors=await getDonorApproved();
+      donors=donors.filter(donor=>data.some(driver=>driver.driverId!==donor.id));
+      setDonors(donors);
+    }catch(err){
+      alert("תקלה בהצגת הנתונים");
+    }
+  }
+  async function getDrops(currentDate:Date=date){
+    try{
+      const data=await getNeedersHere(currentDate);
+          const updatedData={...initialData};
+          updatedData.drop=data;
+        const routes=await getRoutes(date);
+        updatedData.routes=routes;
+        updatedData.drop = updatedData.drop.filter((visit: Visit) =>
+          !routes.some((route: Route) =>
+            route.visit.some((v: Visit) => v.phoneNumber === visit.phoneNumber)
+          )
+        );        
+        setData(updatedData);
+      }catch(err){
+        alert("תקלה בהצגת הנתונים");
+        console.error(err);
+      }
+  }
   useEffect(() => {
-          async function fetchDrivers() {
-            try{
-              const data=await getDriversConstraints(date);
-              setDrivers(data)
-            }catch(err){
-              alert("תקלה בהצגת הנתונים");
-            }
-          }
-          async function getDrops(){
-            try{
-              const data=await getNeedersHere(date);
-                  const updatedData={...initialData};
-                  updatedData.drop=data;
-                const routes=await getRoutes(date);
-                updatedData.routes=routes;
-                setData(updatedData);
-              }catch(err){
-                alert("תקלה בהצגת הנתונים");
-                console.error(err);
-              }
-          }
           fetchDrivers();
           getDrops();
-      }, []);
+      }, [date]);
   const handleDateChange = (newDate:dayjs.Dayjs|null ) => {
           const d =newDate===null?dayjs(Date.now()).toDate():newDate.toDate();
-          console.log('Selected date:', newDate);
-          async function getDrivers() {
-              const data=await getDriversConstraints(d as Date);
-              if(data===null)
-                  alert('אין נתונים להצגה')
-              else
-                  setDrivers(data)
-          }
           setDate(d);
-          getDrivers();
+          fetchDrivers(d);
+          getDrops(d);
         };
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -161,7 +166,7 @@ const DrivingManager = () => {
     useSensor(TouchSensor, { activationConstraint: { delay: 100, tolerance: 10 } })
   );
 
-  const handleDragEnd = ({ active, over }: { active: any; over: any }) => {
+  const handleDragEnd = async({ active, over }: { active: any; over: any }) => {
     if (!over) return;
 
     const [sourceContainer, sourceIndex] = active.id.split('-') as [keyof typeof data, string];
@@ -173,10 +178,13 @@ const DrivingManager = () => {
       const routeIndex = parseInt(targetIndex);
       const sourceItems = [...data[sourceContainer]];
       const movedItem = sourceItems.splice(parseInt(sourceIndex), 1)[0];
-
+      
       const updatedRoutes = [...data.routes];
-      updatedRoutes[routeIndex].visit.push(movedItem as Visit);
-
+      const route=updatedRoutes[routeIndex]
+      movedItem.priority=route.driverId===0?route.visit.length+1:route.visit.length;
+      movedItem.note=movedItem.notes;
+      route.visit.push(movedItem as Visit);
+      await updateRoute(route);
       setData({
         ...data,
         [sourceContainer]: sourceItems,
@@ -196,9 +204,17 @@ const DrivingManager = () => {
       for(let i=0;i<length;i++){
         newRoute[i]=destRoute.visit[i];
       }
+      for(let i=1;i<sourceRoute.visit.length;i++){
+        if(sourceRoute.visit[i].priority!==i)
+          sourceRoute.visit[i].priority=(sourceRoute.visit[i].priority as number) -1;
+      }
+      curr.priority=destRoute.driverId===0?destRoute.visit.length+1:destRoute.visit.length;;
       newRoute[length-1]=curr;
+      destRoute.visit=newRoute;
+      await updateRoute(sourceRoute);
+      await updateRoute(destRoute);
       updatedRoutes[parseInt(targetIndex)].visit=newRoute;
- 
+      updatedRoutes[parseInt(sourceIndex)]=sourceRoute; 
       setData({
         ...data,
         routes: updatedRoutes,
@@ -214,7 +230,8 @@ const DrivingManager = () => {
         </Typography>
         <Typography variant="body2">{visit.address}</Typography>
         <Typography variant="body2">{visit.phoneNumber}</Typography>
-        <Typography variant="body2">הערות: {visit.note}</Typography>
+        <Typography variant="body2">שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
+        <Typography variant="body2">הערות: {visit.note?visit.note:visit.notes}</Typography>
       </CardContent>
     </Card>
   );
@@ -239,13 +256,15 @@ const DrivingManager = () => {
     }
     return null;
   }
-  const handleUp =(index:number,idx: number)=>{
+  const handleUp =async(index:number,idx: number)=>{
     const updatedRoutes = [...data.routes];
     const length=updatedRoutes[index].visit.length;
     const currRoute=Array.from(updatedRoutes[index].visit);
     const curr=updatedRoutes[index].visit.splice(idx, 1)[0];
+    curr.priority=curr.priority!-1;
     let newRoute: Visit[] = new Array(length);
     let next=updatedRoutes[index].visit.splice(idx-1, 1)[0];
+    next.priority=next.priority!+1;
     for(let i=0;i<length;i++){
       if (i===idx-1){
         newRoute[i]=curr;
@@ -256,19 +275,24 @@ const DrivingManager = () => {
       newRoute[i]=currRoute[i];
       }
     }
-    updatedRoutes[index].visit =newRoute;
+    const route=updatedRoutes[index];
+    route.visit =newRoute;
+    await updateRoute(route);
+    updatedRoutes[index]=route;
     setData({
       ...data,
       routes: updatedRoutes,
     });
   }
-  const handleDown =(index:number,idx: number)=>{
+  const handleDown =async(index:number,idx: number)=>{
     const updatedRoutes = [...data.routes];
     const length=updatedRoutes[index].visit.length;
     const currRoute=Array.from(updatedRoutes[index].visit);
     const curr=updatedRoutes[index].visit.splice(idx, 1)[0];
+    curr.priority=curr.priority!+1;
     let newRoute: Visit[] = new Array(length);
     let next=updatedRoutes[index].visit.splice(idx, 1)[0];
+    next.priority=next.priority!-1;
     for(let i=0;i<length;i++){
       if (i===idx+1){
         newRoute[i]=curr;
@@ -279,7 +303,10 @@ const DrivingManager = () => {
       newRoute[i]=currRoute[i];
       }
     }
-    updatedRoutes[index].visit =newRoute;
+    const route=updatedRoutes[index];
+    route.visit =newRoute;
+    await updateRoute(route);
+    updatedRoutes[index]=route;
     setData({
       ...data,
       routes: updatedRoutes,
@@ -299,25 +326,54 @@ const DrivingManager = () => {
     const route=data.routes[index] as Route;
     route.driverId=parseInt(e.target.value as string);
     const updatedRoutes = [...data.routes];
-    route.driver = driver.find(d => d.id === parseInt(e.target.value as string)) as Donor;
+    route.driver = driver.find(d => d.driverId === parseInt(e.target.value as string)) as DriverConstraints;
     route.driverId = parseInt(e.target.value as string);
-    const visit={address:updatedRoutes[index].driver?.address as string,firstName:updatedRoutes[index].driver?.firstName as string,lastName:updatedRoutes[index].driver?.lastName as string,phoneNumber:updatedRoutes[index].driver?.phoneNumber as string,maxHour:0,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0};
+    const visit={address:updatedRoutes[index].driver?.startLocation as string,firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,maxHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,};
     route.visit.unshift(visit);
     await updateRoute(route);
     updatedRoutes[index]=route;
     setData({ ...data, routes: updatedRoutes });
     }catch(err){
-      console.error(err);
       alert('תקלה בשמירת הנתונים');
     }
   }
   const handlePublish = async(index:number) => {
-
+    try{
+    await submitRoute(data.routes[index]);
+    const updatedData={...data};
+    if(updatedData.routes[index].driverId===0){
+      alert('נא לבחור נהג');
+      return;
+    }
+    updatedData.routes[index].submitted=true;
+    setData(updatedData);
+    }catch(err){
+      alert('תקלה בשמירת הנתונים');
+    }
   }
+  const handlePublishAll = async() => {
+    try{
+    await submitAllRoutes(date);
+    const updatedData={...data};
+    updatedData.routes.forEach(route=>route.submitted=true);
+    setData(updatedData);
+    alert('מסלולים פורסמו בהצלחה');
+    }catch(err){
+      alert('תקלה בשמירת הנתונים');
+  }
+}
+const addConstraint = async (donor:Donor) => {
+  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: 20, requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:0});
+  fetchDrivers();
+}
   return (
-    <div style={{ marginTop: '50rem',overflowY: 'auto'}}>
-    <ResponsiveDatePickers onDateChange={handleDateChange} />
-    <Button variant="contained" color="primary" sx={{marginRight:10}} >פרסם הכל</Button>
+    <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
+     <div style={{marginTop: "20px",backgroundColor: "snow",justifySelf: "center",display: "flex",flexDirection: "row",justifyContent: "space-between",  gap: "10px"}}>
+    <ResponsiveDatePickers onDateChange={handleDateChange}/>
+    {!data.routes.every((route)=>route.submitted)?<Button variant="contained" color="primary" sx={{marginRight:10}} onClick={handlePublishAll} >פרסם הכל</Button>:null}
+    <Button variant="contained" color="primary" onClick={()=>{setVisible(true)}}>הוסף נהג</Button>
+    {visible?<AddDriverOption donors={donors} onClose={()=>{setVisible(false)}} onClick={addConstraint}/>:null}
+    </div>
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
         <Box display="flex" justifyContent="space-between" gap={2}>
@@ -351,11 +407,12 @@ const DrivingManager = () => {
                   }}
                 >
                   {driver.map((driver, index) => (
-                    <MenuItem key={index} value={driver.id}>{driver.firstName+' '+driver.lastName}</MenuItem>
+                    <MenuItem key={index} value={driver.driverId}>{driver.driverFirstName+' '+driver.driverLastName}</MenuItem>
                   ))}
+                <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
                 </Select>
                 <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
-                {!route.submitted?<Button variant="contained" color="primary" >פרסם</Button>:null}
+                {!route.submitted?<Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>:null}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}

@@ -27,7 +27,7 @@ const Header = () => {
 
   const handleButtonClick = () => {
     if (isLoggedIn) {
-      window.location.href = '/navPage';
+      window.location.href = '/go';
     } else {
       window.location.href = '/login';
     }
@@ -43,7 +43,12 @@ const Header = () => {
 
   return (
     <nav className='w-full flex bg-white justify-between items-center gap-1 lg:px-16 px-6 py-4 sticky top-0 z-50'>
-      <h1 className='text-black md:text-4xl text-3xl font-bold'>להשביע את הלב</h1>
+      <h1
+        className='text-black md:text-4xl text-3xl font-bold cursor-pointer'
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        להשביע את הלב
+      </h1>
       <ul className='lg:flex justify-center items-center gap-6 hidden'>
         {navItems.map(({ name, path }) => (
           <Link

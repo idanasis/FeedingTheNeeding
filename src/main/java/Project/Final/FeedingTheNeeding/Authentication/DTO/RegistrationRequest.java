@@ -32,7 +32,4 @@ public class RegistrationRequest {
 
     @NotEmpty(message = "Address is required")
     private String address;
-
-    @NotEmpty(message = "City is required")
-    private String city;
 }

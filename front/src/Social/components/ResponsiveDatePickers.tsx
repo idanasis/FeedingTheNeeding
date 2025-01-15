@@ -21,7 +21,7 @@ const handleDisableDate = (date: dayjs.Dayjs) => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-     <DatePicker defaultValue={getNearestFriday(dayjs(Date.now()))} shouldDisableDate={handleDisableDate} shouldDisableMonth={handleDisableMonth}onChange={onDateChange}/>
+     <DatePicker defaultValue={getNearestFriday(dayjs(Date.now()))} shouldDisableDate={handleDisableDate} shouldDisableMonth={handleDisableMonth}onChange={onDateChange} format='DD/MM/YYYY'/>
     </LocalizationProvider>
   );
 }

@@ -25,9 +25,6 @@ public abstract class BaseUser {
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String city;
-
     @Enumerated(EnumType.STRING)
     private UserRole role;
 }

@@ -13,7 +13,6 @@ const DonorRegister: React.FC = () => {
         lastName: '',
         phoneNumber: '',
         address: '',
-        city: ''
     });
 
     const [hasNoCriminalRecord, setHasNoCriminalRecord] = useState(false);
@@ -115,14 +114,33 @@ const DonorRegister: React.FC = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label htmlFor="email">אימייל (אופציונלי)</label>
+                            <label htmlFor="firstName">
+                                שם פרטי <span className="required-asterisk">*</span>
+                            </label>
                             <input
-                                id="email"
-                                type="email"
-                                value={formData.email}
+                                id="firstName"
+                                type="text"
+                                value={formData.firstName}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
+
+                        <div className="form-group">
+                            <label htmlFor="lastName">
+                                שם משפחה <span className="required-asterisk">*</span>
+                            </label>
+                            <input
+                                id="lastName"
+                                type="text"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-row">
 
                         <div className="form-group">
                             <label htmlFor="phoneNumber">
@@ -133,6 +151,19 @@ const DonorRegister: React.FC = () => {
                                 type="tel"
                                 maxLength={10}
                                 value={formData.phoneNumber}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="address">
+                                כתובת <span className="required-asterisk">*</span>
+                            </label>
+                            <input
+                                id="address"
+                                type="text"
+                                value={formData.address}
                                 onChange={handleChange}
                                 required
                             />
@@ -182,62 +213,6 @@ const DonorRegister: React.FC = () => {
                                     {showConfirmPassword ? '👁️‍🗨️' : '🗨️'}
                                 </button>
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="firstName">
-                                שם פרטי <span className="required-asterisk">*</span>
-                            </label>
-                            <input
-                                id="firstName"
-                                type="text"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="lastName">
-                                שם משפחה <span className="required-asterisk">*</span>
-                            </label>
-                            <input
-                                id="lastName"
-                                type="text"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="form-row">
-                        <div className="form-group">
-                            <label htmlFor="address">
-                                כתובת <span className="required-asterisk">*</span>
-                            </label>
-                            <input
-                                id="address"
-                                type="text"
-                                value={formData.address}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="city">
-                                עיר מגורים <span className="required-asterisk">*</span>
-                            </label>
-                            <input
-                                id="city"
-                                type="text"
-                                value={formData.city}
-                                onChange={handleChange}
-                                required
-                            />
                         </div>
                     </div>
 

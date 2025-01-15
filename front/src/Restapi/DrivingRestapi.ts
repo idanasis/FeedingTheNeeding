@@ -18,7 +18,8 @@ export const addRoute = async (date: Date) => {
 export const getRoutes=async (date: Date)=>{
     const response =  await axios.get(drivingUrl+"/routes/getRoutes?date="+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
-    return response.data as Route[];
+    const res=response.data as Route[];
+    return res;
 }
 export const setDriverIdToRoute=async (routeId:number,driverId:number)=>{
     const response =  await axios.put(drivingUrl+"/routes/"+routeId+"/driver/"+driverId,{},
@@ -28,13 +29,7 @@ export const setDriverIdToRoute=async (routeId:number,driverId:number)=>{
 export const getDriversConstraints=async (date: Date)=>{
     const response =  await axios.get(drivingUrl+"/constraints/"+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
-    const driverId= response.data as DriverConstraints[];
-    let drivers=[];
-    for (let i = 0; i < driverId.length; i++) {
-        let driver= await getDonor(driverId[i].driverId);
-        driver.requests=driverId[i].requests;
-        drivers.push(driver);
-    }
+    const drivers= response.data as DriverConstraints[];
     return drivers;
 }
 export const getDonor=async(id:number)=>{
@@ -58,10 +53,31 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         address:neederTracking.needyAddress,
         notes:neederTracking.additionalNotes,
         maxHour:0,
-        status:"Pickup"
+        status:"Deliver"
     }
 }
 export const updateRoute=async(route:Route)=>{
    await axios.patch(drivingUrl+"/routes/updateRoute",route,
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+}
+
+export const submitRoute=async(route:Route)=>{
+    await axios.post(drivingUrl+"/routes/submit/"+route.routeId,{},
+     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    }
+
+export const submitAllRoutes=async(date:Date)=>{
+    await axios.post(drivingUrl+"/routes/submitAll/"+date.toISOString().split('T')[0],{},
+     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+}
+
+export const getDonorApproved = async (): Promise<Donor[]> => {
+    const response=await axios.get(`${userUrl}/donor/approved`,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    return await response.data as Donor[];
+}
+
+export const addDriverConstraints = async (driverConstraints: DriverConstraints) => {
+    const response = await axios.post(drivingUrl+"/constraints", driverConstraints,
+    {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    return response.data as DriverConstraints;
 }
