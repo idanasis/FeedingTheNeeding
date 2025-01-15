@@ -14,10 +14,12 @@ import java.util.Optional;
 @Repository
 public interface CookConstraintsRepository extends JpaRepository<CookConstraints,Long> {
 
-    public Optional<CookConstraints> findByConstraintIdAndDate(long cookId, LocalDate date);
+    public Optional<CookConstraints> findByConstraintIdAndDate(long constraintId, LocalDate date);
 
     public List<CookConstraints> findConstraintsByDate(LocalDate date);
-    public List<CookConstraints> findConstraintsByConstraintId(long cookId);
+    public List<CookConstraints> findConstraintsByConstraintId(long constraintId);
+
+    public List<CookConstraints> findConstraintsByCookId(long cookId);
 
     public List<CookConstraints> findConstraintsByDateAndStatus(LocalDate date, Status status);
 }

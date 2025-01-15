@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CookingService {
@@ -32,7 +33,7 @@ public class CookingService {
 
     public void removeConstraint(CookConstraints constraint) {
         logger.info("removeConstraint of cook {} to date {}", constraint.getConstraintId(), constraint.getDate());
-        Long id = constraint.getConstraintId();
+        long id = constraint.getConstraintId();
         LocalDate date = constraint.getDate();
         CookConstraints cookConstraint = ccr.findByConstraintIdAndDate(id, date).orElseThrow(() -> new CookConstraintsNotExistException(date));
         ccr.delete(cookConstraint);
@@ -41,41 +42,19 @@ public class CookingService {
 
     public List<CookConstraints> getCookConstraints(long cookId) {
         logger.info("getCookConstraints of cook id= {}", cookId);
-        return ccr.findConstraintsByConstraintId(cookId);
+        List<CookConstraints> constraints = ccr.findConstraintsByCookId(cookId);
+        logger.info("Successfully got all cook constraints");
+        return constraints;
     }
 
-//    public void updateCookConstraints(long cookId, CookConstraints newConstraints) {
-//        logger.info("Trying to update constraints of cook {}", cookId);
-//        CookConstraints constraints = getLastConstraints(cookId);
-//
-//        if (constraints == null) {
-//            logger.error("No constraints found for cook {}", cookId);
-//            throw new CookConstraintsNotExistException(LocalDate.now());
-//        }
-//
-//        logger.info("Got constraints from db");
-//        ccr.delete(constraints);
-//        logger.info("Deleted last constraints from db");
-//        ccr.save(newConstraints);
-//        logger.info("Successfully updated constraints for cook {}", cookId);
-//    }
-//
-//    public CookConstraints getLastConstraints(long cookId){
-//        logger.info("Trying to get last constraints for cook {}", cookId);
-//        CookConstraints constraint = ccr.findConstraintsByConstraintId(cookId).stream()
-//                .max(Comparator.comparing(CookConstraints::getDate))
-//                .orElse(null);
-//        logger.info("Successfully got last constraints for cook {}", cookId);
-//
-//        return constraint;
-//    }
-
-    //TODO: change this
-    public List<CookConstraints> getCookHistory(long cookId) {
-        logger.info("Trying to get all cook history for cook {}", cookId);
-        List<CookConstraints> constraints = ccr.findConstraintsByConstraintId(cookId);
-        logger.info("Successfully got all cook history");
-        return constraints;
+    public List<CookConstraints> getLatestCookConstraints(long cookId, LocalDate date){
+        logger.info("getCookConstraints of cook id= {}", cookId);
+        List<CookConstraints> constraints = ccr.findConstraintsByCookId(cookId);
+        List<CookConstraints> filteredConstraints = constraints.stream()
+                .filter(constraint -> !constraint.getDate().isBefore(date))
+                .collect(Collectors.toList());
+        logger.info("Successfully got all cook constraints");
+        return filteredConstraints;
     }
 
     public List<CookConstraints> getAcceptedCookByDate(LocalDate date){
