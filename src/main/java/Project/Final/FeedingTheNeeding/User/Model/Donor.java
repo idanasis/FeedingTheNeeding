@@ -32,6 +32,8 @@ public class Donor extends BaseUser{
     @JsonIgnore
     private UserCredentials userCredentials;
 
+    private boolean volunteeredDuringLastMonth;
+
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
     private boolean verified;

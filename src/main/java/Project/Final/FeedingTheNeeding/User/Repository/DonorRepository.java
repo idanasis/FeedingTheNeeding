@@ -14,4 +14,5 @@ public interface DonorRepository extends UserRepository<Donor> {
     Optional<Donor> findByPhoneNumber(String phoneNumber);
     Optional<Donor> findByVerificationCode(String verificationCode);
     List<Donor> findByStatus(RegistrationStatus string);
+    List<Donor> findByVolunteeredDuringLastMonth(boolean isVolunteeredDuringLastMonth);
 }

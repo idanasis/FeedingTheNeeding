@@ -123,6 +123,7 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
+        donor.setVolunteeredDuringLastMonth(false);
 
         //sendSms(donor);
 

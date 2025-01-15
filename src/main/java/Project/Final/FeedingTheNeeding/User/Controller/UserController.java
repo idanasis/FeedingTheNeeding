@@ -91,6 +91,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @GetMapping("/donor/donorId/{donorId}")
     public ResponseEntity<?> getDonorById(@PathVariable long donorId) {
        try{
@@ -100,32 +101,43 @@ public class UserController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
-@GetMapping("/donor/pending")
-public ResponseEntity<?> getDonorPending() {
-    try{
-        List<Donor> donors = userService.getDonorsPending();
-        return ResponseEntity.ok(donors);
-    }catch (Exception e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @GetMapping("/donor/pending")
+    public ResponseEntity<?> getDonorPending() {
+        try{
+            List<Donor> donors = userService.getDonorsPending();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
-@PutMapping("/donor")
-public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
-    try{
-        userService.updateDonor(entity);
-        return ResponseEntity.noContent().build();
-}catch (Exception e){
-    return ResponseEntity.badRequest().body(e.getMessage());
-}
-}
-@DeleteMapping("/donor/{id}")
-public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
-    try{
-        userService.deleteDonor(id);
-        return ResponseEntity.noContent().build();
-}catch (Exception e){
-    return ResponseEntity.badRequest().body(e.getMessage());
-}
-}
+    @PutMapping("/donor")
+    public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
+        try{
+            userService.updateDonor(entity);
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    @DeleteMapping("/donor/{id}")
+    public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
+        try{
+            userService.deleteDonor(id);
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/donors/volunteeredLastMonth")
+    public ResponseEntity<?> getAllDonorsVolunteeredLastMonth() {
+        try{
+            List<Donor> donors = userService.getAllVolunteeredDuringTheLastMonth();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
 }
