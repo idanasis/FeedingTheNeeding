@@ -10,7 +10,8 @@ import UploadConstraints from "./Cooking/Components/UploadConstraints";
 import DrivingManager from "./Driving/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
 import DriverConstraints from "./Driving/components/DriverConstraints";
-
+import ConstraintsView from "./Donor/Components/constraintsView";
+import CookManager from "./Cooking/Components/CookManager";
 
 
 function App() {
@@ -26,6 +27,8 @@ function App() {
             <Route path="/donation" element={<Donation />}/>
             <Route path = "/cookConstraints" element = {<UploadConstraints />} />
             <Route path = "/driversConstraints" element = {<DriverConstraints />} />
+            <Route path = "/donorConstraints" element = {<ConstraintsView />} />
+            <Route path = "/cookManager" element = {<CookManager />} />
         </Routes>
       </Router>
   );
