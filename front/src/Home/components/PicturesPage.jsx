@@ -69,7 +69,7 @@ const FullscreenModal = ({ image, onClose }) => {
   );
 };
 
-const Pictures = () => {
+const PicturesPage = () => {
   const navigate = useNavigate();
   const images = projectImages;
   const [selectedImage, setSelectedImage] = useState(null);
@@ -134,4 +134,4 @@ const Pictures = () => {
   );
 };
 
-export default Pictures;
+export default PicturesPage;
