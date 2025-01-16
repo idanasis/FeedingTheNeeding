@@ -13,6 +13,7 @@ import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
 import DonorPendingTable from "./User/components/DonorPending";
 import GoPage from "./GoPage/GoPage";
+import PicturesPage from './Home/components/PicturesPage';
 import {getUserRoleFromJWT} from "./GoPage/goPageAPI";
 
 // Protected route wrapper component
@@ -117,6 +118,8 @@ const App = () => {
         />
 
         <Route path="/donation" element={<Donation />} />
+        <Route path="/pictures" element={<PicturesPage />} />
+
 
         {/* Protected routes */}
         <Route
