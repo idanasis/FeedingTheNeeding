@@ -10,6 +10,38 @@ import hanuka from "../images/hanuka.png";
 import purim from "../images/purim.png";
 import build from "../images/repair.svg";
 
+import project1 from '../images/pic1.jpg';
+import project2 from '../images/pic2.jpg';
+import project3 from '../images/pic3.jpg';
+import project4 from '../images/pic4.jpg';
+import project5 from '../images/pic5.jpg';
+import project6 from '../images/pic6.jpg';
+import project7 from '../images/pic7.jpg';
+import project8 from '../images/pic8.jpg';
+import project9 from '../images/pic9.jpg';
+import project10 from '../images/pic10.jpg';
+import project11 from '../images/pic11.jpg';
+import project12 from '../images/pic12.jpg';
+import project13 from '../images/pic13.jpg';
+import project14 from '../images/pic14.jpg';
+
+export const projectImages = [
+  project1,
+  project2,
+  project3,
+  project4,
+  project5,
+  project6,
+  project7,
+  project8,
+  project9,
+  project10,
+  project11,
+  project12,
+  project13,
+  project14,
+];
+
 
 export const allProjects = [
   {
