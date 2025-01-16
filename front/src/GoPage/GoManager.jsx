@@ -12,9 +12,7 @@ const GoManager = () => {
       post: "רכזת מבשלות",
       image: client1,
       pages: [
-        { name: "בלה בלה", path: "/info" },
-        { name: "בלה בלה", path: "/calendar" },
-        { name: "בלה בלה", path: "/tests" }
+        { name: "ניהול בישולים", path: "/cookManager" },
       ]
     },
     {
@@ -23,8 +21,9 @@ const GoManager = () => {
       image: client1,
       pages: [
         { name: "מעקב חוסים", path: "/social" },
-        { name: "רשימת ממתינים", path: "/neederPending" },
-        { name: "מתנדבים ממתינים", path: "/DonorPendingTable" }
+        { name: "מעקב מתנדבים ", path: "/donors" },
+        { name: "חוסים ממתינים", path: "/neederPending" },
+        { name: "מתנדבים ממתינים", path: "/donorPending" }
       ]
     },
     {
