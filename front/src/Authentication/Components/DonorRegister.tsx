@@ -106,6 +106,10 @@ const DonorRegister: React.FC = () => {
     return (
         <div className="register-page">
             <div className="register-container">
+                <button className="home-button" onClick={() => navigate('/')}>
+                    חזרה למסך בית &#8592;
+                </button>
+
                 <form onSubmit={handleRegister} className="register-form">
                     <div className="form-logo">
                         <img src={FeedingLogo} alt="Logo" className="logo-image"/>
@@ -141,7 +145,6 @@ const DonorRegister: React.FC = () => {
                     </div>
 
                     <div className="form-row">
-
                         <div className="form-group">
                             <label htmlFor="phoneNumber">
                                 מספר טלפון <span className="required-asterisk">*</span>
@@ -293,6 +296,7 @@ const DonorRegister: React.FC = () => {
 
         </div>
     );
+
 };
 
 export default DonorRegister;

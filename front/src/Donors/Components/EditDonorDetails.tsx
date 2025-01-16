@@ -1,5 +1,3 @@
-// DonorEdit.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/EditDonorDetails.css';
@@ -20,13 +18,17 @@ const DonorEdit: React.FC = () => {
                 setFormData(donor);
             } catch (err: any) {
                 setError(err.message);
+                // // Optionally redirect to login if unauthorized
+                // if (err.message === 'No authentication token found.' || err.message === 'Failed to fetch donor data.') {
+                //     navigate('/login');
+                // }
             } finally {
                 setLoading(false);
             }
         };
 
         fetchDonorData();
-    }, []);
+    }, [navigate]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!formData) return;
@@ -62,8 +64,6 @@ const DonorEdit: React.FC = () => {
                 return;
             }
 
-            // Add more validations as needed
-
             try {
                 await updateDonor(formData);
                 setSuccessMessage('הנתונים עודכנו בהצלחה!');
@@ -80,6 +80,11 @@ const DonorEdit: React.FC = () => {
     return (
         <div className="edit-page">
             <div className="edit-container">
+                {/* Home Button */}
+                <button className="home-button" onClick={() => navigate('/')}>
+                    חזרה למסך בית &#8592;
+                </button>
+
                 <form onSubmit={handleSubmit} className="edit-form">
                     <div className="form-logo">
                         <img src={FeedingLogo} alt="Logo" className="logo-image" />
@@ -143,8 +148,6 @@ const DonorEdit: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Add more fields as necessary */}
-
                     {error && <p className="error-message">{error}</p>}
                     {successMessage && <p className="success-message">{successMessage}</p>}
 
@@ -170,6 +173,7 @@ const DonorEdit: React.FC = () => {
             )}
         </div>
     );
+
 };
 
 export default DonorEdit;

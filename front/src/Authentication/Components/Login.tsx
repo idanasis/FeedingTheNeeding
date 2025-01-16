@@ -71,6 +71,10 @@ const Login: React.FC = () => {
         <div className="login-page-wrapper">
             <div className="login-page">
                 <div className="login-container">
+                    <button className="home-button" onClick={() => navigate('/')}>
+                         חזרה למסך בית  &#8592;
+                    </button>
+
                     <h2>התחברות למערכת</h2>
                     <img src={Logo} alt="Logo" style={{ maxWidth: '200px', marginBottom: '20px' }} />
                     <form onSubmit={handleLogin} className="login-form">
