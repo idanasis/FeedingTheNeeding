@@ -5,10 +5,10 @@ import client1 from "../Home/images/avatar.webp";
 
 const GoUser = () => {
   const userPages = [
-    { name: "דף הפעילות שלי", path: "/my-activities" },
-    { name: "לוח זמנים", path: "/my-schedule" },
-    { name: "הודעות", path: "/my-messages" },
-    { name: "פרופיל", path: "/profile" }
+    { name: "סיוע בבישול", path: "/cookConstraints" },
+    { name: "סיוע בשינוע", path: "/driversConstraints" },
+    { name: "השיבוצים שלי", path: "/donorConstraints" },
+    { name: "שינוי פרטי פרופיל", path: "/profile" }
   ];
 
   const slideUpVariants = {
