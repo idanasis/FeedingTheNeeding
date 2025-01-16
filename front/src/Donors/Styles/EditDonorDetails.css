@@ -1,0 +1,238 @@
+/* DonorEdit.css */
+
+.edit-page {
+    background: url('../Images/background.png') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    box-sizing: border-box;
+    flex-direction: column;
+}
+
+.edit-container {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px 30px;
+    width: 90%;
+    max-width: 650px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.edit-container .form-logo {
+    text-align: center;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+.edit-container .logo-image {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.edit-container h2 {
+    text-align: center;
+    color: #333;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.edit-container .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 25px;
+    width: 100%;
+}
+
+.edit-container .form-row .form-group {
+    flex: 1 1 45%;
+    margin-bottom: 20px;
+}
+
+.edit-container .form-group label {
+    font-size: 14px;
+    color: #555;
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+.edit-container input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    direction: rtl;
+    text-align: right;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.edit-container input:focus {
+    border-color: #d32f2f;
+    outline: none;
+}
+
+.edit-container .submit-button {
+    background-color: #d32f2f;
+    color: white;
+    font-size: 16px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s ease;
+}
+
+.edit-container .submit-button:hover {
+    background-color: #d32f2f;
+}
+
+.edit-container .error-message {
+    color: red;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.edit-container .success-message {
+    color: green;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.edit-container .extra-options {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.edit-container .extra-options a {
+    color: #d32f2f;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.edit-container .extra-options a:hover {
+    text-decoration: underline;
+}
+
+.success-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    z-index: 1000;
+}
+
+.success-popup p {
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
+
+.success-popup button {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s ease;
+    margin-top: 10px;
+}
+
+.success-popup button:hover {
+    background-color: #d32f2f;
+    transform: translateY(-2px);
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+@media screen and (max-width: 768px) {
+    .edit-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    .edit-container .form-row {
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .edit-container h2 {
+        font-size: 1.25rem;
+    }
+
+    .edit-container .submit-button {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .edit-container .logo-image {
+        width: 120px;
+    }
+
+    .edit-container .checkbox-label {
+        font-size: 13px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .edit-container {
+        width: 90%;
+        padding: 10px;
+    }
+
+    .edit-container .form-row {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .edit-container h2 {
+        font-size: 1rem;
+    }
+
+    .edit-container .submit-button {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .edit-container .logo-image {
+        width: 100px;
+    }
+
+    .edit-container .checkbox-label {
+        font-size: 12px;
+    }
+}

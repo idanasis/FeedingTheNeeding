@@ -11,6 +11,7 @@ import DrivingManager from "./Driving/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
 import DonorPendingTable  from "./User/components/DonorPending"
 import GoPage from "./GoPage/GoPage";
+import EditDonorDetails from "./Donors/Components/EditDonorDetails";
 
 
 
@@ -27,6 +28,7 @@ function App() {
             <Route path="/donation" element={<Donation />}/>
             <Route path="/donorPending" element={<DonorPendingTable  />} />
             <Route path="/go" element={<GoPage />} />
+            <Route path="/editDonorDetails" element={<EditDonorDetails />} />
         </Routes>
       </Router>
   );

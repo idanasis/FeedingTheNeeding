@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
+import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
@@ -35,7 +36,8 @@ public class UserController {
     public ResponseEntity<?> authenticatedDonor() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Donor donor = (Donor) authentication.getPrincipal();
+            UserCredentials currentUser = (UserCredentials) authentication.getPrincipal();
+            Donor donor = currentUser.getDonor();
             return ResponseEntity.ok(donor);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
