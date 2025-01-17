@@ -112,6 +112,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+  
     @PutMapping("/donor")
     public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
         try{
@@ -135,6 +136,16 @@ public class UserController {
     public ResponseEntity<?> getAllDonorsVolunteeredLastMonth() {
         try{
             List<Donor> donors = userService.getAllVolunteeredDuringTheLastMonth();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/donor/approved")
+    public ResponseEntity<?> getDonorApproved() {
+        try{
+            List<Donor> donors = userService.getDonorsApproved();
             return ResponseEntity.ok(donors);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());

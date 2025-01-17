@@ -11,6 +11,8 @@ import { Needy } from '@/src/models/NeedyModel';
 import { Box, Button, IconButton } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { deleteNeedy, getNeedyPending, updateNeedy } from '../../Restapi/socialRestapi';
+import DiveHeader from '../../GoPage/DiveHeader';
+
 
 
 
@@ -122,7 +124,8 @@ const NeedyPendingTable = () => {
       );
     }
   return (
-  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,backgroundColor: "snow"}}>
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,backgroundColor: "snow",paddingRight: '20px',paddingLeft: '20px'}}>
+    <DiveHeader/>
     <h1 style={{ fontSize: '3rem', fontWeight: 'bold', margin: '20px'}}>
       אישור נזקקים
     </h1>

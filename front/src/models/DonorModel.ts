@@ -8,4 +8,6 @@ export interface Donor {
     RegistrationStatus: string;
     email?: string;
     status?: string;
+    lastDonationDate?: Date;
+    role?: string;
 }

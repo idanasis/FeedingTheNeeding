@@ -1,0 +1,57 @@
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+
+  }
+  
+  .popup-content {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    width: 500px;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .close-btn {
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    float: right;
+  }
+  
+  .close-btn:hover {
+    background: #d32f2f;
+  }
+  
+  .donor-list {
+    margin-top: 20px;
+  }
+  
+  .donor-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .donor-card h4 {
+    margin: 0;
+  }
+  
+  .donor-card p {
+    margin: 5px 0;
+  }
+  

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { submitConstraints } from '../RestAPI/CookConstraintsRestAPI';
-import '../Styles/DonorCookConsraintsSub.css'
+import { submitDriverConstraints } from '../models/DriverConstraintsRestAPI';
+import '../styles/constraints.css'
 
 interface TimeSlot {
   start: string;
@@ -9,19 +9,20 @@ interface TimeSlot {
 }
 
 interface DaySchedule {
-  canVisit: boolean;
+  canDrive: boolean;
   timeSlots: TimeSlot[];
   selectedDate: string | null;
 }
 
-const CookConstraints: React.FC = () => {
+const DriverConstraints: React.FC = () => {
   const navigate = useNavigate();
-  const [mealCount, setMealCount] = useState<string>('');
   const [schedule, setSchedule] = useState<DaySchedule>({
-    canVisit: false,
+    canDrive: false,
     timeSlots: [],
     selectedDate: null
   });
+  const [startLocation, setStartLocation] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
   const [tempTimeSlot, setTempTimeSlot] = useState<TimeSlot>({
     start: '',
     end: ''
@@ -44,7 +45,7 @@ const CookConstraints: React.FC = () => {
     setSchedule(prev => ({
       ...prev,
       selectedDate: date,
-      canVisit: true,
+      canDrive: true,
       timeSlots: []
     }));
     setTempTimeSlot({ start: '', end: '' });
@@ -84,18 +85,20 @@ const CookConstraints: React.FC = () => {
     }));
   };
 
+
   const handleSubmit = async () => {
+  //TODO: get actual driverId somehow
     const sentData = {
-      cookId: 1,
-      startTime: schedule.timeSlots[0].start,
-      endTime: schedule.timeSlots[0].end,
-      platesNum: parseInt(mealCount),
-      location: "need to get this",
-      date: schedule.selectedDate
+      driverId: 1,
+      date: schedule.selectedDate,
+      startHour: schedule.timeSlots[0].start,
+      endHour: schedule.timeSlots[0].end,
+      startLocation: startLocation,
+      requests: description
     };
 
     try {
-      await submitConstraints(sentData);
+      await submitDriverConstraints(sentData);
       alert('הנתונים נשלחו בהצלחה!');
     } catch (error) {
       console.error('Error:', error);
@@ -106,39 +109,26 @@ const CookConstraints: React.FC = () => {
   const isAddButtonDisabled = !tempTimeSlot.start || !tempTimeSlot.end;
 
   return (
-    <div className="meal-planner-container">
+    <div className="driver-planner-container">
       <div className="navigation-buttons">
         <button
-          className="nav-button active"
-          onClick={() => {/* Already on this page */}}
+          className="nav-button"
+          onClick={() => navigate('/cookConstraints')}
         >
           טבחים
         </button>
         <button
-          className="nav-button"
-          onClick={() => navigate('/driversConstraints')}
+          className="nav-button active"
+          onClick={() => {/* Already on this page */}}
         >
           נהגים
         </button>
       </div>
 
       <div className="content-wrapper">
-        <div className="meal-planner">
+        <div className="driver-planner">
           <div className="header-container">
-            <h1>כמה מנות אבשל</h1>
-            <div className="meals-input">
-              <input
-                type="number"
-                value={mealCount}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value >= 1) {
-                    setMealCount(e.target.value);
-                  }
-                }}
-                min="1"
-              />
-            </div>
+            <h1>זמינות לנהיגה</h1>
           </div>
 
           <div className="day-selection">
@@ -162,6 +152,25 @@ const CookConstraints: React.FC = () => {
                 </option>
               ))}
             </select>
+          </div>
+
+          <div className="location-input">
+            <label>נקודת התחלה</label>
+            <input
+              type="text"
+              value={startLocation}
+              onChange={(e) => setStartLocation(e.target.value)}
+              placeholder="הכנס את כתובת נקודת ההתחלה"
+            />
+          </div>
+
+          <div className="description-input">
+            <label>הערות נוספות</label>
+            <textarea
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="הוסף הערות או מידע נוסף"
+            />
           </div>
 
           {schedule.selectedDate && (
@@ -220,7 +229,7 @@ const CookConstraints: React.FC = () => {
             <button
               className="submit_button"
               onClick={handleSubmit}
-              disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !mealCount}
+              disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !startLocation}
             >
               להגיש
             </button>
@@ -250,4 +259,4 @@ const CookConstraints: React.FC = () => {
   );
 };
 
-export default CookConstraints;
+export default DriverConstraints;

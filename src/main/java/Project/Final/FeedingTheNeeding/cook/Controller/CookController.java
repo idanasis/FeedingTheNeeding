@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.cook.Controller;
 
+import Project.Final.FeedingTheNeeding.cook.DTO.LatestConstraintsRequestDto;
 import Project.Final.FeedingTheNeeding.cook.DTO.PendingConstraintDTO;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
@@ -59,10 +60,19 @@ public class CookController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/cook/{cookId}")
+    @GetMapping("/allConstraints/cook/{cookId}")
     public ResponseEntity<?> getCookHistory(@PathVariable long cookId){
         try{
-            return ResponseEntity.ok(cs.getCookHistory(cookId));
+            return ResponseEntity.ok(cs.getCookConstraints(cookId));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/constraints/latest")
+    public ResponseEntity<?> getLatestConstraints(@RequestBody LatestConstraintsRequestDto dto){
+        try{
+            return ResponseEntity.ok(cs.getLatestCookConstraints(dto.cookId, dto.date));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

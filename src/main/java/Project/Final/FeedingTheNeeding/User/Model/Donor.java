@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,4 +38,5 @@ public class Donor extends BaseUser{
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
     private boolean verified;
+    private LocalDate lastDonationDate;
 }

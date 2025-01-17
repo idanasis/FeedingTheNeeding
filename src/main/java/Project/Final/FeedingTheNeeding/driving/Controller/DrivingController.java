@@ -4,8 +4,6 @@ import Project.Final.FeedingTheNeeding.driving.Fascade.DrivingFascade;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraint;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
 import Project.Final.FeedingTheNeeding.driving.Model.Route;
-import Project.Final.FeedingTheNeeding.driving.Model.Visit;
-import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
