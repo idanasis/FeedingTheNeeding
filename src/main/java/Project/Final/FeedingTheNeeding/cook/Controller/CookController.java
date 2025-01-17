@@ -8,6 +8,7 @@ import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
 import jakarta.validation.Constraint;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
@@ -47,6 +48,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/constraints/cook/{cookId}")
     public ResponseEntity<?> getCookConstraints(@PathVariable long cookId) {
         try {
@@ -56,6 +58,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/cook/{cookId}")
     public ResponseEntity<?> getCookHistory(@PathVariable long cookId){
         try{
@@ -65,6 +68,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("getAccepted/{date}")
     public ResponseEntity<?> getAllAcceptedConstraintsByDate(@PathVariable LocalDate date){
         try{
@@ -74,6 +78,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("getPending/{date}")
     public ResponseEntity<?> getPendingConstraintsByDate(@PathVariable LocalDate date){
         try{
@@ -88,6 +93,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("acceptConstraint/{constraintId}")
     public ResponseEntity<?> acceptConstraintStatus(@PathVariable long constraintId){
         try{
@@ -97,6 +103,7 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("rejectConstraint/{constraintId}")
     public ResponseEntity<?> rejectConstraintStatus(@PathVariable long constraintId){
         try{

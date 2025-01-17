@@ -8,6 +8,7 @@ import Project.Final.FeedingTheNeeding.driving.Model.Visit;
 import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -44,6 +45,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/constraints/{date}")
     public ResponseEntity<?> getDateConstraints(@PathVariable String date) {
         try {
@@ -54,6 +56,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/constraints/driver/{driverId}")
     public ResponseEntity<?> getDriverConstraints(@PathVariable long driverId) {
         try {
@@ -63,6 +66,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/routes/submit/{routeId}")
     public ResponseEntity<?> submitRouteForDriver(@PathVariable long routeId) {
         try {
@@ -73,6 +77,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/routes/create")
     public ResponseEntity<?> createRoute(@RequestParam("date") String date) {
         try {
@@ -83,6 +88,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/routes/create/driver")
     public ResponseEntity<?> createRouteWithDriver(@RequestParam Long driverId, @RequestParam LocalDate date) {
         try {
@@ -92,6 +98,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PutMapping("/routes/{routeId}/driver/{driverId}")
     public ResponseEntity<?> setDriverIdToRoute(@PathVariable long routeId, @PathVariable long driverId) {
         try {
@@ -102,6 +109,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @DeleteMapping("/routes/{routeId}")
     public ResponseEntity<?> removeRoute(@PathVariable long routeId) {
         try {
@@ -112,6 +120,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PostMapping("/routes/submitAll/{date}")
     public ResponseEntity<?> submitAllRoutes(@PathVariable String date) {
         try {
@@ -123,6 +132,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/routes/{routeId}")
     public ResponseEntity<?> getRoute(@PathVariable long routeId) {
         try {
@@ -132,6 +142,7 @@ public class DrivingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/routes")
     public ResponseEntity<?> getRouteByDateAndDriver(@RequestParam LocalDate date, @RequestParam long driverId) {
         try {
@@ -140,6 +151,8 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/routes/getRoutes")
     public ResponseEntity<?> getRoutes(@RequestParam("date") String date) {
         try {
@@ -149,7 +162,8 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/history")
     public ResponseEntity<?> viewHistory() {
         try {
@@ -158,6 +172,8 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PatchMapping("/routes/updateRoute")
     public ResponseEntity<?> updateRoute(@RequestBody Route route) {
         try {
@@ -166,6 +182,8 @@ public class DrivingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/constraints/driver/futureNotApproved/{driverId}")
     public ResponseEntity<?> getDriverFutureConstraintsHaventConfirmed(@RequestParam long driverId) {
         try {
