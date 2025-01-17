@@ -39,12 +39,11 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Attach the CORS configuration here
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/cooking/**").permitAll()
-                        .requestMatchers("/driving/**").permitAll()
-                        .requestMatchers("/social/**").permitAll()
-                        .requestMatchers("/needer/**").permitAll()
-                        .requestMatchers("/user/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/cooking/**", "/driving/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
+                        .requestMatchers("/social/**", "/needer/**").hasAnyRole("ADMIN", "STAFF")
+                        .requestMatchers("/user/**").hasRole("ADMIN")
+                        .anyRequest().hasRole("ADMIN")
+
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -59,7 +58,6 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("https://backend.com", "https://localhost:8080","http://localhost:5173","*")); // need to change if we have other settings
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        // configuration.setAllowedMethods(List.of("Authorization", "Content-Type"));
         configuration.setAllowedHeaders(Arrays.asList("authorization","content-type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

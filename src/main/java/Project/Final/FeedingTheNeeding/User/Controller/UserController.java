@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
+import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
@@ -35,7 +36,8 @@ public class UserController {
     public ResponseEntity<?> authenticatedDonor() {
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            Donor donor = (Donor) authentication.getPrincipal();
+            UserCredentials currentUser = (UserCredentials) authentication.getPrincipal();
+            Donor donor = currentUser.getDonor();
             return ResponseEntity.ok(donor);
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -91,6 +93,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @GetMapping("/donor/donorId/{donorId}")
     public ResponseEntity<?> getDonorById(@PathVariable long donorId) {
        try{
@@ -100,42 +103,54 @@ public class UserController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
-@GetMapping("/donor/pending")
-public ResponseEntity<?> getDonorPending() {
-    try{
-        List<Donor> donors = userService.getDonorsPending();
-        return ResponseEntity.ok(donors);
-    }catch (Exception e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+    @GetMapping("/donor/pending")
+    public ResponseEntity<?> getDonorPending() {
+        try{
+            List<Donor> donors = userService.getDonorsPending();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
-@GetMapping("/donor/approved")
-public ResponseEntity<?> getDonorApproved() {
-    try{
-        List<Donor> donors = userService.getDonorsApproved();
-        return ResponseEntity.ok(donors);
-    }catch (Exception e){
-        return ResponseEntity.badRequest().body(e.getMessage());
+  
+    @PutMapping("/donor")
+    public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
+        try{
+            userService.updateDonor(entity);
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-}
-@PutMapping("/donor")
-public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
-    try{
-        userService.updateDonor(entity);
-        return ResponseEntity.noContent().build();
-}catch (Exception e){
-    return ResponseEntity.badRequest().body(e.getMessage());
-}
-}
-@DeleteMapping("/donor/{id}")
-public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
-    try{
-        userService.deleteDonor(id);
-        return ResponseEntity.noContent().build();
-}catch (Exception e){
-    return ResponseEntity.badRequest().body(e.getMessage());
-}
-}
+    @DeleteMapping("/donor/{id}")
+    public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
+        try{
+            userService.deleteDonor(id);
+            return ResponseEntity.noContent().build();
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/donors/volunteeredLastMonth")
+    public ResponseEntity<?> getAllDonorsVolunteeredLastMonth() {
+        try{
+            List<Donor> donors = userService.getAllVolunteeredDuringTheLastMonth();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/donor/approved")
+    public ResponseEntity<?> getDonorApproved() {
+        try{
+            List<Donor> donors = userService.getDonorsApproved();
+            return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
 
 }

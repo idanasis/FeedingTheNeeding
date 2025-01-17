@@ -2,9 +2,11 @@ package Project.Final.FeedingTheNeeding.Authentication.Model;
 
 import Project.Final.FeedingTheNeeding.User.Model.BaseUser;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
+import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
@@ -33,6 +35,11 @@ public class UserCredentials implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // Prefix roles with "ROLE_" as Spring Security expects
+        if (donor != null && donor.getUserCredentials() != null) {
+            UserRole role = donor.getUserCredentials().getDonor().getRole();
+            return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        }
         return List.of();
     }
 

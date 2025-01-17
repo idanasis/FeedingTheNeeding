@@ -1,5 +1,6 @@
 package Project.Final.FeedingTheNeeding.Authentication.DTO;
 
-public enum RegistrationStatus { PENDING,
+public enum RegistrationStatus {
+    PENDING,
     AVAILABLE
 }

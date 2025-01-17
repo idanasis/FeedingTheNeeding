@@ -14,6 +14,8 @@ import DriverConstraints from "./Driving/components/DriverConstraints";
 import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
 import GoPage from "./GoPage/GoPage";
+import EditDonorDetails from "./Donors/Components/EditDonorDetails";
+
 import PicturesPage from './Home/components/PicturesPage';
 import {getUserRoleFromJWT} from "./GoPage/goPageAPI";
 
@@ -31,7 +33,7 @@ const ProtectedRoute = ({ children, allowedRoles, role }) => {
   const noAuthRoutes = ['/login', '/donorRegister'];
   
   // Donor-specific routes
-  const donorRoutes = ['/', '/donation', '/cookConstraints', '/driversConstraints', '/donorConstraints', '/go'];
+  const donorRoutes = ['/', '/donation', '/cookConstraints', '/driversConstraints', '/donorConstraints', '/go', '/editDonorDetails'];
 
 
   // Check if current path is public
@@ -197,6 +199,14 @@ const App = () => {
         />
         <Route
           path="/go"
+          element={
+            <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
+              <GoPage />
+            </ProtectedRoute>
+        }
+        />
+        <Route
+          path="/editDonorDetails"
           element={
             <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
               <GoPage />
