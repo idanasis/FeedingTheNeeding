@@ -53,7 +53,6 @@ const DonorTable = () => {
       console.log(e);
     }
   }
-
   return (
     <div className="donor-table-container">
       <img
