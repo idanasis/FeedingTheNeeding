@@ -18,7 +18,6 @@ const DonorTable = () => {
     }
   };
   useEffect(() => {
-    
     fetchDonors();
   }, []);
 
