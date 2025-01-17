@@ -189,6 +189,14 @@ const App = () => {
           }
         />
         <Route
+        path='/donors'
+        element={
+          <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN']}>
+            <DonorTable />
+          </ProtectedRoute>
+        }
+        />
+        <Route
           path="/go"
           element={
             <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
@@ -196,11 +204,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-      <Route path="/donors"
-element={<ProtectedRoute role={ allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
-    <DonorTable /> />
-   </ProtectedRoute>
-}/>
+
       </Routes>
     </Router>
   );
