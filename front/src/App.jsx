@@ -8,10 +8,11 @@ import DonorRegister from "./Authentication/Components/DonorRegister";
 import UploadConstraints from "./Cooking/Components/UploadConstraints";
 import DrivingManager from "./Driving/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
+import DonorPendingTable  from "./User/components/DonorPending"
+import DonorTable from "./User/components/Donors"
 import DriverConstraints from "./Driving/components/DriverConstraints";
 import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
-import DonorPendingTable from "./User/components/DonorPending";
 import GoPage from "./GoPage/GoPage";
 import PicturesPage from './Home/components/PicturesPage';
 import {getUserRoleFromJWT} from "./GoPage/goPageAPI";
@@ -187,6 +188,14 @@ const App = () => {
           }
         />
         <Route
+        path='/donors'
+        element={
+          <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN']}>
+            <DonorTable />
+          </ProtectedRoute>
+        }
+        />
+        <Route
           path="/go"
           element={
             <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
@@ -194,6 +203,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
       </Routes>
     </Router>
   );

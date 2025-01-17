@@ -78,6 +78,8 @@ public class UserService {
         upDonor.setAddress(donor.getAddress());
         upDonor.setStatus(donor.getStatus());
         upDonor.setEmail(donor.getEmail());
+        upDonor.setRole(donor.getRole());
+        upDonor.setLastDonationDate(donor.getLastDonationDate());
         donorRepository.save(upDonor);
         logger.info("Donor "+donor.getId()+" updated");
     }
