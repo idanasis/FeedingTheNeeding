@@ -97,8 +97,8 @@ const PendingRequests: React.FC = () => {
                                         <td className="time-column">
                                             {request.startTime} - {request.endTime}
                                         </td>
-                                        <td className="address-column">{request.location}</td>
-                                        <td className="meals-column">{request.platesNum}</td>
+                                        <td className="address-column">{request.addr}</td>
+                                        <td className="meals-column">{request.mealCount}</td>
                                         <td className="actions-column">
                                             <div className="action-buttons">
                                                 <button

@@ -6,6 +6,38 @@
   padding: 20px;
 }
 
+/* New navigation styles */
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  direction: rtl;
+}
+
+.nav-button {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border: 2px solid #4a5568;
+  border-radius: 10px;
+  background: transparent;
+  color: #4a5568;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-button:hover {
+  background: #4a5568;
+  color: white;
+}
+
+.nav-button.active {
+  background: #4a5568;
+  color: white;
+}
+
+/* Original styles */
 .content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -93,6 +125,46 @@
 }
 
 .date-select:focus {
+  outline: none;
+  border-color: #a0aec0;
+  box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.2);
+}
+
+/* New Location and Description input styles */
+.location-input,
+.description-input {
+  margin: 24px 0;
+  width: 100%;
+}
+
+.location-input label,
+.description-input label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.location-input input,
+.description-input textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #4a5568;
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.description-input textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.location-input input:focus,
+.description-input textarea:focus {
   outline: none;
   border-color: #a0aec0;
   box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.2);
@@ -279,6 +351,11 @@
   .meal-planner, .time-slots-column {
     padding: 24px;
   }
+
+  .navigation-buttons {
+    flex-direction: row;
+    margin-bottom: 24px;
+  }
 }
 
 @media screen and (max-width: 768px) {
@@ -328,6 +405,11 @@
   .meals-input input {
     width: 120px;
   }
+
+  .nav-button {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
 }
 
 @media screen and (max-width: 480px) {
@@ -356,5 +438,14 @@
   .submit-button {
     width: 100%;
     max-width: 300px;
+  }
+
+  .navigation-buttons {
+    gap: 8px;
+  }
+
+  .nav-button {
+    padding: 8px 16px;
+    font-size: 14px;
   }
 }

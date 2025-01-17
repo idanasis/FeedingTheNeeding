@@ -4,10 +4,10 @@ const API_BASE_URL = 'http://localhost:8080';
 
 export interface PendingCookDTO {
     name: number; //change to string later
-    start_hour: string;
-    end_hour: string;
-    meal_amount: number;
-    address: string;
+    startTime: string;
+    endTime: string;
+    platesNum: number;
+    location: string;
     date: string;
     status: number; //not needed
 }
