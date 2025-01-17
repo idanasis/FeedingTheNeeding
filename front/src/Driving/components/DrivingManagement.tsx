@@ -28,6 +28,7 @@ import { getNearestFriday } from '../../commons/Commons';
 import { DriverConstraints } from '../models/DriverConstraints';
 import AddDriverOption from './AddDriverOption';
 import { getDonorApproved } from '../../Restapi/DrivingRestapi';
+import DiveHeader from '../../GoPage/DiveHeader';
 
 
 const initialData = {
@@ -117,7 +118,6 @@ const DrivingManager = () => {
       const data=await getDriversConstraints(currentDate);
       setDrivers(data)
       let donors=await getDonorApproved();
-      console.log(donors);
       donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
       setDonors(donors);
     }catch(err){
@@ -127,8 +127,8 @@ const DrivingManager = () => {
   async function getDrops(currentDate:Date=date){
     try{
       const data=await getNeedersHere(currentDate);
-          const updatedData={...initialData};
-          updatedData.drop=data;
+        const updatedData={...initialData};
+        updatedData.drop=data;
         const routes=await getRoutes(date);
         updatedData.routes=routes;
         updatedData.drop = updatedData.drop.filter((visit: Visit) =>
@@ -233,6 +233,7 @@ const DrivingManager = () => {
         <Typography variant="body2">{visit.phoneNumber}</Typography>
         <Typography variant="body2">שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
         <Typography variant="body2">הערות: {visit.note?visit.note:visit.notes}</Typography>
+        {visit.dietaryPreferences?<Typography variant="body2">{visit.dietaryPreferences}</Typography>:null}
       </CardContent>
     </Card>
   );
@@ -380,6 +381,7 @@ const removeRoute = async(index:number)=>{
 }
   return (
     <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
+      <DiveHeader/>
      <div style={{marginTop: "20px",backgroundColor: "snow",justifySelf: "center",display: "flex",flexDirection: "row",justifyContent: "space-between",  gap: "10px"}}>
     <ResponsiveDatePickers onDateChange={handleDateChange}/>
     {!data.routes.every((route)=>route.submitted)?<Button variant="contained" color="primary" sx={{marginRight:10}} onClick={handlePublishAll} >פרסם הכל</Button>:null}
