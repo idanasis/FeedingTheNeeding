@@ -13,7 +13,6 @@ import DonorTable from "./User/components/Donors"
 import DriverConstraints from "./Driving/components/DriverConstraints";
 import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
-import DonorPendingTable from "./User/components/DonorPending";
 import GoPage from "./GoPage/GoPage";
 import PicturesPage from './Home/components/PicturesPage';
 import {getUserRoleFromJWT} from "./GoPage/goPageAPI";
