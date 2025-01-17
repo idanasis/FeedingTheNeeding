@@ -12,5 +12,6 @@ export interface Visit {
     status: string;
     priority?: number;
     notes?: string;
+    dietaryPreferences?: string;
     
   }

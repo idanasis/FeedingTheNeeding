@@ -1,7 +1,6 @@
 import { Donor } from "../Driving/models/Donor";
 import { DriverConstraints } from "../Driving/models/DriverConstraints";
 import { Route } from "../Driving/models/Route";
-import { NeederTrackingModel } from "../models/NeederTrackingModel";
 import { NeederTrackingProjectionModel } from "../models/NeederTrackingProjectionModel";
 import { socialUrl } from "./socialRestapi";
 import axios from 'axios';
@@ -12,7 +11,6 @@ const userUrl="http://localhost:8080/user"
 export const addRoute = async (date: Date) => {
     const response =  await axios.post(drivingUrl+"/routes/create"+"?date="+date.toISOString().split('T')[0],{},
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
-    console.log(response);
     return response.data as Route;
 }
 export const getRoutes=async (date: Date)=>{
@@ -46,6 +44,7 @@ export const getNeedersHere=async (date: Date)=>{
 }
 
 const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingProjectionModel)=>{
+    console.log(neederTracking);
     return {
         firstName:neederTracking.needyFirstName,
         lastName:neederTracking.needyLastName,
@@ -53,7 +52,8 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         address:neederTracking.needyAddress,
         notes:neederTracking.additionalNotes,
         maxHour:0,
-        status:"Deliver"
+        status:"Deliver",
+        dietaryPreferences:neederTracking.dietaryPreferences
     }
 }
 export const updateRoute=async(route:Route)=>{
