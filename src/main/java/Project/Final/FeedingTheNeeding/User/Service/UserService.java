@@ -102,9 +102,4 @@ public class UserService {
             throw new UserDoesntExistsException("User "+id+" not found");
         }
     }
-
-    public List<Donor> getAllVolunteeredDuringTheLastMonth(){
-        logger.info("getAllVolunteeredDuringTheLastMonth");
-        return donorRepository.findByVolunteeredDuringLastMonth(true);
-    }
 }

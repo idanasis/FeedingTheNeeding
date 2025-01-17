@@ -132,16 +132,6 @@ public class UserController {
         }
     }
 
-    @GetMapping("/donors/volunteeredLastMonth")
-    public ResponseEntity<?> getAllDonorsVolunteeredLastMonth() {
-        try{
-            List<Donor> donors = userService.getAllVolunteeredDuringTheLastMonth();
-            return ResponseEntity.ok(donors);
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @GetMapping("/donor/approved")
     public ResponseEntity<?> getDonorApproved() {
         try{
