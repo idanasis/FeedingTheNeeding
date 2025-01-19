@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8080';
 
 export interface PendingCookDTO {
-    name: number; //change to string later
+    name: number; //Change to string later
     startTime: string;
     endTime: string;
     platesNum: number;
