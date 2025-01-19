@@ -10,6 +10,7 @@ import { TableVirtuoso, TableComponents } from 'react-virtuoso';
 import { Box, Button } from '@mui/material';
 import { Donor } from '../../models/DonorModel';
 import { deleteDonor, getPendingDonors, updateDonor } from '../../Restapi/DonorRestapi';
+import DiveHeader from '../../GoPage/DiveHeader';
 
 
 
@@ -124,6 +125,7 @@ const DonorPendingTable = () => {
     }
   return (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' ,backgroundColor: "snow"}}>
+    <DiveHeader />
     <h1 style={{ fontSize: '3rem', fontWeight: 'bold', margin: '20px'}}>
       אישור מתנדבים
     </h1>
