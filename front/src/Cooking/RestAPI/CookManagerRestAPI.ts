@@ -3,11 +3,12 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8080';
 
 export interface PendingCookDTO {
-    name: number; //Change to string later
+    id: number;
+    name: string;
     startTime: string;
     endTime: string;
-    platesNum: number;
-    location: string;
+    constraints: Record<string, number>;
+    addr: string;
     date: string;
     status: number; //not needed
 }
@@ -18,16 +19,16 @@ export enum Status {
     Rejected = 'Rejected'
 }
 
-export interface PendingConstraint {
-    constraintId: number;
-    name: string;
-    start_hour: string;
-    end_hour: string;
-    constraints: Record<String, number>;
-    address: string;
-    date: string; // LocalDate will be received as a string in JSON
-    status: Status;
-}
+// export interface PendingConstraint {
+//     constraintId: number;
+//     name: string;
+//     start_hour: string;
+//     end_hour: string;
+//     constraints: Record<String, number>;
+//     address: string;
+//     date: string; // LocalDate will be received as a string in JSON
+//     status: Status;
+// }
 
 export const getPendingRequests = async (date: string): Promise<PendingCookDTO[]> => {
     try {

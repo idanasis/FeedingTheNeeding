@@ -7,6 +7,7 @@ const PendingRequests: React.FC = () => {
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
+    const [expandedRequestId, setExpandedRequestId] = useState<number | null>(null);
 
     const fetchPendingRequests = async (date: string) => {
         try {
@@ -52,6 +53,19 @@ const PendingRequests: React.FC = () => {
         }
     };
 
+    const toggleRequestDetails = (requestId: number) => {
+        setExpandedRequestId(expandedRequestId === requestId ? null : requestId);
+    };
+
+    const renderConstraints = (constraints: Record<string, number>) => {
+        return Object.entries(constraints).map(([constraint, amount]) => (
+            <div key={constraint} className="constraint-item">
+                <span className="constraint-name">{constraint}</span>
+                <span className="constraint-amount">{amount}</span>
+            </div>
+        ));
+    };
+
     return (
         <div className="pending-requests-container">
             <div className="content-wrapper">
@@ -83,39 +97,66 @@ const PendingRequests: React.FC = () => {
                                     <th className="date-column">תאריך</th>
                                     <th className="time-column">שעות</th>
                                     <th className="address-column">כתובת</th>
-                                    <th className="meals-column">מספר מנות</th>
+                                    <th className="constraints-column">דרישות תזונה</th>
                                     <th className="actions-column">פעולות</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {pendingRequests.map((request, index) => (
-                                    <tr key={index}>
-                                        <td className="name-column">{request.name}</td>
-                                        <td className="date-column">
-                                            {new Date(request.date).toLocaleDateString('he-IL')}
-                                        </td>
-                                        <td className="time-column">
-                                            {request.startTime} - {request.endTime}
-                                        </td>
-                                        <td className="address-column">{request.addr}</td>
-                                        <td className="meals-column">{request.mealCount}</td>
-                                        <td className="actions-column">
-                                            <div className="action-buttons">
+                                {pendingRequests.map((request) => (
+                                    <React.Fragment key={request.id}>
+                                        <tr className={expandedRequestId === request.id ? 'expanded-row' : ''}>
+                                            <td className="name-column">{request.name}</td>
+                                            <td className="date-column">
+                                                {new Date(request.date).toLocaleDateString('he-IL')}
+                                            </td>
+                                            <td className="time-column">
+                                                {request.startTime} - {request.endTime}
+                                            </td>
+                                            <td className="address-column">{request.addr}</td>
+                                            <td className="constraints-column">
                                                 <button
-                                                    className="approve-button"
-                                                    onClick={() => handleApprove(request.constraintId)}
+                                                    className="view-constraints-button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleRequestDetails(request.id);
+                                                    }}
                                                 >
-                                                    אישור
+                                                    {expandedRequestId === request.id ? 'הסתר פרטים' : 'הצג פרטים'}
                                                 </button>
-                                                <button
-                                                    className="reject-button"
-                                                    onClick={() => handleReject(request.constraintId)}
-                                                >
-                                                    דחייה
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                            </td>
+                                            <td className="actions-column">
+                                                <div className="action-buttons">
+                                                    <button
+                                                        className="approve-button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleApprove(request.id);
+                                                        }}
+                                                    >
+                                                        אישור
+                                                    </button>
+                                                    <button
+                                                        className="reject-button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            handleReject(request.id);
+                                                        }}
+                                                    >
+                                                        דחייה
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        {expandedRequestId === request.id && (
+                                            <tr className="constraints-details-row">
+                                                <td colSpan={6}>
+                                                    <div className="constraints-details">
+                                                        {renderConstraints(request.constraints)}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
                                 ))}
                             </tbody>
                         </table>
