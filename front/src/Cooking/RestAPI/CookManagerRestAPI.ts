@@ -23,7 +23,7 @@ export interface PendingConstraint {
     name: string;
     start_hour: string;
     end_hour: string;
-    meal_amount: number;
+    constraints: Record<String, number>;
     address: string;
     date: string; // LocalDate will be received as a string in JSON
     status: Status;
@@ -33,17 +33,18 @@ export const getPendingRequests = async (date: string): Promise<PendingCookDTO[]
     try {
         const response = await axios.get(`${API_BASE_URL}/cooking/getPending/${date}`);
         console.log('Retrieved pending requests:', response.data);
-        let duplicatedData: PendingCookDTO[] = [];
-                for(let i = 0; i < 10; i++) {
-                    // For each copy, create new objects with slightly modified data
-                    const newData = response.data.map((item: PendingCookDTO, index: number) => ({
-                        ...item,
-                        name: `${item.cookId} ${i + 1}`,  // Add number to name to distinguish entries
-                        meal_amount: item.platesNum + i  // Slightly modify meal amount
-                    }));
-                    duplicatedData = [...duplicatedData, ...newData];
-                }
-        return duplicatedData;
+        return response.data;
+//         let duplicatedData: PendingCookDTO[] = [];
+//                 for(let i = 0; i < 10; i++) {
+//                     // For each copy, create new objects with slightly modified data
+//                     const newData = response.data.map((item: PendingCookDTO, index: number) => ({
+//                         ...item,
+//                         name: `${item.cookId} ${i + 1}`,  // Add number to name to distinguish entries
+//                         meal_amount: item.platesNum + i  // Slightly modify meal amount
+//                     }));
+//                     duplicatedData = [...duplicatedData, ...newData];
+//                 }
+//         return duplicatedData;
     } catch (error) {
         console.error('Error fetching pending requests:', error);
         throw new Error('Failed to fetch pending requests. Please try again later.');
