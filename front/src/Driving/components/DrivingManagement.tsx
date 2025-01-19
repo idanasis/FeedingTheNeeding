@@ -8,7 +8,6 @@ import {
   TouchSensor,
 } from '@dnd-kit/core';
 import {
-  rectSortingStrategy,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -224,16 +223,21 @@ const DrivingManager = () => {
   };
 
   const renderVisit = (visit: Visit) => (
-    <Card variant="outlined">
+    <Card
+    variant="outlined"
+    sx={{
+      height: '130px',
+    }}
+  >
       <CardContent>
-        <Typography variant="h6">
+        <Typography variant="h6" fontSize={16}>
           {visit.firstName} {visit.lastName}
         </Typography>
-        <Typography variant="body2">{visit.address}</Typography>
-        <Typography variant="body2">{visit.phoneNumber}</Typography>
-        <Typography variant="body2">שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
-        <Typography variant="body2">הערות: {visit.note?visit.note:visit.notes}</Typography>
-        {visit.dietaryPreferences?<Typography variant="body2">{visit.dietaryPreferences}</Typography>:null}
+        <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
+        <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
+        <Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
+        <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
+        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.dietaryPreferences}</Typography>:null}
       </CardContent>
     </Card>
   );
@@ -412,7 +416,7 @@ const removeRoute = async(index:number)=>{
             </Typography>
             {data.routes.map((route, index) => (
               <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
-              <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px' }}>
+              <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px'}}>
                 <Typography variant="h6">סיבוב {index+1}</Typography>
                 <Select
                   value={route.driverId||'לא נבחר'}
