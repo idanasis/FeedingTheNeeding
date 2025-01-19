@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,5 +102,12 @@ public class UserService {
             logger.error("User "+id+" not found");
             throw new UserDoesntExistsException("User "+id+" not found");
         }
+    }
+    public void setDonationToDonor(long donorId,LocalDate date){
+        logger.info("setDonationToDonor");
+        Donor donor = donorRepository.findById(donorId).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+        donor.setLastDonationDate(date);
+        donorRepository.save(donor);
+        logger.info("Donation set to donor "+donorId);
     }
 }
