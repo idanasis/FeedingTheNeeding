@@ -1,13 +1,13 @@
 package Project.Final.FeedingTheNeeding.cook.Model;
 
 import java.time.LocalDate;
+import java.util.Dictionary;
+import java.util.Map;
 
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
 @Data
 @Entity
@@ -21,7 +21,9 @@ public class CookConstraints {
     private String startTime;
     private String endTime;
 
-    private int PlatesNum; //how many plates will she make. Min 2 plates
+    @Convert(converter = Map2JsonConverter.class)
+    @Column(columnDefinition = "text")
+    private Map<String, Integer> constraints;
 
     private String location;
     private LocalDate date;
@@ -30,22 +32,22 @@ public class CookConstraints {
 
     public CookConstraints(){}
 
-    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, int platesNum, String loc, LocalDate date){
+    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date){
         this.constraintId = constraintId;
         this.cookId = cookId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.PlatesNum = platesNum;
+        this.constraints = constraints;
         this.location = loc;
         this.date = date;
     }
 
-    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, int platesNum, String loc, LocalDate date, Status status){
+    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date, Status status){
         this.constraintId = constraintId;
         this.cookId = cookId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.PlatesNum = platesNum;
+        this.constraints = constraints;
         this.location = loc;
         this.date = date;
         this.status = status;

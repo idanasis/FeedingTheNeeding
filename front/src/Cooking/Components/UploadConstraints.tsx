@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { submitConstraints } from '../RestAPI/CookConstraintsRestAPI';
-import '../Styles/DonorCookConsraintsSub.css'
+import { submitConstraints, getFoodConstraints } from '../RestAPI/CookConstraintsRestAPI';
+import '../Styles/DonorCookConsraintsSub.css';
 
 interface TimeSlot {
   start: string;
@@ -14,9 +14,12 @@ interface DaySchedule {
   selectedDate: string | null;
 }
 
+interface FoodSelection {
+  [key: string]: number;
+}
+
 const CookConstraints: React.FC = () => {
   const navigate = useNavigate();
-  const [mealCount, setMealCount] = useState<string>('');
   const [schedule, setSchedule] = useState<DaySchedule>({
     canVisit: false,
     timeSlots: [],
@@ -26,6 +29,25 @@ const CookConstraints: React.FC = () => {
     start: '',
     end: ''
   });
+  const [neededFood, setNeededFood] = useState<Record<string, number>>({});
+  const [selectedFood, setSelectedFood] = useState<FoodSelection>({});
+
+  useEffect(() => {
+    if (schedule.selectedDate) {
+      fetchNeededFood(schedule.selectedDate);
+    }
+  }, [schedule.selectedDate]);
+
+  const fetchNeededFood = async (date: string) => {
+    try {
+      const foodData = await getFoodConstraints(date);
+      setNeededFood(foodData);
+      setSelectedFood({});
+    } catch (error) {
+      console.error('Error fetching food constraints:', error);
+      alert('שגיאה בטעינת נתוני המזון הנדרש');
+    }
+  };
 
   const getNextFridays = () => {
     const fridays = [];
@@ -48,6 +70,15 @@ const CookConstraints: React.FC = () => {
       timeSlots: []
     }));
     setTempTimeSlot({ start: '', end: '' });
+  };
+
+  const handleFoodQuantityChange = (foodType: string, quantity: number) => {
+    if (quantity >= 0 && quantity <= (neededFood[foodType] || 0)) {
+      setSelectedFood(prev => ({
+        ...prev,
+        [foodType]: quantity
+      }));
+    }
   };
 
   const addTimeSlot = () => {
@@ -84,14 +115,18 @@ const CookConstraints: React.FC = () => {
     }));
   };
 
+  const getTotalSelectedMeals = () => {
+    return Object.values(selectedFood).reduce((sum, quantity) => sum + quantity, 0);
+  };
+
   const handleSubmit = async () => {
     const sentData = {
       cookId: 1,
       startTime: schedule.timeSlots[0].start,
       endTime: schedule.timeSlots[0].end,
-      platesNum: parseInt(mealCount),
-      location: "need to get this",
-      date: schedule.selectedDate
+      constraints: selectedFood,
+      location: "default_location",
+      date: schedule.selectedDate!
     };
 
     try {
@@ -108,10 +143,7 @@ const CookConstraints: React.FC = () => {
   return (
     <div className="meal-planner-container">
       <div className="navigation-buttons">
-        <button
-          className="nav-button active"
-          onClick={() => {/* Already on this page */}}
-        >
+        <button className="nav-button active">
           טבחים
         </button>
         <button
@@ -122,23 +154,10 @@ const CookConstraints: React.FC = () => {
         </button>
       </div>
 
-      <div className="content-wrapper">
+      <div className="content_wrapper">
         <div className="meal-planner">
           <div className="header-container">
-            <h1>כמה מנות אבשל</h1>
-            <div className="meals-input">
-              <input
-                type="number"
-                value={mealCount}
-                onChange={(e) => {
-                  const value = parseInt(e.target.value);
-                  if (value >= 1) {
-                    setMealCount(e.target.value);
-                  }
-                }}
-                min="1"
-              />
-            </div>
+            <h1>בחירת תפריט ומועד הגעה</h1>
           </div>
 
           <div className="day-selection">
@@ -165,62 +184,84 @@ const CookConstraints: React.FC = () => {
           </div>
 
           {schedule.selectedDate && (
-            <div className="time-slots-section">
-              <div className="new-time-slot">
-                <div className="time-inputs">
-                  <div className="time-input-group">
-                    <label>התחלה:</label>
-                    <select
-                      value={tempTimeSlot.start}
-                      onChange={(e) => updateTempTimeSlot('start', e.target.value)}
-                    >
-                      <option value="">בחר שעה</option>
-                      {Array.from({ length: 48 }, (_, i) => {
-                        const hour = Math.floor(i / 2);
-                        const minute = i % 2 === 0 ? '00' : '30';
-                        return (
-                          <option key={i} value={`${hour.toString().padStart(2, '0')}:${minute}`}>
-                            {`${hour.toString().padStart(2, '0')}:${minute}`}
-                          </option>
-                        );
-                      })}
-                    </select>
+            <>
+              <div className="food-selection-container">
+                {Object.entries(neededFood).map(([foodType, neededQuantity]) => (
+                  <div key={foodType} className="food-item">
+                    <span className="food-type">{foodType}</span>
+                    <span className="food-quantity">נדרש: {neededQuantity}</span>
+                    <div className="quantity-input">
+                      <input
+                        type="number"
+                        value={selectedFood[foodType] || 0}
+                        onChange={(e) => handleFoodQuantityChange(foodType, parseInt(e.target.value))}
+                        min="0"
+                        max={neededQuantity}
+                      />
+                    </div>
                   </div>
-                  <div className="time-input-group">
-                    <label>סיום:</label>
-                    <select
-                      value={tempTimeSlot.end}
-                      onChange={(e) => updateTempTimeSlot('end', e.target.value)}
+                ))}
+              </div>
+
+              <div className="time-slots-section">
+                <div className="new-time-slot">
+                  <div className="time-inputs">
+                    <div className="time-input-group">
+                      <label>התחלה:</label>
+                      <select
+                        value={tempTimeSlot.start}
+                        onChange={(e) => updateTempTimeSlot('start', e.target.value)}
+                      >
+                        <option value="">בחר שעה</option>
+                        {Array.from({ length: 48 }, (_, i) => {
+                          const hour = Math.floor(i / 2);
+                          const minute = i % 2 === 0 ? '00' : '30';
+                          return (
+                            <option key={i} value={`${hour.toString().padStart(2, '0')}:${minute}`}>
+                              {`${hour.toString().padStart(2, '0')}:${minute}`}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <div className="time-input-group">
+                      <label>סיום:</label>
+                      <select
+                        value={tempTimeSlot.end}
+                        onChange={(e) => updateTempTimeSlot('end', e.target.value)}
+                      >
+                        <option value="">בחר שעה</option>
+                        {Array.from({ length: 48 }, (_, i) => {
+                          const hour = Math.floor(i / 2);
+                          const minute = i % 2 === 0 ? '00' : '30';
+                          return (
+                            <option key={i} value={`${hour.toString().padStart(2, '0')}:${minute}`}>
+                              {`${hour.toString().padStart(2, '0')}:${minute}`}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                    <button
+                      className={`add-time ${isAddButtonDisabled ? 'disabled' : ''}`}
+                      onClick={addTimeSlot}
+                      disabled={isAddButtonDisabled}
                     >
-                      <option value="">בחר שעה</option>
-                      {Array.from({ length: 48 }, (_, i) => {
-                        const hour = Math.floor(i / 2);
-                        const minute = i % 2 === 0 ? '00' : '30';
-                        return (
-                          <option key={i} value={`${hour.toString().padStart(2, '0')}:${minute}`}>
-                            {`${hour.toString().padStart(2, '0')}:${minute}`}
-                          </option>
-                        );
-                      })}
-                    </select>
+                      +
+                    </button>
                   </div>
-                  <button
-                    className={`add-time ${isAddButtonDisabled ? 'disabled' : ''}`}
-                    onClick={addTimeSlot}
-                    disabled={isAddButtonDisabled}
-                  >
-                    +
-                  </button>
                 </div>
               </div>
-            </div>
+            </>
           )}
 
           <div className="submit-container">
             <button
               className="submit_button"
               onClick={handleSubmit}
-              disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !mealCount}
+              disabled={!schedule.selectedDate ||
+                       schedule.timeSlots.length === 0 ||
+                       getTotalSelectedMeals() === 0}
             >
               להגיש
             </button>
@@ -228,7 +269,21 @@ const CookConstraints: React.FC = () => {
         </div>
 
         <div className="time-slots-column">
-          <h3>זמנים שנבחרו</h3>
+          <h3>סיכום בחירות</h3>
+          <div className="selected-foods">
+            <h4>מנות שנבחרו:</h4>
+            {Object.entries(selectedFood)
+              .filter(([_, quantity]) => quantity > 0)
+              .map(([foodType, quantity]) => (
+                <div key={foodType} className="selected-food-item">
+                  <span>{foodType}</span>
+                  <span>{quantity}</span>
+                </div>
+              ))}
+            <div className="total-meals">
+              <strong>סה"כ מנות: {getTotalSelectedMeals()}</strong>
+            </div>
+          </div>
           <div className="time-slots-list">
             {schedule.timeSlots.map((slot, index) => (
               <div key={index} className="time-slot-item">

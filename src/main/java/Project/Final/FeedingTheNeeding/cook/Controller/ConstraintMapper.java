@@ -12,7 +12,7 @@ public class ConstraintMapper {
         //TODO: add dto.name = *somehow get the name given the jwt*
         dto.startTime = constraint.getStartTime();
         dto.endTime = constraint.getEndTime();
-        dto.mealCount = constraint.getPlatesNum();
+        dto.constraints = constraint.getConstraints();
         dto.addr = constraint.getLocation();
         dto.date = constraint.getDate();
         dto.status = constraint.getStatus();

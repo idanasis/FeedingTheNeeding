@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/social")
@@ -136,6 +139,27 @@ public class NeederTrackingController {
             List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
             logger.info("Fetched all NeederTracking records for date: {}", date);
             return ResponseEntity.ok(neederTrackings);
+        } catch (Exception e) {
+            logger.error("Failed to fetch all NeederTracking records for date: {}", date, e);
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getNeededFoodByDate")
+    public ResponseEntity<?> getAllNeededFoodByDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        try {
+            logger.info("Fetching all NeederTracking records for date: {}", date);
+            List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
+            logger.info("Fetched all NeederTracking records for date: {}", date);
+
+            Map<String, Long> dietaryPreferenceCounts = neederTrackings.stream()
+                    .map(NeederTracking::getDietaryPreferences)
+                    .collect(Collectors.groupingBy(
+                            preference -> preference,
+                            Collectors.counting()
+                    ));
+
+            return ResponseEntity.ok(dietaryPreferenceCounts);
         } catch (Exception e) {
             logger.error("Failed to fetch all NeederTracking records for date: {}", date, e);
             return ResponseEntity.badRequest().body(e.getMessage());
