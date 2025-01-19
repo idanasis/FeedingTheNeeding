@@ -13,7 +13,7 @@ public class ConstraintMapper {
         dto.startTime = constraint.getStartTime();
         dto.endTime = constraint.getEndTime();
         dto.constraints = constraint.getConstraints();
-        dto.addr = constraint.getLocation();
+        dto.address = constraint.getLocation();
         dto.date = constraint.getDate();
         dto.status = constraint.getStatus();
         return dto;

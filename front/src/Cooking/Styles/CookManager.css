@@ -3,13 +3,18 @@
     flex-direction: row-reverse;
     min-height: 100vh;
     position: relative;
+
 }
 
 .pending-requests-container {
     direction: rtl;
     flex-grow: 1;
     min-height: 100vh;
-    background: #fafafa;
+    background: url('../Images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     padding: clamp(8px, 2vw, 20px);
     font-size: clamp(14px, 2vw, 16px);
 }
