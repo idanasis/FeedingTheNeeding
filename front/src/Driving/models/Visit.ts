@@ -12,5 +12,8 @@ export interface Visit {
     priority?: number;
     notes?: string;
     dietaryPreferences?: string;
-    
+    name?: string;
+    constraints?: [string, number][];
+    startTime?: string;
+    endTime?: string;
   }

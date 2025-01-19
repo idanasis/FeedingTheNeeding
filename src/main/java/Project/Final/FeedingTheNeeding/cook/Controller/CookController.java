@@ -79,7 +79,7 @@ public class CookController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("getAccepted/{date}")
+    @GetMapping("/getAccepted/{date}")
     public ResponseEntity<?> getAllAcceptedConstraintsByDate(@PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
