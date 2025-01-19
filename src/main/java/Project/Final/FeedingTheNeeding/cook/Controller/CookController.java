@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -44,6 +45,16 @@ public class CookController {
             cs.removeConstraint(constraint);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("updateConstraint")
+    public ResponseEntity<?> updateConstraint(@RequestParam long constraintId, @RequestParam Map<String, Integer> constraint){
+        try{
+            cs.updateConstraint(constraintId, constraint);
+            return ResponseEntity.ok().build();
+        } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -102,6 +113,21 @@ public class CookController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
+    @GetMapping("getConstraints/{date}")
+    public ResponseEntity<?> getConstraintsByDate(@PathVariable LocalDate date){
+        try{
+            List<CookConstraints> constraints = cs.getConstraintsByDate(date);
+            List<PendingConstraintDTO> dtos = constraints.stream()
+                    .map(mapper::toDTO)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(dtos);
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
     @PostMapping("acceptConstraint/{constraintId}")
     public ResponseEntity<?> acceptConstraintStatus(@PathVariable long constraintId){

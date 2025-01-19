@@ -3,7 +3,6 @@
     flex-direction: row-reverse;
     min-height: 100vh;
     position: relative;
-
 }
 
 .pending-requests-container {
@@ -177,22 +176,6 @@
     color: #c53030;
 }
 
-.all-complete {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: clamp(12px, 2vw, 16px);
-    background: #c6f6d5;
-    color: #2f855a;
-    border-radius: 8px;
-    font-weight: 500;
-    font-size: clamp(14px, 2vw, 16px);
-}
-
-.complete-icon {
-    font-size: 1.5em;
-}
-
 /* Table Styles */
 .loading {
     text-align: center;
@@ -234,7 +217,6 @@
     max-height: 600px;
     display: flex;
     flex-direction: column;
-    margin-top: clamp(8px, 1.5vw, 20px);
 }
 
 .requests-table {
@@ -271,7 +253,7 @@
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
-    height: calc(600px - 70px);
+    max-height: calc(600px - 70px);
 }
 
 .requests-table thead,
@@ -295,6 +277,22 @@
 
 .requests-table tr:hover {
     background: #f7fafc;
+}
+
+.requests-table tr.accepted {
+    background-color: rgba(72, 187, 120, 0.1);
+}
+
+.requests-table tr.declined {
+    background-color: rgba(245, 101, 101, 0.1);
+}
+
+.requests-table tr.accepted:hover {
+    background-color: rgba(72, 187, 120, 0.15);
+}
+
+.requests-table tr.declined:hover {
+    background-color: rgba(245, 101, 101, 0.15);
 }
 
 /* Constraints Styles */
@@ -329,6 +327,31 @@
     font-size: clamp(12px, 1.8vw, 14px);
 }
 
+.constraint-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.constraint-button {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #edf2f7;
+    border: none;
+    border-radius: 4px;
+    color: #4a5568;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.constraint-button:hover {
+    background: #e2e8f0;
+}
+
 .constraint-name {
     font-weight: 500;
     color: #2d3748;
@@ -342,6 +365,43 @@
     border-radius: 4px;
     font-weight: 600;
     font-size: clamp(12px, 1.8vw, 14px);
+    min-width: 30px;
+    text-align: center;
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    text-align: center;
+    font-size: clamp(12px, 1.8vw, 14px);
+}
+
+.status-badge.accepted {
+    background-color: #48bb78;
+    color: white;
+}
+
+.status-badge.rejected {
+    background-color: #f56565;
+    color: white;
+}
+
+/* Undo button styles */
+.undo-button {
+    padding: clamp(6px, 1.2vw, 8px) clamp(12px, 2vw, 16px);
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: clamp(12px, 1.8vw, 14px);
+    background-color: #4a5568;
+    color: white;
+}
+
+.undo-button:hover {
+    background-color: #2d3748;
 }
 
 /* Column specific styles */
@@ -392,10 +452,12 @@
     display: flex;
     gap: 8px;
     justify-content: flex-end;
+    align-items: center;
 }
 
 .approve-button,
-.reject-button {
+.reject-button,
+.update-approve-button {
     padding: clamp(6px, 1.2vw, 8px) clamp(12px, 2vw, 16px);
     border: none;
     border-radius: 6px;
@@ -412,6 +474,15 @@
 
 .approve-button:hover {
     background: #38a169;
+}
+
+.update-approve-button {
+    background: #4299e1;
+    color: white;
+}
+
+.update-approve-button:hover {
+    background: #3182ce;
 }
 
 .reject-button {
@@ -500,14 +571,44 @@
         padding: clamp(8px, 1.5vw, 12px);
     }
 
+    .constraint-item {
+        padding: clamp(8px, 1.5vw, 10px);
+        gap: 8px;
+    }
+
+    .constraint-controls {
+        gap: 6px;
+    }
+
     .action-buttons {
         flex-direction: column;
         gap: 4px;
     }
 
     .approve-button,
-    .reject-button {
+    .reject-button,
+    .update-approve-button {
         width: 100%;
+    }
+
+    .constraint-button {
+        width: 28px;
+        height: 28px;
+        font-size: 18px;
+    }
+
+    .constraint-amount {
+        min-width: 40px;
+    }
+
+    .status-badge {
+        padding: 4px 8px;
+        font-size: clamp(11px, 3.2vw, 13px);
+    }
+
+    .undo-button {
+        padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
+        font-size: clamp(11px, 3.2vw, 13px);
     }
 }
 
@@ -548,7 +649,8 @@
 
     .view-constraints-button,
     .approve-button,
-    .reject-button {
+    .reject-button,
+    .update-approve-button {
         font-size: clamp(11px, 3.2vw, 13px);
         padding: clamp(4px, 1vw, 6px) clamp(8px, 1.5vw, 10px);
     }
@@ -576,18 +678,21 @@
         font-size: 12px;
     }
 
-    .sidebar-constraint-amount {
+    .stat-label,
+    .stat-value {
         font-size: 11px;
         padding: 3px 6px;
     }
 
-    .all-complete {
-        padding: 10px;
-        font-size: 13px;
+    .constraint-button {
+        width: 24px;
+        height: 24px;
+        font-size: 16px;
     }
 
-    .complete-icon {
-        font-size: 1.2em;
+    .constraint-amount {
+        min-width: 32px;
+        font-size: 12px;
     }
 
     /* Adjust column widths for very small screens */
