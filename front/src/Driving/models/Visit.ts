@@ -1,4 +1,3 @@
-import { Route } from "./Route";
 
 // Types
 export interface Visit {
