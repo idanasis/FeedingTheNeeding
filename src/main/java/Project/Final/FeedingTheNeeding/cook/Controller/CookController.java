@@ -82,7 +82,12 @@ public class CookController {
     @GetMapping("getAccepted/{date}")
     public ResponseEntity<?> getAllAcceptedConstraintsByDate(@PathVariable LocalDate date){
         try{
-            return ResponseEntity.ok(cs.getAcceptedCookByDate(date));
+            List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
+            List<PendingConstraintDTO> dtos = constraints.stream()
+                    .map(mapper::toDTO)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(dtos);
         } catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
