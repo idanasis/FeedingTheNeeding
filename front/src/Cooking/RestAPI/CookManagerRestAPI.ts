@@ -8,51 +8,34 @@ export interface PendingCookDTO {
     startTime: string;
     endTime: string;
     constraints: Record<string, number>;
-    addr: string;
+    address: string;
     date: string;
     status: number; //not needed
+    phoneNumberL string; //not needed
 }
 
-export enum Status {
-    Pending = 'Pending',
-    Approved = 'Approved',
-    Rejected = 'Rejected'
+interface ConstraintResponse {
+    constraintId: number;
+    cookId: number;
+    startTime: string;
+    endTime: string;
+    constraints: Record<string, number>;
+    location: string;
+    date: string;
+    status: string;
 }
-
-// export interface PendingConstraint {
-//     constraintId: number;
-//     name: string;
-//     start_hour: string;
-//     end_hour: string;
-//     constraints: Record<String, number>;
-//     address: string;
-//     date: string; // LocalDate will be received as a string in JSON
-//     status: Status;
-// }
 
 export const getPendingRequests = async (date: string): Promise<PendingCookDTO[]> => {
     try {
         const response = await axios.get(`${API_BASE_URL}/cooking/getPending/${date}`);
         console.log('Retrieved pending requests:', response.data);
         return response.data;
-//         let duplicatedData: PendingCookDTO[] = [];
-//                 for(let i = 0; i < 10; i++) {
-//                     // For each copy, create new objects with slightly modified data
-//                     const newData = response.data.map((item: PendingCookDTO, index: number) => ({
-//                         ...item,
-//                         name: `${item.cookId} ${i + 1}`,  // Add number to name to distinguish entries
-//                         meal_amount: item.platesNum + i  // Slightly modify meal amount
-//                     }));
-//                     duplicatedData = [...duplicatedData, ...newData];
-//                 }
-//         return duplicatedData;
     } catch (error) {
         console.error('Error fetching pending requests:', error);
         throw new Error('Failed to fetch pending requests. Please try again later.');
     }
 };
 
-//TODO: change the signature so requestId will be long and not string
 export const approveCookRequest = async (constraintId: number): Promise<void> => {
     try {
         console.log("Wanting to approve request with id: ", constraintId)
@@ -73,3 +56,48 @@ export const rejectCookRequest = async (constraintId: number): Promise<void> => 
         throw new Error('Failed to reject request. Please try again later.');
     }
 };
+
+export const getFoodConstraints = async(date: string): Promise<Record<string, number>> => {
+    try{
+        console.log('Fetching needed food for date ', date);
+        const response = await axios.get(`${API_BASE_URL}/social/getNeededFoodByDate`, {
+            params: {
+                date: date
+            }
+        });
+        console.log('Successfully fetched food constraints: ', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error during fetching food constraints');
+        console.log(error)
+        throw new Error(error || 'Submitting constraints failed. Please try again later');
+    }
+}
+
+export const getAcceptedConstraints = async(date: string): Promise<Record<string, number>> => {
+    try {
+        console.log('Fetching accepted constraints ', date);
+        const response = await axios.get<ConstraintResponse[]>(`${API_BASE_URL}/cooking/getAccepted/${date}`);
+        console.log('Successfully fetched accepted constraints: ', response.data);
+
+        // Create aggregated constraints object
+        const summedConstraints: Record<string, number> = {};
+
+        // Loop through all objects and sum up their constraints
+        response.data.forEach(item => {
+            Object.entries(item.constraints).forEach(([key, value]) => {
+                // Initialize key if it doesn't exist
+                if (!(key in summedConstraints)) {
+                    summedConstraints[key] = 0;
+                }
+                summedConstraints[key] += value;
+            });
+        });
+
+        return summedConstraints;
+    } catch (error) {
+        console.error('Error during fetching accepted constraints');
+        console.log(error);
+        throw new Error(error?.toString() || 'Fetching constraints failed. Please try again later');
+    }
+}

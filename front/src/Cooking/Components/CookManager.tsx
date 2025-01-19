@@ -1,40 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { PendingCookDTO, getPendingRequests, approveCookRequest, rejectCookRequest } from '../RestAPI/CookManagerRestAPI';
-import '../Styles/CookManager.css'
+import {
+    PendingCookDTO,
+    getPendingRequests,
+    approveCookRequest,
+    rejectCookRequest,
+    getFoodConstraints,
+    getAcceptedConstraints
+} from '../RestAPI/CookManagerRestAPI';
+
+interface SummaryData {
+    needed: Record<string, number>;
+    accepted: Record<string, number>;
+}
 
 const PendingRequests: React.FC = () => {
     const [pendingRequests, setPendingRequests] = useState<PendingCookDTO[]>([]);
     const [selectedDate, setSelectedDate] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    const [expandedRequestId, setExpandedRequestId] = useState<number | null>(null);
+    const [expandedConstraintIds, setExpandedConstraintIds] = useState<Set<number>>(new Set());
+    const [summaryData, setSummaryData] = useState<SummaryData>({ needed: {}, accepted: {} });
 
-    const fetchPendingRequests = async (date: string) => {
+    const fetchAllData = async (date: string) => {
         try {
             setLoading(true);
             setError('');
-            const data = await getPendingRequests(date);
-            setPendingRequests(data);
+
+            const [pendingData, neededFood, acceptedFood] = await Promise.all([
+                getPendingRequests(date),
+                getFoodConstraints(date),
+                getAcceptedConstraints(date)
+            ]);
+
+            setPendingRequests(pendingData);
+            setSummaryData({
+                needed: neededFood,
+                accepted: acceptedFood
+            });
         } catch (err) {
-            setError('בעיה בטעינת הבקשות');
+            setError('בעיה בטעינת הנתונים');
             console.error(err);
         } finally {
             setLoading(false);
         }
     };
 
+    useEffect(() => {
+        if (selectedDate) {
+            const intervalId = setInterval(() => {
+                fetchAllData(selectedDate);
+            }, 60000);
+
+            return () => clearInterval(intervalId);
+        }
+    }, [selectedDate]);
+
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = event.target.value;
         setSelectedDate(newDate);
         if (newDate) {
-            fetchPendingRequests(newDate);
+            fetchAllData(newDate);
         }
     };
 
-    const handleApprove = async (requestId: number) => {
+    const handleApprove = async (constraintId: number) => {
         try {
-            await approveCookRequest(requestId);
-            fetchPendingRequests(selectedDate);
+            await approveCookRequest(constraintId);
+            fetchAllData(selectedDate);
             alert('הבקשה אושרה בהצלחה');
         } catch (err) {
             alert('שגיאה באישור הבקשה');
@@ -42,10 +74,10 @@ const PendingRequests: React.FC = () => {
         }
     };
 
-    const handleReject = async (requestId: number) => {
+    const handleReject = async (constraintId: number) => {
         try {
-            await rejectCookRequest(requestId);
-            fetchPendingRequests(selectedDate);
+            await rejectCookRequest(constraintId);
+            fetchAllData(selectedDate);
             alert('הבקשה נדחתה בהצלחה');
         } catch (err) {
             alert('שגיאה בדחיית הבקשה');
@@ -53,8 +85,17 @@ const PendingRequests: React.FC = () => {
         }
     };
 
-    const toggleRequestDetails = (requestId: number) => {
-        setExpandedRequestId(expandedRequestId === requestId ? null : requestId);
+    const toggleRequestDetails = (constraintId: number, event: React.MouseEvent) => {
+        event.stopPropagation();
+        setExpandedConstraintIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(constraintId)) {
+                newSet.delete(constraintId);
+            } else {
+                newSet.add(constraintId);
+            }
+            return newSet;
+        });
     };
 
     const renderConstraints = (constraints: Record<string, number>) => {
@@ -66,106 +107,158 @@ const PendingRequests: React.FC = () => {
         ));
     };
 
-    return (
-        <div className="pending-requests-container">
-            <div className="content-wrapper">
-                <div className="date-selection-section">
-                    <h1>בקשות בישול ממתינות</h1>
-                    <div className="date-input-wrapper">
-                        <input
-                            type="date"
-                            value={selectedDate}
-                            onChange={handleDateChange}
-                            className="date-input"
-                        />
+    const renderSidebar = () => {
+        const { needed, accepted } = summaryData;
+        const hasConstraints = Object.keys(needed).length > 0;
+
+        return (
+            <div className="constraints-sidebar">
+                <div className="sidebar-header">
+                    <h3>סיכום מנות</h3>
+                    <div className="sidebar-date">
+                        {selectedDate ? new Date(selectedDate).toLocaleDateString('he-IL') : 'לא נבחר תאריך'}
                     </div>
                 </div>
 
-                {loading && <div className="loading">טוען...</div>}
-                {error && <div className="error-message">{error}</div>}
+                <div className="sidebar-content">
+                    {!hasConstraints && (
+                        <div className="no-constraints">
+                            אין מנות להיום
+                        </div>
+                    )}
 
-                {!loading && !error && pendingRequests.length === 0 && (
-                    <div className="no-requests">אין בקשות ממתינות לתאריך זה</div>
-                )}
+                    {hasConstraints && Object.keys(needed).map((constraint) => {
+                        const neededAmount = needed[constraint] || 0;
+                        const acceptedAmount = accepted[constraint] || 0;
+                        const remainingAmount = Math.max(0, neededAmount - acceptedAmount);
 
-                {pendingRequests.length > 0 && (
-                    <div className="table-section">
-                        <table className="requests-table">
-                            <thead>
-                                <tr>
-                                    <th className="name-column">שם המבשל</th>
-                                    <th className="date-column">תאריך</th>
-                                    <th className="time-column">שעות</th>
-                                    <th className="address-column">כתובת</th>
-                                    <th className="constraints-column">דרישות תזונה</th>
-                                    <th className="actions-column">פעולות</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {pendingRequests.map((request) => (
-                                    <React.Fragment key={request.id}>
-                                        <tr className={expandedRequestId === request.id ? 'expanded-row' : ''}>
-                                            <td className="name-column">{request.name}</td>
-                                            <td className="date-column">
-                                                {new Date(request.date).toLocaleDateString('he-IL')}
-                                            </td>
-                                            <td className="time-column">
-                                                {request.startTime} - {request.endTime}
-                                            </td>
-                                            <td className="address-column">{request.addr}</td>
-                                            <td className="constraints-column">
-                                                <button
-                                                    className="view-constraints-button"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        toggleRequestDetails(request.id);
-                                                    }}
-                                                >
-                                                    {expandedRequestId === request.id ? 'הסתר פרטים' : 'הצג פרטים'}
-                                                </button>
-                                            </td>
-                                            <td className="actions-column">
-                                                <div className="action-buttons">
+                        return (
+                            <div key={constraint} className="sidebar-item">
+                                <div className="constraint-header">
+                                    <span className="sidebar-constraint-name">{constraint}</span>
+                                </div>
+                                <div className="constraint-stats">
+                                    <div className="stat-item">
+                                        <span className="stat-label">נדרש:</span>
+                                        <span className="stat-value needed">{neededAmount}</span>
+                                    </div>
+                                    <div className="stat-item">
+                                        <span className="stat-label">אושר:</span>
+                                        <span className="stat-value accepted">{acceptedAmount}</span>
+                                    </div>
+                                    {remainingAmount > 0 && (
+                                        <div className="stat-item">
+                                            <span className="stat-label">חסר:</span>
+                                            <span className="stat-value remaining">{remainingAmount}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    };
+
+    const isExpanded = (constraintId: number): boolean => {
+        return expandedConstraintIds.has(constraintId);
+    };
+
+    return (
+        <div className="app-container">
+            {selectedDate && renderSidebar()}
+
+            <div className="pending-requests-container">
+                <div className="content-wrapper">
+                    <div className="date-selection-section">
+                        <h1>בקשות בישול ממתינות</h1>
+                        <div className="date-input-wrapper">
+                            <input
+                                type="date"
+                                value={selectedDate}
+                                onChange={handleDateChange}
+                                className="date-input"
+                            />
+                        </div>
+                    </div>
+
+                    {loading && <div className="loading">טוען...</div>}
+                    {error && <div className="error-message">{error}</div>}
+
+                    {!loading && !error && pendingRequests.length === 0 && (
+                        <div className="no-requests">אין בקשות ממתינות לתאריך זה</div>
+                    )}
+
+                    {pendingRequests.length > 0 && (
+                        <div className="table-section">
+                            <table className="requests-table">
+                                <thead>
+                                    <tr>
+                                        <th className="name-column">שם המבשל</th>
+                                        <th className="date-column">תאריך</th>
+                                        <th className="time-column">שעות</th>
+                                        <th className="address-column">כתובת</th>
+                                        <th className="constraints-column">דרישות תזונה</th>
+                                        <th className="actions-column">פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {pendingRequests.map((request) => (
+                                        <React.Fragment key={request.constraintId}>
+                                            <tr>
+                                                <td className="name-column">{request.name}</td>
+                                                <td className="date-column">
+                                                    {new Date(request.date).toLocaleDateString('he-IL')}
+                                                </td>
+                                                <td className="time-column">
+                                                    {request.startTime} - {request.endTime}
+                                                </td>
+                                                <td className="address-column">{request.addr}</td>
+                                                <td className="constraints-column">
                                                     <button
-                                                        className="approve-button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleApprove(request.id);
-                                                        }}
+                                                        className="view-constraints-button"
+                                                        onClick={(e) => toggleRequestDetails(request.constraintId, e)}
                                                     >
-                                                        אישור
+                                                        {isExpanded(request.constraintId) ? 'הסתר פרטים' : 'הצג פרטים'}
                                                     </button>
-                                                    <button
-                                                        className="reject-button"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            handleReject(request.id);
-                                                        }}
-                                                    >
-                                                        דחייה
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {expandedRequestId === request.id && (
-                                            <tr className="constraints-details-row">
-                                                <td colSpan={6}>
-                                                    <div className="constraints-details">
-                                                        {renderConstraints(request.constraints)}
+                                                </td>
+                                                <td className="actions-column">
+                                                    <div className="action-buttons">
+                                                        <button
+                                                            className="approve-button"
+                                                            onClick={() => handleApprove(request.constraintId)}
+                                                        >
+                                                            אישור
+                                                        </button>
+                                                        <button
+                                                            className="reject-button"
+                                                            onClick={() => handleReject(request.constraintId)}
+                                                        >
+                                                            דחייה
+                                                        </button>
                                                     </div>
                                                 </td>
                                             </tr>
-                                        )}
-                                    </React.Fragment>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                )}
+                                            {isExpanded(request.constraintId) && (
+                                                <tr className="constraints-details-row">
+                                                    <td colSpan={6}>
+                                                        <div className="constraints-details">
+                                                            {renderConstraints(request.constraints)}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            )}
+                                        </React.Fragment>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </div>
             </div>
         </div>
     );
 };
 
 export default PendingRequests;
-//CHANGE CHANGE CHANGE TO PUSH

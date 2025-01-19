@@ -1,7 +1,6 @@
 package Project.Final.FeedingTheNeeding.cook.DTO;
 
 import java.time.LocalDate;
-import java.util.Dictionary;
 import java.util.Map;
 
 public class PendingConstraintDTO {
@@ -14,22 +13,24 @@ public class PendingConstraintDTO {
 
     public Map<String, Integer> constraints;
 
-    public String addr;
+    public String address;
 
     public LocalDate date;
 
     public Status status;
 
+    public String phoneNumber = "Default_Phone_Number"; //TODO: change the mapper function, then remove this
+
     //Spring needs a default constractor
     public PendingConstraintDTO() {}
 
     public PendingConstraintDTO(long constraintId, String startTime, String endTime, Map<String, Integer> constraints,
-                                String addr, LocalDate date, Status status){
+                                String address, LocalDate date, Status status){
         this.constraintId = constraintId;
         this.startTime = startTime;
         this.endTime = endTime;
         this.constraints = constraints;
-        this.addr = addr;
+        this.address = address;
         this.date = date;
         this.status = status;
     }
