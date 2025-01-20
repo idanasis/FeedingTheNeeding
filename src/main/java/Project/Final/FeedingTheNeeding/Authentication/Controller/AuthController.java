@@ -128,4 +128,15 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @GetMapping("/user-id")
+    public ResponseEntity<?> getUserIDFromJWT(@RequestParam String token) {
+        try{
+            long id = authService.getUserIDFromJWT(token);
+            return ResponseEntity.ok(id);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 }
