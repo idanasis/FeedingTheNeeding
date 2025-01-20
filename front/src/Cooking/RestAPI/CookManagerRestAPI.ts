@@ -10,8 +10,8 @@ export interface PendingCookDTO {
     constraints: Record<string, number>;
     address: string;
     date: string;
-    status: number; //not needed
-    phoneNumberL string; //not needed
+    status: string;
+    phoneNumber: string; //not needed
 }
 
 interface ConstraintResponse {
@@ -25,9 +25,9 @@ interface ConstraintResponse {
     status: string;
 }
 
-export const getPendingRequests = async (date: string): Promise<PendingCookDTO[]> => {
+export const getAllRequests = async (date: string): Promise<PendingCookDTO[]> => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/cooking/getPending/${date}`);
+        const response = await axios.get(`${API_BASE_URL}/cooking/getConstraints/${date}`);
         console.log('Retrieved pending requests:', response.data);
         return response.data;
     } catch (error) {
@@ -99,5 +99,26 @@ export const getAcceptedConstraints = async(date: string): Promise<Record<string
         console.error('Error during fetching accepted constraints');
         console.log(error);
         throw new Error(error?.toString() || 'Fetching constraints failed. Please try again later');
+    }
+}
+
+export const updateConstraint = async(id: number, constraints: Record<string, number>): Promise<Void> => {
+    try {
+        console.log("Updating constraint with id:", id, "New constraints:", constraints);
+
+        const params = new URLSearchParams({
+                    constraintId: id.toString(),
+                    ...Object.fromEntries(
+                        Object.entries(constraints).map(([key, value]) => [key, value.toString()])
+                    )
+                });
+
+        await axios.post(`${API_BASE_URL}/cooking/updateConstraint`, null, {
+            params: params
+        });
+        console.log('Request rejected successfully');
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        throw new Error('Failed to reject request. Please try again later.');
     }
 }

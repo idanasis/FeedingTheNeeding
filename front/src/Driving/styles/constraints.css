@@ -2,12 +2,16 @@
   direction: rtl;
   width: 100%;
   min-height: 100vh;
-  background: #fafafa;
+  background: url('../../Cooking/Images/background.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   padding: 20px;
 }
 
 /* Navigation styles */
-.navigation-buttons {
+.driver-navigation-buttons {
   display: flex;
   justify-content: center;
   gap: 16px;
@@ -15,7 +19,7 @@
   direction: rtl;
 }
 
-.nav-button {
+.driver-nav-button {
   padding: 12px 32px;
   font-size: 16px;
   font-weight: 600;
@@ -27,18 +31,18 @@
   transition: all 0.2s ease;
 }
 
-.nav-button:hover {
+.driver-nav-button:hover {
   background: #4a5568;
   color: white;
 }
 
-.nav-button.active {
+.driver-nav-button.active {
   background: #4a5568;
   color: white;
 }
 
 /* Content layout */
-.content-wrapper {
+.driver-content-wrapper {
   max-width: 1200px;
   margin: 0 auto;
   display: flex;
@@ -55,7 +59,7 @@
 }
 
 /* Header styles */
-.header-container {
+.driver-header-container {
   text-align: center;
   margin-bottom: 40px;
   background: #f8f9fa;
@@ -65,7 +69,7 @@
   width: 100%;
 }
 
-.header-container h1 {
+.driver-header-container h1 {
   color: #4a5568;
   font-size: 24px;
   font-weight: 600;
@@ -74,12 +78,12 @@
 }
 
 /* Date selection styles */
-.day-selection {
+.driver-day-selection {
   margin: 32px 0;
   text-align: center;
 }
 
-.date-select {
+.driver-date-select {
   width: 100%;
   max-width: 400px;
   padding: 14px 20px;
@@ -97,21 +101,21 @@
   padding-left: 48px;
 }
 
-.date-select:focus {
+.driver-date-select:focus {
   outline: none;
   border-color: #a0aec0;
   box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.2);
 }
 
 /* Location and Description input styles */
-.location-input,
-.description-input {
+.driver-location-input,
+.driver-description-input {
   margin: 24px 0;
   width: 100%;
 }
 
-.location-input label,
-.description-input label {
+.driver-location-input label,
+.driver-description-input label {
   display: block;
   margin-bottom: 8px;
   font-size: 14px;
@@ -119,8 +123,8 @@
   font-weight: 500;
 }
 
-.location-input input,
-.description-input textarea {
+.driver-location-input input,
+.driver-description-input textarea {
   width: 100%;
   padding: 12px 16px;
   border: 2px solid #e2e8f0;
@@ -131,20 +135,20 @@
   transition: all 0.2s ease;
 }
 
-.description-input textarea {
+.driver-description-input textarea {
   min-height: 100px;
   resize: vertical;
 }
 
-.location-input input:focus,
-.description-input textarea:focus {
+.driver-location-input input:focus,
+.driver-description-input textarea:focus {
   outline: none;
   border-color: #a0aec0;
   box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.2);
 }
 
 /* Time slots section */
-.time-slots-section {
+.driver-time-slots-section {
   margin-top: 32px;
   padding: 24px;
   background: #f8f9fa;
@@ -152,7 +156,7 @@
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
 }
 
-.time-slots-column {
+.driver-time-slots-column {
   width: 320px;
   background-color: #ffffff;
   border-radius: 16px;
@@ -163,4 +167,175 @@
   overflow-y: auto;
   overflow-x: hidden;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
- }
+}
+
+.driver-time-slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.driver-time-slot-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.driver-new-time-slot {
+  margin-top: 16px;
+}
+
+.driver-time-inputs {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+}
+
+.driver-time-input-group {
+  flex: 1;
+}
+
+.driver-add-time {
+  padding: 8px 16px;
+  background: #4a5568;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.driver-add-time.disabled {
+  background: #e2e8f0;
+  cursor: not-allowed;
+}
+
+.driver-remove-time {
+  background: none;
+  border: none;
+  color: #718096;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.driver-submit-container {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.driver-submit_button {
+  padding: 12px 32px;
+  background: #4299e1;
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.driver-submit_button:disabled {
+  background: #e2e8f0;
+  cursor: not-allowed;
+}
+
+/* Time selection element styles */
+.driver-time-input-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.driver-time-input-group select {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 15px;
+  color: #4a5568;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 16px center;
+  padding-left: 48px;
+}
+
+.driver-time-input-group select:focus {
+  outline: none;
+  border-color: #a0aec0;
+  box-shadow: 0 0 0 3px rgba(160, 174, 192, 0.2);
+}
+
+.driver-time-input-group select:disabled {
+  background-color: #f7fafc;
+  cursor: not-allowed;
+}
+
+/* Time slot addition button styles */
+.driver-add-time {
+  padding: 8px 16px;
+  font-size: 20px;
+  font-weight: 600;
+  background: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 24px;
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.driver-add-time:hover:not(.disabled) {
+  background: #2d3748;
+}
+
+.driver-add-time.disabled {
+  background: #e2e8f0;
+  color: #a0aec0;
+  cursor: not-allowed;
+}
+
+/* Time slot container styles */
+.driver-time-slots-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.driver-time-slot-item {
+  background: #f7fafc;
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.driver-time-slot-item span {
+  color: #4a5568;
+  font-size: 15px;
+}
+
+.driver-remove-time {
+  background: none;
+  border: none;
+  color: #a0aec0;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.driver-remove-time:hover {
+  color: #e53e3e;
+  background: #fff5f5;
+}

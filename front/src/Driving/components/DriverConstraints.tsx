@@ -71,13 +71,6 @@ const DriverConstraints: React.FC = () => {
     }
   };
 
-  const updateTempTimeSlot = (field: 'start' | 'end', value: string) => {
-    setTempTimeSlot(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
   const removeTimeSlot = (index: number) => {
     setSchedule(prev => ({
       ...prev,
@@ -85,9 +78,7 @@ const DriverConstraints: React.FC = () => {
     }));
   };
 
-
   const handleSubmit = async () => {
-  //TODO: get actual driverId somehow
     const sentData = {
       driverId: 1,
       date: schedule.selectedDate,
@@ -110,32 +101,32 @@ const DriverConstraints: React.FC = () => {
 
   return (
     <div className="driver-planner-container">
-      <div className="navigation-buttons">
+      <div className="driver-navigation-buttons">
         <button
-          className="nav-button"
+          className="driver-nav-button"
           onClick={() => navigate('/cookConstraints')}
         >
           טבחים
         </button>
         <button
-          className="nav-button active"
+          className="driver-nav-button active"
           onClick={() => {/* Already on this page */}}
         >
           נהגים
         </button>
       </div>
 
-      <div className="content-wrapper">
+      <div className="driver-content-wrapper">
         <div className="driver-planner">
-          <div className="header-container">
+          <div className="driver-header-container">
             <h1>זמינות לנהיגה</h1>
           </div>
 
-          <div className="day-selection">
+          <div className="driver-day-selection">
             <select
               value={schedule.selectedDate || ''}
               onChange={(e) => handleDateSelect(e.target.value)}
-              className="date-select"
+              className="driver-date-select"
             >
               <option value="">בחר תאריך</option>
               {getNextFridays().map((friday) => (
@@ -154,7 +145,7 @@ const DriverConstraints: React.FC = () => {
             </select>
           </div>
 
-          <div className="location-input">
+          <div className="driver-location-input">
             <label>נקודת התחלה</label>
             <input
               type="text"
@@ -164,7 +155,7 @@ const DriverConstraints: React.FC = () => {
             />
           </div>
 
-          <div className="description-input">
+          <div className="driver-description-input">
             <label>הערות נוספות</label>
             <textarea
               value={description}
@@ -174,14 +165,14 @@ const DriverConstraints: React.FC = () => {
           </div>
 
           {schedule.selectedDate && (
-            <div className="time-slots-section">
-              <div className="new-time-slot">
-                <div className="time-inputs">
-                  <div className="time-input-group">
+            <div className="driver-time-slots-section">
+              <div className="driver-new-time-slot">
+                <div className="driver-time-inputs">
+                  <div className="driver-time-input-group">
                     <label>התחלה:</label>
                     <select
                       value={tempTimeSlot.start}
-                      onChange={(e) => updateTempTimeSlot('start', e.target.value)}
+                      onChange={(e) => setTempTimeSlot(prev => ({ ...prev, start: e.target.value }))}
                     >
                       <option value="">בחר שעה</option>
                       {Array.from({ length: 48 }, (_, i) => {
@@ -195,11 +186,11 @@ const DriverConstraints: React.FC = () => {
                       })}
                     </select>
                   </div>
-                  <div className="time-input-group">
+                  <div className="driver-time-input-group">
                     <label>סיום:</label>
                     <select
                       value={tempTimeSlot.end}
-                      onChange={(e) => updateTempTimeSlot('end', e.target.value)}
+                      onChange={(e) => setTempTimeSlot(prev => ({ ...prev, end: e.target.value }))}
                     >
                       <option value="">בחר שעה</option>
                       {Array.from({ length: 48 }, (_, i) => {
@@ -214,7 +205,7 @@ const DriverConstraints: React.FC = () => {
                     </select>
                   </div>
                   <button
-                    className={`add-time ${isAddButtonDisabled ? 'disabled' : ''}`}
+                    className={`driver-add-time ${isAddButtonDisabled ? 'disabled' : ''}`}
                     onClick={addTimeSlot}
                     disabled={isAddButtonDisabled}
                   >
@@ -225,38 +216,38 @@ const DriverConstraints: React.FC = () => {
             </div>
           )}
 
-          <div className="submit-container">
-            <button
-              className="submit_button"
-              onClick={handleSubmit}
-              disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !startLocation}
-            >
-              להגיש
-            </button>
-          </div>
-        </div>
+          <div className="driver-submit-container">
+                      <button
+                        className="driver-submit_button"
+                        onClick={handleSubmit}
+                        disabled={!schedule.selectedDate || schedule.timeSlots.length === 0 || !startLocation}
+                      >
+                        להגיש
+                      </button>
+                    </div>
+                  </div>
 
-        <div className="time-slots-column">
-          <h3>זמנים שנבחרו</h3>
-          <div className="time-slots-list">
-            {schedule.timeSlots.map((slot, index) => (
-              <div key={index} className="time-slot-item">
-                <span>
-                  {slot.start} - {slot.end}
-                </span>
-                <button
-                  className="remove-time"
-                  onClick={() => removeTimeSlot(index)}
-                >
-                  ✕
-                </button>
+                  <div className="driver-time-slots-column">
+                    <h3>זמנים שנבחרו</h3>
+                    <div className="driver-time-slots-list">
+                      {schedule.timeSlots.map((slot, index) => (
+                        <div key={index} className="driver-time-slot-item">
+                          <span>
+                            {slot.start} - {slot.end}
+                          </span>
+                          <button
+                            className="driver-remove-time"
+                            onClick={() => removeTimeSlot(index)}
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+            );
+          };
 
 export default DriverConstraints;

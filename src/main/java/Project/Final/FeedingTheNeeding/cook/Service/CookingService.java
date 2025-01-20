@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,15 @@ public class CookingService {
     public CookConstraints submitConstraints(CookConstraints constraints) {
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
+    }
+
+    public void updateConstraint(long constraintId, Map<String, Integer> constraint){
+        logger.info("Trying to update constraint with id {}", constraintId);
+        List<CookConstraints> constraints = ccr.findConstraintsByConstraintId(constraintId);
+        CookConstraints cc = constraints.get(0);
+        cc.setConstraints(constraint);
+        ccr.save(cc);
+        logger.info("Updated constraint with id {}", constraintId);
     }
 
     public void removeConstraint(CookConstraints constraint) {
@@ -67,6 +77,13 @@ public class CookingService {
     public List<CookConstraints> getPendingConstraints(LocalDate date){
         logger.info("Getting all pending constraints for date: {}", date);
         List<CookConstraints> constraints = ccr.findConstraintsByDateAndStatus(date, Status.Pending);
+        logger.info("Successfully got all pending constraints for the date: {}", date);
+        return constraints;
+    }
+
+    public List<CookConstraints> getConstraintsByDate(LocalDate date){
+        logger.info("Getting all pending constraints for date: {}", date);
+        List<CookConstraints> constraints = ccr.findConstraintsByDate(date);
         logger.info("Successfully got all pending constraints for the date: {}", date);
         return constraints;
     }

@@ -2,7 +2,11 @@
     direction: rtl;
     width: 100%;
     min-height: 100vh;
-    background: #fafafa;
+    background: url('../../Cooking/Images/background.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     padding: 20px;
 }
 
