@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/cooking")
 public class CookController {
     private final CookingService cs;
+    private RestTemplate restTemplate;
 
     @Autowired
     private ConstraintMapper mapper;
@@ -36,8 +37,6 @@ public class CookController {
     public CookController(CookingService cs) {this.cs = cs;}
 
     private String getAddressById(long id, String token){
-        RestTemplate restTemplate = new RestTemplate();
-
         String url = "http://localhost:8080/user/donor/donorLoc/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -57,8 +56,6 @@ public class CookController {
     }
 
     private long getIdByToken(String token){
-        RestTemplate restTemplate = new RestTemplate();
-
         // Add the token as a request parameter
         String url = "http://localhost:8080/auth/user-id?token=" + token;
 
@@ -82,8 +79,6 @@ public class CookController {
     }
 
     private String getNameById(long id, String token){
-        RestTemplate restTemplate = new RestTemplate();
-
         String url = "http://localhost:8080/user/donor/donorName/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -102,8 +97,6 @@ public class CookController {
     }
 
     private String getPhoneNumberById(long id, String token){
-        RestTemplate restTemplate = new RestTemplate();
-
         String url = "http://localhost:8080/user/donor/donorPhone/" + id;
 
         HttpHeaders headers = new HttpHeaders();
