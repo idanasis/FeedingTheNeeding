@@ -292,4 +292,23 @@ public class AuthService {
         else
             throw new UserDoesntExistsException("donor not found");
     }
+
+    public long getUserIDFromJWT(String token) {
+        logger.info("start-get user id from token: {}", token);
+        if(token == null)
+            throw new IllegalArgumentException("invalid token");
+        if(token.startsWith("Bearer "))
+            token = token.substring(7);
+
+        String phoneNumber = jwtTokenService.extractUsername(token);
+        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            long id = donor.getId();
+            logger.info("end-get user id {}", id);
+            return id;
+        }
+        else
+            throw new UserDoesntExistsException("donor not found");
+    }
 }
