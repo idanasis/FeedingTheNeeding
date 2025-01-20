@@ -371,7 +371,7 @@ const PendingRequests: React.FC = () => {
                                                 <td className="time-column">
                                                     {request.startTime} - {request.endTime}
                                                 </td>
-                                                <td className="address-column">{request.addr}</td>
+                                                <td className="address-column">{request.address}</td>
                                                 <td className="constraints-column">
                                                     <button
                                                         className="view-constraints-button"

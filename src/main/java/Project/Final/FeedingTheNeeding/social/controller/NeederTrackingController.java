@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -30,6 +31,7 @@ public class NeederTrackingController {
     }
 
     // Get all NeederTracking records
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping
     public ResponseEntity<?> getAllNeederTrackings() {
         try {
@@ -44,6 +46,7 @@ public class NeederTrackingController {
     }
 
     // Get a specific NeederTracking by ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/{id}")
     public ResponseEntity<?> getNeederTrackingById(@PathVariable Long id) {
         try {
@@ -61,6 +64,7 @@ public class NeederTrackingController {
     }
 
     // Add a new NeederTracking record
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @PostMapping
     public ResponseEntity<?> addNeederTracking(@RequestBody NeederTracking neederTracking) {
         try {
@@ -75,6 +79,7 @@ public class NeederTrackingController {
     }
 
     // Update an existing NeederTracking record by ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @PutMapping("/{id}")
     public ResponseEntity<?> updateNeederTracking(
             @PathVariable Long id,
@@ -89,7 +94,9 @@ public class NeederTrackingController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     // Delete a specific NeederTracking record by ID
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNeederTracking(@PathVariable Long id) {
         try {
@@ -103,6 +110,7 @@ public class NeederTrackingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/getNeedersHere")
     public ResponseEntity<?> getNeedersHere(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {
@@ -116,6 +124,7 @@ public class NeederTrackingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/getNeedy/{id}")
     public ResponseEntity<?> getNeedyFromNeederTrackingId(@PathVariable Long id) {
         try {
@@ -132,6 +141,7 @@ public class NeederTrackingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/getNeedersByDate")
     public ResponseEntity<?> getAllNeederTrackings(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {
@@ -145,6 +155,7 @@ public class NeederTrackingController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('DONOR', 'ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/getNeededFoodByDate")
     public ResponseEntity<?> getAllNeededFoodByDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {

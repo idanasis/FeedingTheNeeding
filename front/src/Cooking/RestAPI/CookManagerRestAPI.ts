@@ -11,7 +11,7 @@ export interface PendingCookDTO {
     address: string;
     date: string;
     status: string;
-    phoneNumber: string; //not needed
+    phoneNumber: string;
 }
 
 interface ConstraintResponse {
@@ -20,14 +20,19 @@ interface ConstraintResponse {
     startTime: string;
     endTime: string;
     constraints: Record<string, number>;
-    location: string;
+    address: string;
     date: string;
     status: string;
 }
 
 export const getAllRequests = async (date: string): Promise<PendingCookDTO[]> => {
     try {
-        const response = await axios.get(`${API_BASE_URL}/cooking/getConstraints/${date}`);
+        const response = await axios.get(`${API_BASE_URL}/cooking/getConstraints/${date}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Retrieved pending requests:', response.data);
         return response.data;
     } catch (error) {
@@ -39,7 +44,12 @@ export const getAllRequests = async (date: string): Promise<PendingCookDTO[]> =>
 export const approveCookRequest = async (constraintId: number): Promise<void> => {
     try {
         console.log("Wanting to approve request with id: ", constraintId)
-        await axios.post(`${API_BASE_URL}/cooking/acceptConstraint/${constraintId}`);
+        await axios.post(`${API_BASE_URL}/cooking/acceptConstraint/${constraintId}`, null,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Request approved successfully');
     } catch (error) {
         console.error('Error approving request:', error);
@@ -49,7 +59,12 @@ export const approveCookRequest = async (constraintId: number): Promise<void> =>
 
 export const rejectCookRequest = async (constraintId: number): Promise<void> => {
     try {
-        await axios.post(`${API_BASE_URL}/cooking/rejectConstraint/${constraintId}`);
+        await axios.post(`${API_BASE_URL}/cooking/rejectConstraint/${constraintId}`, null,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Request rejected successfully');
     } catch (error) {
         console.error('Error rejecting request:', error);
@@ -63,6 +78,9 @@ export const getFoodConstraints = async(date: string): Promise<Record<string, nu
         const response = await axios.get(`${API_BASE_URL}/social/getNeededFoodByDate`, {
             params: {
                 date: date
+            },
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         console.log('Successfully fetched food constraints: ', response.data);
@@ -77,7 +95,12 @@ export const getFoodConstraints = async(date: string): Promise<Record<string, nu
 export const getAcceptedConstraints = async(date: string): Promise<Record<string, number>> => {
     try {
         console.log('Fetching accepted constraints ', date);
-        const response = await axios.get<ConstraintResponse[]>(`${API_BASE_URL}/cooking/getAccepted/${date}`);
+        const response = await axios.get<ConstraintResponse[]>(`${API_BASE_URL}/cooking/getAccepted/${date}`,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Successfully fetched accepted constraints: ', response.data);
 
         // Create aggregated constraints object
@@ -114,11 +137,14 @@ export const updateConstraint = async(id: number, constraints: Record<string, nu
                 });
 
         await axios.post(`${API_BASE_URL}/cooking/updateConstraint`, null, {
-            params: params
+            params: params,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
         console.log('Request rejected successfully');
     } catch (error) {
-        console.error('Error rejecting request:', error);
+        console.error('Error updating request:', error);
         throw new Error('Failed to reject request. Please try again later.');
     }
 }

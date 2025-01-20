@@ -6,7 +6,7 @@ import java.util.Map;
 public class PendingConstraintDTO {
     public long constraintId;
 
-    public String name = "Default name"; //TODO: change the mapper function, then remove this
+    public String name;
 
     public String startTime;
     public String endTime;
@@ -19,19 +19,21 @@ public class PendingConstraintDTO {
 
     public Status status;
 
-    public String phoneNumber = "Default_Phone_Number"; //TODO: change the mapper function, then remove this
+    public String phoneNumber;
 
     //Spring needs a default constractor
     public PendingConstraintDTO() {}
 
-    public PendingConstraintDTO(long constraintId, String startTime, String endTime, Map<String, Integer> constraints,
-                                String address, LocalDate date, Status status){
+    public PendingConstraintDTO(long constraintId, String name, String startTime, String endTime, Map<String, Integer> constraints,
+                                String address, LocalDate date, Status status, String phoneNumber){
         this.constraintId = constraintId;
+        this.name = name;
         this.startTime = startTime;
         this.endTime = endTime;
         this.constraints = constraints;
         this.address = address;
         this.date = date;
         this.status = status;
+        this.phoneNumber = phoneNumber;
     }
 }

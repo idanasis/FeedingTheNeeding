@@ -52,4 +52,13 @@ public class CookConstraints {
         this.date = date;
         this.status = status;
     }
+
+    public void setCookId(long cookId)
+    {
+        this.cookId = cookId;
+    }
+
+    public void setLocation(String location){
+        this.location = location;
+    }
 }
