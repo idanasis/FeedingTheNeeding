@@ -1,4 +1,3 @@
-import { Route } from "./Route";
 
 // Types
 export interface Visit {
@@ -12,5 +11,9 @@ export interface Visit {
     status: string;
     priority?: number;
     notes?: string;
-    
+    dietaryPreferences?: string;
+    name?: string;
+    constraints?: [string, number][];
+    startTime?: string;
+    endTime?: string;
   }

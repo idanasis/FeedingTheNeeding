@@ -5,8 +5,8 @@ import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
 import dayjs from 'dayjs';
 import { getAllNeederTracking } from '../../Restapi/socialRestapi';
-import FeedingLogo from '../../Authentication/Images/logo.png';
 import { getNearestFriday } from '../../commons/Commons';
+import DiveHeader from '../../GoPage/DiveHeader';
 
 
 const NeederTracking = () => {
@@ -35,14 +35,8 @@ const NeederTracking = () => {
       };
 
     return (
-        <div className='social-need-tracking' style={{ backgroundColor: "snow"}}>
-            <img src={FeedingLogo} alt="Logo"style={{
-          position: "absolute",
-          top: "1px",
-          left: "5px",
-          height: "60px", // Adjust the size as needed
-        }}/>
-            <h1 className='text-black md:text-4xl text-3xl font-bold' style={{ color: '#000' }}>טבלת מעקב נזקקים</h1>
+        <div className='social-need-tracking' style={{}}>
+            <DiveHeader/>
             <div style={{paddingRight:"1rem"}}>
             <ResponsiveDatePickers onDateChange={handleDateChange}/>  
             </div>

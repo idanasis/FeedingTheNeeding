@@ -1,4 +1,6 @@
-.register-page {
+/* EditDonorDetails.css */
+
+.edit-page {
     background: url('../Images/background.png') no-repeat center center fixed;
     background-size: cover;
     display: flex;
@@ -11,7 +13,7 @@
     flex-direction: column;
 }
 
-.register-container {
+.edit-container {
     position: relative;
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
@@ -25,10 +27,10 @@
     align-items: center;
 }
 
-.register-container .home-button {
+.edit-container .home-button {
     position: absolute;
     top: 15px;
-    left: 15px;
+    left: 15px; /* Changed from right: 15px to left: 15px */
     background-color: transparent;
     border: none;
     color: #d32f2f;
@@ -41,51 +43,51 @@
     gap: 5px;
 }
 
-.register-container .home-button:hover {
+.edit-container .home-button:hover {
     color: #b71c1c;
     transform: scale(1.05);
 }
 
-.register-container .form-logo {
+.edit-container .form-logo {
     text-align: center;
     margin-bottom: 10px;
     width: 100%;
 }
 
-.register-container .logo-image {
+.edit-container .logo-image {
     width: 150px;
     height: auto;
     display: block;
     margin: 0 auto;
 }
 
-.register-container h2 {
+.edit-container h2 {
     text-align: center;
     color: #333;
     font-size: 1.5rem;
     margin-bottom: 20px;
 }
 
-.register-container .form-row {
+.edit-container .form-row {
     display: flex;
     flex-wrap: wrap;
     gap: 25px;
     width: 100%;
 }
 
-.register-container .form-row .form-group {
+.edit-container .form-row .form-group {
     flex: 1 1 45%;
     margin-bottom: 20px;
 }
 
-.register-container .form-group label {
+.edit-container .form-group label {
     font-size: 14px;
     color: #555;
     margin-left: 10px;
     white-space: nowrap;
 }
 
-.register-container input {
+.edit-container input {
     flex: 1;
     padding: 8px;
     border: 1px solid #ccc;
@@ -97,38 +99,12 @@
     margin-bottom: 10px;
 }
 
-.register-container input:focus {
+.edit-container input:focus {
     border-color: #d32f2f;
     outline: none;
 }
 
-.register-container .password-input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.register-container .password-input-wrapper input {
-    padding-right: 40px;
-    height: 40px;
-}
-
-.register-container .password-input-wrapper .toggle-password-button {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    color: #555;
-}
-
-.register-container .password-input-wrapper .toggle-password-button:hover {
-    color: #d32f2f;
-}
-
-.register-container .submit-button {
+.edit-container .submit-button {
     background-color: #d32f2f;
     color: white;
     font-size: 16px;
@@ -142,61 +118,38 @@
     transition: background-color 0.3s, transform 0.2s ease;
 }
 
-.register-container .submit-button:hover {
+.edit-container .submit-button:hover {
     background-color: #b71c1c;
 }
 
-.register-container .error-message {
+.edit-container .error-message {
     color: red;
     text-align: center;
     font-size: 14px;
     margin-top: 5px;
 }
 
-.register-container .extra-options {
+.edit-container .success-message {
+    color: green;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.edit-container .extra-options {
     margin-top: 20px;
     text-align: center;
 }
 
-.register-container .extra-options a {
+.edit-container .extra-options a {
     color: #d32f2f;
     text-decoration: none;
     font-weight: bold;
     cursor: pointer;
 }
 
-.register-container .extra-options a:hover {
+.edit-container .extra-options a:hover {
     text-decoration: underline;
-}
-
-.register-container .checkbox-group {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    width: 100%;
-    direction: rtl;
-}
-
-.register-container .checkbox-group input[type="checkbox"] {
-    margin-left: 10px;
-    transform: scale(1.2);
-    width: auto;
-    height: auto;
-    cursor: pointer;
-}
-
-.register-container .checkbox-label {
-    font-size: 16px;
-    color: #333;
-    display: inline-block;
-    cursor: pointer;
-    text-align: right;
-}
-
-.register-container .required-asterisk {
-    color: red;
-    font-weight: bold;
-    margin-left: 4px;
 }
 
 .success-popup {
@@ -238,27 +191,6 @@
     transform: translateY(-2px);
 }
 
-.resend-container {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #333;
-}
-
-.resend-container button.resend-link {
-    background: none;
-    border: none;
-    color: #d32f2f;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: underline;
-    font-size: 14px;
-}
-
-.resend-container button.resend-link:hover {
-    text-decoration: none;
-    color: #b71c1c;
-}
-
 .overlay {
     position: fixed;
     top: 0;
@@ -270,63 +202,69 @@
 }
 
 @media screen and (max-width: 768px) {
-    .register-container {
+    .edit-container {
         width: 95%;
         padding: 15px;
     }
 
-    .register-container .form-row {
+    .edit-container .form-row {
         flex-wrap: wrap;
         gap: 20px;
     }
 
-    .register-container h2 {
+    .edit-container h2 {
         font-size: 1.25rem;
     }
 
-    .register-container .submit-button {
+    .edit-container .submit-button {
         font-size: 14px;
         padding: 10px;
     }
 
-    .register-container .logo-image {
+    .edit-container .logo-image {
         width: 120px;
     }
 
-    .register-container .checkbox-label {
+    .edit-container .checkbox-label {
         font-size: 13px;
+    }
+
+    .edit-container .home-button {
+        font-size: 14px;
+        padding: 5px 8px;
     }
 }
 
 @media screen and (max-width: 480px) {
-    .register-container {
+    .edit-container {
         width: 90%;
         padding: 10px;
     }
 
-    .register-container .form-row {
+    .edit-container .form-row {
         flex-wrap: wrap;
         gap: 15px;
     }
 
-    .register-container h2 {
+    .edit-container h2 {
         font-size: 1rem;
     }
 
-    .register-container .submit-button {
+    .edit-container .submit-button {
         font-size: 12px;
         padding: 8px;
     }
 
-    .register-container .logo-image {
+    .edit-container .logo-image {
         width: 100px;
     }
 
-    .register-container .checkbox-label {
+    .edit-container .checkbox-label {
         font-size: 12px;
     }
 
-    .register-container .checkbox-group input[type="checkbox"] {
-        transform: scale(1);
+    .edit-container .home-button {
+        font-size: 12px;
+        padding: 4px 6px;
     }
 }

@@ -162,7 +162,7 @@ const NeederTrackingTable = ({ data }: { data: NeederTrackingModel[] }) => {
   const rows = data.map((item) => createData(item));
   
   return (
-    <TableContainer component={Paper} style={{ height: '100vh', width: '100%' }}>
+    <TableContainer  style={{ height: '100vh', width: '100%', background: 'rgba(255, 255, 255, 0.8)',}}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>

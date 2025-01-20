@@ -13,6 +13,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,18 +58,22 @@ public class UserService {
         logger.info("getDonorByPhoneNumber");
         return donorRepository.findByPhoneNumber(phoneNumber).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
+
     public Donor getDonorById(long id) {
         logger.info("getDonorById");
         return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
+
     public List<Donor> getDonorsPending(){
         logger.info("getDonorsPending");
         return donorRepository.findByStatus(RegistrationStatus.PENDING);
     }
+  
     public List<Donor> getDonorsApproved(){
         logger.info("getDonorsPending");
         return donorRepository.findByStatus(RegistrationStatus.AVAILABLE);
     }
+  
     public void updateDonor(Donor donor){
         logger.info("updateDonor");
         Donor upDonor = donorRepository.findById(donor.getId()).orElseThrow(() -> new UserDoesntExistsException("User not found"));
@@ -78,9 +83,12 @@ public class UserService {
         upDonor.setAddress(donor.getAddress());
         upDonor.setStatus(donor.getStatus());
         upDonor.setEmail(donor.getEmail());
+        upDonor.setRole(donor.getRole());
+        upDonor.setLastDonationDate(donor.getLastDonationDate());
         donorRepository.save(upDonor);
         logger.info("Donor "+donor.getId()+" updated");
     }
+
     @Transactional
     public void deleteDonor(long id){
         logger.info("deleteDonor");
@@ -94,5 +102,12 @@ public class UserService {
             logger.error("User "+id+" not found");
             throw new UserDoesntExistsException("User "+id+" not found");
         }
+    }
+    public void setDonationToDonor(long donorId,LocalDate date){
+        logger.info("setDonationToDonor");
+        Donor donor = donorRepository.findById(donorId).orElseThrow(() -> new UserDoesntExistsException("User not found"));
+        donor.setLastDonationDate(date);
+        donorRepository.save(donor);
+        logger.info("Donation set to donor "+donorId);
     }
 }

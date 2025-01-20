@@ -8,7 +8,6 @@ import {
   TouchSensor,
 } from '@dnd-kit/core';
 import {
-  rectSortingStrategy,
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
@@ -21,52 +20,20 @@ import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import AddIcon from '@mui/icons-material/Add';
-import { addDriverConstraints, addRoute, getDriversConstraints, getNeedersHere, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
+import { addDriverConstraints, addRoute, deleteRoute, getDriversConstraints, getNeedersHere, getPickupVisits, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
 import { getNearestFriday } from '../../commons/Commons';
 import { DriverConstraints } from '../models/DriverConstraints';
 import AddDriverOption from './AddDriverOption';
 import { getDonorApproved } from '../../Restapi/DrivingRestapi';
+import DiveHeader from '../../GoPage/DiveHeader';
 
 
 const initialData = {
   routes: [
   ] as Route[],
-  pickup: [
-    {
-      address: '123 Main St',
-      firstName: 'John',
-      lastName: 'Doe',
-      phoneNumber: '123-456-7890',
-      maxHour: 16,
-      status: "Pickup"
-    },
-    {
-      address: '456 Park Ave',
-      firstName: 'Jane',
-      lastName: 'Smith',
-      phoneNumber: '987-654-3210',
-      maxHour: 20,
-      status: "Pickup"
-    },
-    {
-      address: '456 Park Ass',
-      firstName: 'johnie',
-      lastName: 'mitchell',
-      phoneNumber: '987-654-3210',
-      maxHour: 19,
-      status: "Pickup"
-    },
-    {
-      address: '123 exce',
-      firstName: 'jennifer',
-      lastName: 'relee',
-      phoneNumber: '987-654-2340',
-      maxHour: 18,
-      status: "Pickup"
-    },
-  ],
+  pickup: [] as Visit[],
   drop: [] as Visit[],
 };
 export interface Data {
@@ -117,7 +84,7 @@ const DrivingManager = () => {
       const data=await getDriversConstraints(currentDate);
       setDrivers(data)
       let donors=await getDonorApproved();
-      donors=donors.filter(donor=>data.some(driver=>driver.driverId!==donor.id));
+      donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
       setDonors(donors);
     }catch(err){
       alert("תקלה בהצגת הנתונים");
@@ -126,15 +93,22 @@ const DrivingManager = () => {
   async function getDrops(currentDate:Date=date){
     try{
       const data=await getNeedersHere(currentDate);
-          const updatedData={...initialData};
-          updatedData.drop=data;
+        const updatedData={...initialData};
+        updatedData.drop=data;
         const routes=await getRoutes(date);
         updatedData.routes=routes;
         updatedData.drop = updatedData.drop.filter((visit: Visit) =>
           !routes.some((route: Route) =>
             route.visit.some((v: Visit) => v.phoneNumber === visit.phoneNumber)
           )
-        );        
+        ); 
+        const pickup=await getPickupVisits(date);
+        updatedData.pickup=pickup;
+        updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
+          !routes.some((route: Route) =>
+            route.visit.some((v: Visit) => v.phoneNumber === visit.phoneNumber)
+          )
+        );       
         setData(updatedData);
       }catch(err){
         alert("תקלה בהצגת הנתונים");
@@ -223,15 +197,22 @@ const DrivingManager = () => {
   };
 
   const renderVisit = (visit: Visit) => (
-    <Card variant="outlined">
+    <Card
+    variant="outlined"
+    sx={{
+      height: '150px',
+    }}
+  >
       <CardContent>
-        <Typography variant="h6">
+        <Typography variant="h6" fontSize={16}>
           {visit.firstName} {visit.lastName}
         </Typography>
-        <Typography variant="body2">{visit.address}</Typography>
-        <Typography variant="body2">{visit.phoneNumber}</Typography>
-        <Typography variant="body2">שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
-        <Typography variant="body2">הערות: {visit.note?visit.note:visit.notes}</Typography>
+        <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
+        <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
+        {visit.startTime?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startTime}:00</Typography>:null}
+        <Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
+        <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
+        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.dietaryPreferences}</Typography>:null}
       </CardContent>
     </Card>
   );
@@ -353,8 +334,13 @@ const DrivingManager = () => {
   }
   const handlePublishAll = async() => {
     try{
-    await submitAllRoutes(date);
+    
     const updatedData={...data};
+    if(updatedData.routes.some(route=>route.driverId===0)){
+      alert('נא לבחור נהגים לכל המסלולים או למחוק אותם');
+      return;
+    }
+    await submitAllRoutes(date);
     updatedData.routes.forEach(route=>route.submitted=true);
     setData(updatedData);
     alert('מסלולים פורסמו בהצלחה');
@@ -366,8 +352,15 @@ const addConstraint = async (donor:Donor) => {
   await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: 20, requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:0});
   fetchDrivers();
 }
+const removeRoute = async(index:number)=>{
+  const updatedRoutes = [...data.routes];
+  const route=updatedRoutes[index];
+  await deleteRoute(route.routeId);
+  await getDrops()
+}
   return (
-    <div style={{overflowY: 'auto',backgroundColor: "snow"}}>
+    <div style={{overflowY: 'auto',backgroundColor: "snow",height: '100vh'}}>
+      <DiveHeader/>
      <div style={{marginTop: "20px",backgroundColor: "snow",justifySelf: "center",display: "flex",flexDirection: "row",justifyContent: "space-between",  gap: "10px"}}>
     <ResponsiveDatePickers onDateChange={handleDateChange}/>
     {!data.routes.every((route)=>route.submitted)?<Button variant="contained" color="primary" sx={{marginRight:10}} onClick={handlePublishAll} >פרסם הכל</Button>:null}
@@ -398,7 +391,7 @@ const addConstraint = async (donor:Donor) => {
             </Typography>
             {data.routes.map((route, index) => (
               <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
-              <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px' }}>
+              <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px'}}>
                 <Typography variant="h6">סיבוב {index+1}</Typography>
                 <Select
                   value={route.driverId||'לא נבחר'}
@@ -413,6 +406,7 @@ const addConstraint = async (donor:Donor) => {
                 </Select>
                 <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
                 {!route.submitted?<Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>:null}
+                {!route.submitted?<Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>:null}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}
