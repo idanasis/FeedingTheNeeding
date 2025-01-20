@@ -51,7 +51,6 @@ public class CookController {
                 entity,
                 String.class
         );
-        cs.log("Got user");
 
         String address = donorResponse.getBody();
         return address;
@@ -80,14 +79,53 @@ public class CookController {
         long id = userIdResponse.getBody();
 
         return id;
+    }
 
+    private String getNameById(long id, String token){
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = "http://localhost:8080/user/donor/donorName/" + id;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+        ResponseEntity<String> donorResponse = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+
+        String name = donorResponse.getBody();
+        return name;
+    }
+
+    private String getPhoneNumberById(long id, String token){
+        RestTemplate restTemplate = new RestTemplate();
+
+        String url = "http://localhost:8080/user/donor/donorPhone/" + id;
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", token);
+
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> donorResponse = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                entity,
+                String.class
+        );
+
+        String phoneNumber = donorResponse.getBody();
+        return phoneNumber;
     }
 
     @PostMapping("/submit/constraints")
     public ResponseEntity<?> submitConstraints( @RequestHeader("Authorization") String authorizationHeader,
                                                 @RequestBody CookConstraints constraints){
         try{
-            cs.log("Submitting");
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authentication token");
             }
@@ -157,13 +195,19 @@ public class CookController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/getAccepted/{date}")
-    public ResponseEntity<?> getAllAcceptedConstraintsByDate(@PathVariable LocalDate date){
+    public ResponseEntity<?> getAllAcceptedConstraintsByDate(@RequestHeader("Authorization") String authorizationHeader,
+                                                             @PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
-            List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(mapper::toDTO)
-                    .collect(Collectors.toList());
 
+            long id = getIdByToken(authorizationHeader);
+            String name = getNameById(id, authorizationHeader);
+            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
+
+
+            List<PendingConstraintDTO> dtos = constraints.stream()
+                    .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
+                    .collect(Collectors.toList());
             return ResponseEntity.ok(dtos);
         } catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -172,11 +216,17 @@ public class CookController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("getPending/{date}")
-    public ResponseEntity<?> getPendingConstraintsByDate(@PathVariable LocalDate date){
+    public ResponseEntity<?> getPendingConstraintsByDate(@RequestHeader("Authorization") String authorizationHeader,
+                                                         @PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getPendingConstraints(date);
+
+            long id = getIdByToken(authorizationHeader);
+            String name = getNameById(id, authorizationHeader);
+            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
+
             List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(mapper::toDTO)
+                    .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(dtos);
@@ -186,11 +236,17 @@ public class CookController {
     }
 
     @GetMapping("getConstraints/{date}")
-    public ResponseEntity<?> getConstraintsByDate(@PathVariable LocalDate date){
+    public ResponseEntity<?> getConstraintsByDate(@RequestHeader("Authorization") String authorizationHeader,
+                                                  @PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getConstraintsByDate(date);
+
+            long id = getIdByToken(authorizationHeader);
+            String name = getNameById(id, authorizationHeader);
+            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
+
             List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(mapper::toDTO)
+                    .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(dtos);

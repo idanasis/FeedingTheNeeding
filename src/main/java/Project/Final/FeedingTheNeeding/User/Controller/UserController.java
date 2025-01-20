@@ -154,7 +154,7 @@ public class UserController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'STAFF')")
     @GetMapping("/donor/donorLoc/{donorId}")
     public ResponseEntity<?> getDonorAddressById(@PathVariable long donorId) {
         try{
@@ -165,5 +165,26 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'STAFF')")
+    @GetMapping("/donor/donorName/{donorId}")
+    public ResponseEntity<?> getDonorNameById(@PathVariable long donorId) {
+        try{
+            Donor donor = userService.getDonorById(donorId);
+            String res = donor.getFirstName() + " " + donor.getLastName();
+            return ResponseEntity.ok(res);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR', 'STAFF')")
+    @GetMapping("/donor/donorPhone/{donorId}")
+    public ResponseEntity<?> getDonorPhoneNumberById(@PathVariable long donorId) {
+        try{
+            Donor donor = userService.getDonorById(donorId);
+            return ResponseEntity.ok(donor.getPhoneNumber());
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 }

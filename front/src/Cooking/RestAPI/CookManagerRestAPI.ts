@@ -11,7 +11,7 @@ export interface PendingCookDTO {
     address: string;
     date: string;
     status: string;
-    phoneNumber: string; //not needed
+    phoneNumber: string;
 }
 
 interface ConstraintResponse {
@@ -44,7 +44,12 @@ export const getAllRequests = async (date: string): Promise<PendingCookDTO[]> =>
 export const approveCookRequest = async (constraintId: number): Promise<void> => {
     try {
         console.log("Wanting to approve request with id: ", constraintId)
-        await axios.post(`${API_BASE_URL}/cooking/acceptConstraint/${constraintId}`);
+        await axios.post(`${API_BASE_URL}/cooking/acceptConstraint/${constraintId}`, null,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Request approved successfully');
     } catch (error) {
         console.error('Error approving request:', error);
@@ -54,7 +59,12 @@ export const approveCookRequest = async (constraintId: number): Promise<void> =>
 
 export const rejectCookRequest = async (constraintId: number): Promise<void> => {
     try {
-        await axios.post(`${API_BASE_URL}/cooking/rejectConstraint/${constraintId}`);
+        await axios.post(`${API_BASE_URL}/cooking/rejectConstraint/${constraintId}`, null,
+        {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
         console.log('Request rejected successfully');
     } catch (error) {
         console.error('Error rejecting request:', error);
@@ -127,7 +137,10 @@ export const updateConstraint = async(id: number, constraints: Record<string, nu
                 });
 
         await axios.post(`${API_BASE_URL}/cooking/updateConstraint`, null, {
-            params: params
+            params: params,
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
         console.log('Request rejected successfully');
     } catch (error) {

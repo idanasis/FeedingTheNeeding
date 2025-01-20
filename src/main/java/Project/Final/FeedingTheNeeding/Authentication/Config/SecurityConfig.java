@@ -42,7 +42,7 @@ public class SecurityConfig {
                         .requestMatchers("/cooking/**", "/driving/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
                         .requestMatchers("/needer/**").hasAnyRole("ADMIN","STAFF")
                         .requestMatchers("/social/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
-                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "DONOR")
+                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "DONOR", "STAFF")
                         .anyRequest().hasRole("ADMIN")
 
                 )

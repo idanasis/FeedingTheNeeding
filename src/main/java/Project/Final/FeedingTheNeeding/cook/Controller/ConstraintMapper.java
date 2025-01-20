@@ -6,10 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ConstraintMapper {
-    public PendingConstraintDTO toDTO(CookConstraints constraint) {
+    public PendingConstraintDTO toDTO(CookConstraints constraint, String name, String phoneNumber) {
         PendingConstraintDTO dto = new PendingConstraintDTO();
         dto.constraintId = constraint.getConstraintId();
-        //TODO: add dto.name = *somehow get the name given the jwt*
+        dto.name = name;
+        dto.phoneNumber = phoneNumber;
         dto.startTime = constraint.getStartTime();
         dto.endTime = constraint.getEndTime();
         dto.constraints = constraint.getConstraints();
