@@ -214,9 +214,10 @@
     padding: clamp(12px, 2vw, 24px);
     overflow: hidden;
     height: auto;
-    max-height: 600px;
+    max-height: calc(100vh - 200px);
     display: flex;
     flex-direction: column;
+    padding-bottom: 16px;
 }
 
 .requests-table {
@@ -253,7 +254,8 @@
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
-    max-height: calc(600px - 70px);
+    max-height: calc(100vh - 280px);
+    padding-bottom: 16px;
 }
 
 .requests-table thead,
@@ -549,8 +551,9 @@
 
     .table-section {
         padding: clamp(8px, 1.5vw, 12px);
-        height: calc(100vh - clamp(100px, 20vw, 140px));
-        margin-bottom: calc(40vh + 16px);
+        height:  calc(100vh - 160px);
+        margin-bottom: calc(40vh + 32px);
+        padding-bottom: 24px;
     }
 
     .requests-table {
@@ -558,7 +561,8 @@
     }
 
     .requests-table tbody {
-        height: calc(100vh - clamp(180px, 30vw, 220px));
+        height: calc(100vh - 200px);
+        padding-bottom: 24px;
     }
 
     .requests-table th,
@@ -628,12 +632,12 @@
     }
 
     .table-section {
-        height: calc(100vh - clamp(80px, 15vw, 120px));
-        padding: clamp(6px, 1.2vw, 8px);
+        height: calc(100vh - 140px);
+        margin-bottom: calc(40vh + 40px); /* Further increased margin for smaller screens */
     }
 
     .requests-table tbody {
-        height: calc(100vh - clamp(160px, 25vw, 200px));
+        height: calc(100vh - 180px);
     }
 
     .requests-table th,
