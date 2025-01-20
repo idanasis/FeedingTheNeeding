@@ -7,6 +7,7 @@ import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,6 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/authDonor")
     public ResponseEntity<?> authenticatedDonor() {
         try {
@@ -44,6 +46,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/Allusers")
     public ResponseEntity<?> getAllUsers() {
         try {
@@ -54,6 +57,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/donors")
     public ResponseEntity<?> getAllDonors() {
         try {
@@ -64,6 +68,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/needy")
     public ResponseEntity<?> getAllNeedyUsers() {
         try {
@@ -74,6 +79,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/needy/{phoneNumber}")
     public ResponseEntity<?> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
         try{
@@ -84,6 +90,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/donor/{phoneNumber}")
     public ResponseEntity<?> getDonorByPhoneNumber(@PathVariable String phoneNumber) {
         try{
@@ -94,6 +101,7 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/donor/donorId/{donorId}")
     public ResponseEntity<?> getDonorById(@PathVariable long donorId) {
        try{
@@ -103,6 +111,7 @@ public class UserController {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/donor/pending")
     public ResponseEntity<?> getDonorPending() {
         try{
@@ -112,7 +121,8 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-  
+
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/donor")
     public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
         try{
@@ -122,6 +132,7 @@ public class UserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/donor/{id}")
     public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
         try{
@@ -132,11 +143,23 @@ public class UserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/donor/approved")
     public ResponseEntity<?> getDonorApproved() {
         try{
             List<Donor> donors = userService.getDonorsApproved();
             return ResponseEntity.ok(donors);
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'DONOR')")
+    @GetMapping("/donor/donorLoc/{donorId}")
+    public ResponseEntity<?> getDonorAddressById(@PathVariable long donorId) {
+        try{
+            Donor donor = userService.getDonorById(donorId);
+            return ResponseEntity.ok(donor.getAddress());
         }catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

@@ -13,10 +13,25 @@ export interface CookConstraintsData {
 
 export const submitConstraints = async (data : CookConstraintsData) : Promise<void> => {
     try{
-        console.log('Submitting the data: ', data);
-        const response = await axios.post(`${API_BASE_URL}/cooking/submit/constraints`, data);
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+
+        const response = await axios.post(
+            `${API_BASE_URL}/cooking/submit/constraints`,
+            data,
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
         console.log('Submitting successful: ', response.data);
         return response;
+
     } catch (error) {
         console.error('Error during submitting constraints');
         console.log(error)
@@ -30,12 +45,15 @@ export const getFoodConstraints = async(date: string): Promise<Record<string, nu
         const response = await axios.get(`${API_BASE_URL}/social/getNeededFoodByDate`, {
             params: {
                 date: date
+            },
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
         console.log('Submitting fetched the data: ', response.data);
         return response.data;
     } catch (error) {
-        console.error('Error during submitting constraints');
+        console.error('Error during food fetching');
         console.log(error)
         throw new Error(error || 'Submitting constraints failed. Please try again later');
     }

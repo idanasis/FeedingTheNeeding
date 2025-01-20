@@ -27,6 +27,13 @@ public class CookingService {
         logger.info("Cooking service created");
     }
 
+    public void log(String msg){
+        logger.warn(msg);
+    }
+    public void log(long msg){
+        logger.warn(msg);
+    }
+
     public CookConstraints submitConstraints(CookConstraints constraints) {
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
