@@ -6,7 +6,8 @@ import {
     rejectCookRequest,
     getFoodConstraints,
     getAcceptedConstraints,
-    updateConstraint
+    updateConstraint,
+    undoAction
 } from '../RestAPI/CookManagerRestAPI';
 import '../Styles/CookManager.css';
 
@@ -83,6 +84,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Accepted' }
                     : request
             ));
+            if (selectedDate) {
+                await fetchAllData(selectedDate);
+            }
             alert('הבקשה אושרה בהצלחה');
         } catch (err) {
             alert('שגיאה באישור הבקשה');
@@ -98,6 +102,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Declined' }
                     : request
             ));
+             if (selectedDate) {
+                await fetchAllData(selectedDate);
+             }
             alert('הבקשה נדחתה בהצלחה');
         } catch (err) {
             alert('שגיאה בדחיית הבקשה');
@@ -107,11 +114,15 @@ const PendingRequests: React.FC = () => {
 
     const handleUndo = async (constraintId: number) => {
         try {
+            await undoAction(constraintId);
             setAllRequests(prev => prev.map(request =>
                 request.constraintId === constraintId
                     ? { ...request, status: 'Pending' }
                     : request
             ));
+             if (selectedDate) {
+                await fetchAllData(selectedDate);
+             }
             alert('הפעולה בוטלה בהצלחה');
         } catch (err) {
             alert('שגיאה בביטול הפעולה');
@@ -133,6 +144,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Accepted' }
                     : request
             ));
+             if (selectedDate) {
+                await fetchAllData(selectedDate);
+             }
             alert('הבקשה עודכנה ואושרה בהצלחה');
         } catch (err) {
             alert('שגיאה בעדכון ואישור הבקשה');

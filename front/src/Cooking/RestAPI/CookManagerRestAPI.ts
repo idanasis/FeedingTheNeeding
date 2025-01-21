@@ -148,3 +148,19 @@ export const updateConstraint = async(id: number, constraints: Record<string, nu
         throw new Error('Failed to reject request. Please try again later.');
     }
 }
+
+export const undoAction = async (constraintId: number): Promise<Void> => {
+    try{
+        console.log("Undoing constraint with id:", constraintId);
+        await axios.post(`${API_BASE_URL}/cooking/undoConstraint/${constraintId}`, null, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        console.log('Request rejected successfully');
+
+    } catch (error){
+        console.error('Error undoing constraint:', error);
+        throw new Error('Failed to undo action. Please try again later.');
+    }
+}

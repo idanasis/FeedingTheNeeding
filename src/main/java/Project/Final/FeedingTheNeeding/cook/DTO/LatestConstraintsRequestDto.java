@@ -5,14 +5,12 @@ import org.springframework.cglib.core.Local;
 import java.time.LocalDate;
 
 public class LatestConstraintsRequestDto {
-    public long cookId;
 
-    public LocalDate date;
+    public String date;
 
     public LatestConstraintsRequestDto() {}
 
-    public LatestConstraintsRequestDto(long cookId, LocalDate date){
-        this.cookId = cookId;
+    public LatestConstraintsRequestDto(String date){
         this.date = date;
     }
 }
