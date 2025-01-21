@@ -181,11 +181,11 @@ public class DrivingController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("/constraints/driver/futureNotApproved/{driverId}")
-    public ResponseEntity<?> getDriverFutureConstraintsHaventConfirmed(@RequestParam long driverId) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'DONOR')")
+    @GetMapping("/constraints/driver/futureNotApproved")
+    public ResponseEntity<?> getDriverFutureConstraintsHaventConfirmed(@RequestParam String driverId) {
         try {
-            return ResponseEntity.ok(drivingService.getDriverFutureConstraintsHaventConfirmed(driverId));
+            return ResponseEntity.ok(drivingService.getDriverFutureConstraintsHaventConfirmed(Long.parseLong(driverId)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }

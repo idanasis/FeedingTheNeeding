@@ -3,6 +3,8 @@ package Project.Final.FeedingTheNeeding.driving.Fascade;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
 
 import Project.Final.FeedingTheNeeding.driving.Repository.DriverConstraintsRepository;
@@ -157,8 +159,17 @@ public class DrivingFascade {
     }
     public List<DriverConstraint> getDriverFutureConstraintsHaventConfirmed(long driverId){
         logger.info("getDriverConstraintsHaventConfirmed with driver id {}", driverId);
-        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId).stream().filter(constraint -> constraint.getDate().isBefore(LocalDate.now())).toList();
+
+        // Create a mutable list using collect(Collectors.toList()) instead of toList()
+        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId)
+                .stream()
+                .filter(constraint -> constraint.getDate().isBefore(LocalDate.now()))
+                .collect(Collectors.toList());  // Changed from toList()
+
+        logger.info("got constraints");
         List<Route> routes = routeRepository.findRoutesByDriverId(driverId);
+        logger.info("got routes");
+
         constraints.removeIf(constraint -> routes.stream().anyMatch(route -> route.getDate().equals(constraint.getDate())));
         logger.info("getDriverConstraintsHaventConfirmed with driver id {} done", driverId);
         return constraints;

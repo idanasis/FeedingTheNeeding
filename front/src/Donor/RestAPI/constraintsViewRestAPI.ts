@@ -56,12 +56,32 @@ export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
 
 export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
     try {
-            const response = await axios.get(`${API_BASE_URL}/driving/constraints/driver/futureNotApproved${driverId}`);
-            console.log('Retrieved pending requests:', response.data);
+            const token = localStorage.getItem('token');
+            const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
+                        params: { token: token }, // Send token as query parameter
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+            console.log("Succesffully got id: ", idResponse.data);
+
+            const driverId = idResponse.data;
+
+            const response = await axios.get(
+                        `${API_BASE_URL}/driving/constraints/driver/futureNotApproved`, {
+                            params: { driverId: driverId },
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+            console.log('Retrieved drivers constraints:', response.data);
             return response.data;
         } catch (error) {
-            console.error('Error fetching pending requests:', error);
-            throw new Error('Failed to fetch pending requests. Please try again later.');
+            console.error('Error fetching driver constraints:', error);
+            throw new Error('Failed to fetch drivers requests. Please try again later.');
         }
 };
 
