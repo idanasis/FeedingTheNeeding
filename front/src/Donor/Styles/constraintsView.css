@@ -209,6 +209,23 @@
     box-shadow: 0 0 0 2px rgba(133, 77, 14, 0.2);
 }
 
+.route-day-section {
+    margin-bottom: 24px;
+}
+
+.route-day-section:last-child {
+    margin-bottom: 0;
+}
+
+.route-date {
+    color: #4a5568;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 16px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
 @media screen and (max-width: 768px) {
     .content-wrapper {
         gap: 16px;
@@ -279,6 +296,11 @@
         padding: 4px 8px;
         font-size: 12px;
     }
+
+    .route-date {
+        font-size: 16px;
+        margin: 12px 0;
+    }
 }
 
 @media screen and (max-width: 480px) {
@@ -328,5 +350,10 @@
     .constraints-table th,
     .constraints-table td {
         padding: 8px 6px;
+    }
+
+    .route-date {
+        font-size: 14px;
+        margin: 8px 0;
     }
 }

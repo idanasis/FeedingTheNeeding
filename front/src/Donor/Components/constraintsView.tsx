@@ -7,6 +7,19 @@ interface UserConstraintsProps {
     userId?: number;
 }
 
+const getStatusInHebrew = (status: string): string => {
+    switch (status) {
+        case 'Start':
+            return 'התחלה';
+        case 'Pickup':
+            return 'איסוף';
+        case 'Deliver':
+            return 'מסירה';
+        default:
+            return status;
+    }
+};
+
 const CollapsibleConstraints: React.FC<{ constraints: Record<string, number> }> = ({ constraints }) => {
     const [isExpanded, setIsExpanded] = useState(false);
     const constraintsArray = Object.entries(constraints);
@@ -82,12 +95,29 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
             }
 
             try {
-                console.log('Fetching driver routes...');
-                const routesData = await getDriverRoutes();
-                console.log('Received routes data:', routesData);
-                setDriverRoutes(routesData);
+                console.log('Fetching driver routes for next 14 days...');
+                const allRoutes: DriverRoutes[] = [];
+                const today = new Date();
+
+                for (let i = 0; i < 14; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() + i);
+                    const formattedDate = date.toISOString().split('T')[0];
+
+                    try {
+                        const routeData = await getDriverRoutes(formattedDate);
+                        if (routeData) {
+                            allRoutes.push(routeData);
+                        }
+                    } catch (routeErr) {
+                        console.log(`No routes found for date ${formattedDate}`);
+                    }
+                }
+
+                console.log('Retrieved all driver routes:', allRoutes);
+                setDriverRoutes(allRoutes);
             } catch (err) {
-                console.log('No driver routes found or not authorized:', err);
+                console.log('Error fetching driver routes:', err);
             }
 
         } catch (err) {
@@ -173,8 +203,8 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
                                                 {driverConstraints.map((constraint, index) => (
                                                     <tr key={index}>
                                                         <td>{new Date(constraint.date).toLocaleDateString('he-IL')}</td>
-                                                        <td>{constraint.startHour}:00</td>
-                                                        <td>{constraint.endHour}:00</td>
+                                                        <td>{constraint.start_hour}:00</td>
+                                                        <td>{constraint.end_hour}:00</td>
                                                         <td>{constraint.startLocation}</td>
                                                         <td>{constraint.requests || 'אין בקשות'}</td>
                                                         <td>
@@ -194,38 +224,45 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
                                 <div className="table-section">
                                     <h2>מסלולי נהיגה (מאושרים)</h2>
                                     <div className="table-wrapper">
-                                        <table className="constraints-table">
-                                            <thead>
-                                                <tr>
-                                                    <th>ביקור</th>
-                                                    <th>כתובת</th>
-                                                    <th>שם מלא</th>
-                                                    <th>טלפון</th>
-                                                    <th>שעה מקסימלית</th>
-                                                    <th>סטטוס</th>
-                                                    <th>עדיפות</th>
-                                                    <th>הערה</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {driverRoutes.routes?.map((visit, index) => (
-                                                    <tr key={index}>
-                                                        <td>{visit.visitId}</td>
-                                                        <td>{visit.address}</td>
-                                                        <td>{`${visit.firstName} ${visit.lastName}`}</td>
-                                                        <td>{visit.phoneNumber}</td>
-                                                        <td>{visit.maxHour}</td>
-                                                        <td>
-                                                            <span className='status-approved'>
-                                                                {visit.status}
-                                                            </span>
-                                                        </td>
-                                                        <td>{visit.priority}</td>
-                                                        <td>{visit.note || 'אין הערות'}</td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
+                                        {driverRoutes.map((routeDay, dayIndex) => (
+                                            <div key={dayIndex} className="route-day-section">
+                                                <h3 className="route-date">
+                                                    {new Date(routeDay.date).toLocaleDateString('he-IL')}
+                                                </h3>
+                                                <table className="constraints-table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>ביקור</th>
+                                                            <th>כתובת</th>
+                                                            <th>שם מלא</th>
+                                                            <th>טלפון</th>
+                                                            <th>שעה מקסימלית</th>
+                                                            <th>סטטוס</th>
+                                                            <th>עדיפות</th>
+                                                            <th>הערה</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {routeDay.visit?.map((visit, index) => (
+                                                            <tr key={index}>
+                                                                <td>{visit.visitId}</td>
+                                                                <td>{visit.address}</td>
+                                                                <td>{`${visit.firstName} ${visit.lastName}`}</td>
+                                                                <td>{visit.phoneNumber}</td>
+                                                                <td>{visit.maxHour}</td>
+                                                                <td>
+                                                                    <span className={`status-approved status-${visit.status.toLowerCase()}`}>
+                                                                        {getStatusInHebrew(visit.status)}
+                                                                    </span>
+                                                                </td>
+                                                                <td>{visit.priority}</td>
+                                                                <td>{visit.note || 'אין הערות'}</td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                             )}
