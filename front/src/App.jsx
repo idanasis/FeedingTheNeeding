@@ -209,7 +209,7 @@ const App = () => {
           path="/editDonorDetails"
           element={
             <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN', 'DONOR']}>
-              <GoPage />
+              <EditDonorDetails />
             </ProtectedRoute>
           }
         />

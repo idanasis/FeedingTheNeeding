@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { Needy } from '../models/NeedyModel'; // Import the Needy interface
 
-const API_BASE_URL = 'http://localhost:8080/needer';
+const API_BASE_URL = 'http://localhost:8080/auth/register/needy';
 
 /**
  * Create or update a Needy.
