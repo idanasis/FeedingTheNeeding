@@ -243,12 +243,10 @@ public class CookController {
                                                   @PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getConstraintsByDate(date);
-            long id = getIdByToken(authorizationHeader);
-            String name = getNameById(id, authorizationHeader);
-            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
 
             List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
+                    .map(constraint -> mapper.toDTO(constraint, getNameById(constraint.getCookId(), authorizationHeader),
+                            getPhoneNumberById(constraint.getCookId(), authorizationHeader)))
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(dtos);

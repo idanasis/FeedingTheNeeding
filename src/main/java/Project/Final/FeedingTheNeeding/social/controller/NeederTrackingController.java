@@ -155,6 +155,7 @@ public class NeederTrackingController {
         }
     }
 
+
     @PreAuthorize("hasAnyRole('DONOR', 'ADMIN', 'STAFF')") // Add the appropriate roles
     @GetMapping("/getNeededFoodByDate")
     public ResponseEntity<?> getAllNeededFoodByDate(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -163,11 +164,16 @@ public class NeederTrackingController {
             List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
             logger.info("Fetched all NeederTracking records for date: {}", date);
 
+//            Map<String, Long> dietaryPreferenceCounts = neederTrackings.stream()
+//                    .map(NeederTracking::getDietaryPreferences)
+//                    .collect(Collectors.groupingBy(
+//                            preference -> preference,
+//                            Collectors.counting()
+//                    ));
             Map<String, Long> dietaryPreferenceCounts = neederTrackings.stream()
-                    .map(NeederTracking::getDietaryPreferences)
                     .collect(Collectors.groupingBy(
-                            preference -> preference,
-                            Collectors.counting()
+                            NeederTracking::getDietaryPreferences,
+                            Collectors.summingLong(tracking -> tracking.getNeedy().getFamilySize())
                     ));
 
             return ResponseEntity.ok(dietaryPreferenceCounts);
