@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitDriverConstraints, DriverConstraintsData } from '../models/DriverConstraintsRestAPI';
+import DiveHeader from '../../GoPage/DiveHeader';
 import '../styles/constraints.css'
 
 interface TimeSlot {
@@ -118,6 +119,8 @@ const DriverConstraints: React.FC = () => {
   const isAddButtonDisabled = !tempTimeSlot.start || !tempTimeSlot.end;
 
   return (
+  <>
+  <DiveHeader />
     <div className="driver-planner-container">
       {/* Navigation buttons section */}
       <div className="driver-navigation-buttons">
@@ -272,6 +275,7 @@ const DriverConstraints: React.FC = () => {
         </div>
       </div>
     </div>
+    < />
   );
 };
 

@@ -14,7 +14,6 @@ export interface PendingCookDTO {
     phoneNumber: string;
 }
 
-
 export interface DriverConstraints {
     driverId: number;
     date: string;
@@ -23,6 +22,28 @@ export interface DriverConstraints {
     startLocation: string;
     requests: string;
 }
+
+export interface Visit{
+    visitId: number;
+    route: string;
+    address: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    maxHour: string;
+    status: string;
+    priority: int;
+    note: string
+}
+
+export interface DriverRoutes{
+    routeId: number;
+    driverId: number;
+    date: string;
+    routes: List<Visit>;
+    isSubmitted: boolean;
+}
+
 
 export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
     try {
@@ -85,4 +106,43 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
         }
 };
 
+export const getDriverRoutes = async (): Promise<DriverRoutes> => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+
+        const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
+            params: { token: token },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log("Successfully got id: ", idResponse.data);
+        const driverId = idResponse.data;
+
+        const response = await axios.get(
+            `${API_BASE_URL}/driving/routes`, {
+                params: {
+                    date: today,
+                    driverId: driverId
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        console.log('Retrieved drivers routes:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching driver routes:', error);
+        throw new Error('Failed to fetch drivers routes. Please try again later.');
+    }
+};
 

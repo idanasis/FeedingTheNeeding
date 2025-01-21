@@ -161,17 +161,18 @@ public class DrivingFascade {
         logger.info("getDriverConstraintsHaventConfirmed with driver id {}", driverId);
 
         // Create a mutable list using collect(Collectors.toList()) instead of toList()
-        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId)
-                .stream()
-                .filter(constraint -> constraint.getDate().isBefore(LocalDate.now()))
-                .collect(Collectors.toList());  // Changed from toList()
-
-        logger.info("got constraints");
-        List<Route> routes = routeRepository.findRoutesByDriverId(driverId);
-        logger.info("got routes");
-
-        constraints.removeIf(constraint -> routes.stream().anyMatch(route -> route.getDate().equals(constraint.getDate())));
-        logger.info("getDriverConstraintsHaventConfirmed with driver id {} done", driverId);
+        List<DriverConstraint> constraints = driverConstraintsRepository.findConstraintsByDriverId(driverId);
         return constraints;
+//                .stream()
+//                .filter(constraint -> constraint.getDate().isBefore(LocalDate.now()))
+//                .collect(Collectors.toList());  // Changed from toList()
+//
+//        logger.info("got constraints");
+//        List<Route> routes = routeRepository.findRoutesByDriverId(driverId);
+//        logger.info("got routes");
+//
+//        constraints.removeIf(constraint -> routes.stream().anyMatch(route -> route.getDate().equals(constraint.getDate())));
+//        logger.info("getDriverConstraintsHaventConfirmed with driver id {} done", driverId);
+//        return constraints;
     }
 }
