@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitConstraints, getFoodConstraints } from '../RestAPI/CookConstraintsRestAPI';
+import DiveHeader from '../../GoPage/DiveHeader';
 import '../Styles/DonorCookConsraintsSub.css';
 
 interface TimeSlot {
@@ -141,6 +142,8 @@ const CookConstraints: React.FC = () => {
   const isAddButtonDisabled = !tempTimeSlot.start || !tempTimeSlot.end;
 
   return (
+  <>
+  <DiveHeader />
     <div className="meal-planner-container">
       <div className="navigation-buttons">
         <button className="nav-button active">
@@ -301,6 +304,7 @@ const CookConstraints: React.FC = () => {
         </div>
       </div>
     </div>
+    < />
   );
 };
 

@@ -14,7 +14,6 @@ export interface PendingCookDTO {
     phoneNumber: string;
 }
 
-
 export interface DriverConstraints {
     driverId: number;
     date: string;
@@ -23,6 +22,28 @@ export interface DriverConstraints {
     startLocation: string;
     requests: string;
 }
+
+export interface Visit{
+    visitId: number;
+    route: string;
+    address: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    maxHour: string;
+    status: string;
+    priority: int;
+    note: string
+}
+
+export interface DriverRoutes{
+    routeId: number;
+    driverId: number;
+    date: string;
+    routes: List<Visit>;
+    isSubmitted: boolean;
+}
+
 
 export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
     try {
@@ -54,16 +75,74 @@ export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
     }
 };
 
-//need to add history for spesific driver also
-export const getDriverConstraints = async (driverId: number): Promise<DriverConstraints[]> => {
+export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
     try {
-            const response = await axios.get(`${API_BASE_URL}/driving/constraints/driver/futureNotApproved${driverId}`);
-            console.log('Retrieved pending requests:', response.data);
+            const token = localStorage.getItem('token');
+            const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
+                        params: { token: token }, // Send token as query parameter
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+
+            console.log("Succesffully got id: ", idResponse.data);
+
+            const driverId = idResponse.data;
+
+            const response = await axios.get(
+                        `${API_BASE_URL}/driving/constraints/driver/futureNotApproved`, {
+                            params: { driverId: driverId },
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+            console.log('Retrieved drivers constraints:', response.data);
             return response.data;
         } catch (error) {
-            console.error('Error fetching pending requests:', error);
-            throw new Error('Failed to fetch pending requests. Please try again later.');
+            console.error('Error fetching driver constraints:', error);
+            throw new Error('Failed to fetch drivers requests. Please try again later.');
         }
 };
 
+export const getDriverRoutes = async (): Promise<DriverRoutes> => {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+
+        // Get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+
+        const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
+            params: { token: token },
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        console.log("Successfully got id: ", idResponse.data);
+        const driverId = idResponse.data;
+
+        const response = await axios.get(
+            `${API_BASE_URL}/driving/routes`, {
+                params: {
+                    date: today,
+                    driverId: driverId
+                },
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        console.log('Retrieved drivers routes:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching driver routes:', error);
+        throw new Error('Failed to fetch drivers routes. Please try again later.');
+    }
+};
 

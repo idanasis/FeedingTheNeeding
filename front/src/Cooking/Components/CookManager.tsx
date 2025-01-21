@@ -9,6 +9,7 @@ import {
     updateConstraint,
     undoAction
 } from '../RestAPI/CookManagerRestAPI';
+import DiveHeader from '../../GoPage/DiveHeader';
 import '../Styles/CookManager.css';
 
 interface SummaryData {
@@ -337,6 +338,8 @@ const PendingRequests: React.FC = () => {
     };
 
     return (
+    <>
+    <DiveHeader />
         <div className="app-container">
             {selectedDate && renderSidebar()}
 
@@ -416,6 +419,7 @@ const PendingRequests: React.FC = () => {
                 </div>
             </div>
         </div>
+        < />
     );
 };
 

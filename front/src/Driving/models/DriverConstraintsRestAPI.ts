@@ -21,6 +21,20 @@ export const submitDriverConstraints = async (data: DriverConstraintsData): Prom
             throw new Error('Authentication token not found');
         }
 
+        console.log("Getting driver id");
+        const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
+                                params: { token: token }, // Send token as query parameter
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+        console.log("Succesffully got id: ", idResponse.data);
+
+        const driverId = idResponse.data;
+        data.driverId = idResponse.data;
+
+
         const response = await axios.post(`${API_BASE_URL}/driving/constraints`, data,{
             headers: {
                 'Authorization': `Bearer ${token}`

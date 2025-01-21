@@ -39,6 +39,11 @@
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     padding: 24px;
+    margin-bottom: 24px;
+}
+
+.table-section:last-child {
+    margin-bottom: 0;
 }
 
 .table-section h2 {
@@ -46,6 +51,14 @@
     font-size: 20px;
     font-weight: 600;
     margin: 0 0 20px 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.table-section + .table-section {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 32px;
 }
 
 .table-wrapper {
@@ -55,14 +68,11 @@
     -webkit-overflow-scrolling: touch;
 }
 
-.loading-section {
+.loading {
     text-align: center;
     padding: 20px;
     color: #718096;
     font-size: 18px;
-    background: #ffffff;
-    border-radius: 16px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
 }
 
 .error-message {
@@ -80,6 +90,8 @@
     color: #718096;
     background: #ffffff;
     border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    margin: 24px 0;
 }
 
 .constraints-table {
@@ -91,6 +103,9 @@
 
 .constraints-table thead {
     background: #f8f9fa;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .constraints-table th {
@@ -120,7 +135,6 @@
     background: #f8f9fa;
 }
 
-/* Constraints cell specific styles */
 .constraints-cell {
     max-width: 300px;
     padding: 8px 0;
@@ -165,7 +179,6 @@
     text-decoration: underline;
 }
 
-/* Status Styles */
 .status-approved {
     background-color: #f0fdf4;
     color: #166534;
@@ -188,7 +201,6 @@
     box-shadow: 0 0 0 1px rgba(133, 77, 14, 0.1);
 }
 
-/* Hover effects */
 .status-approved:hover {
     box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.2);
 }
@@ -197,22 +209,13 @@
     box-shadow: 0 0 0 2px rgba(133, 77, 14, 0.2);
 }
 
-/* Loading indicator */
-.loading {
-    text-align: center;
-    padding: 20px;
-    color: #718096;
-    font-size: 18px;
-}
-
-/* Responsive Styles */
 @media screen and (max-width: 768px) {
-    .constraints-container {
-        padding: 12px;
+    .content-wrapper {
+        gap: 16px;
     }
 
-    .content-wrapper {
-        gap: 12px;
+    .constraints-container {
+        padding: 12px;
     }
 
     .header-section {
@@ -224,12 +227,32 @@
     }
 
     .table-section {
+        margin-bottom: 16px;
         padding: 16px;
     }
 
     .table-section h2 {
         font-size: 18px;
         margin-bottom: 16px;
+    }
+
+    .table-section + .table-section {
+        padding-top: 24px;
+    }
+
+    .no-constraints {
+        margin: 16px 0;
+        padding: 24px;
+    }
+
+    .table-wrapper {
+        margin: -8px;
+        padding: 8px;
+        width: calc(100% + 16px);
+    }
+
+    .constraints-table {
+        min-width: 600px;
     }
 
     .constraints-cell {
@@ -246,10 +269,6 @@
         padding: 3px 6px;
     }
 
-    .constraints-table {
-        font-size: 14px;
-    }
-
     .constraints-table th,
     .constraints-table td {
         padding: 12px 8px;
@@ -262,14 +281,35 @@
     }
 }
 
-/* Additional styles for very small screens */
 @media screen and (max-width: 480px) {
+    .constraints-container {
+        padding: 12px;
+    }
+
     .header-section h1 {
         font-size: 18px;
     }
 
+    .table-section {
+        margin-bottom: 12px;
+        padding: 12px;
+    }
+
     .table-section h2 {
         font-size: 16px;
+    }
+
+    .table-section + .table-section {
+        padding-top: 20px;
+    }
+
+    .constraints-table {
+        min-width: 480px;
+    }
+
+    .no-constraints {
+        margin: 12px 0;
+        padding: 20px;
     }
 
     .constraints-cell {
