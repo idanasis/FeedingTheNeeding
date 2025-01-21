@@ -8,7 +8,7 @@ const GoUser = () => {
     { name: "סיוע בבישול", path: "/cookConstraints" },
     { name: "סיוע בשינוע", path: "/driversConstraints" },
     { name: "השיבוצים שלי", path: "/donorConstraints" },
-    { name: "שינוי פרטי פרופיל", path: "/profile" }
+    { name: "שינוי פרטי פרופיל", path: "/editDonorDetails" }
   ];
 
   const slideUpVariants = {
