@@ -280,6 +280,4 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
         </>
     );
 };
-
 export default UserConstraints;
-
