@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PendingCookDTO, DriverConstraints, getCookConstraints, getDriverConstraints } from '../RestAPI/constraintsViewRestAPI.ts';
+import DiveHeader from '../../GoPage/DiveHeader';
 import '../Styles/constraintsView.css';
 
 interface UserConstraintsProps {
@@ -77,6 +78,8 @@ const UserConstraints: React.FC<UserConstraintsProps> = ({ userId, userType }) =
     }, [userId, userType]);
 
     return (
+    <>
+    <DiveHeader />
         <div className="constraints-container">
             <div className="content-wrapper">
                 <div className="header-section">
@@ -163,6 +166,7 @@ const UserConstraints: React.FC<UserConstraintsProps> = ({ userId, userType }) =
                 )}
             </div>
         </div>
+        < />
     );
 };
 
