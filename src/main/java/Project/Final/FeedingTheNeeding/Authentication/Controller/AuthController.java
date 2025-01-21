@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.AccountNotVerifiedException;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
@@ -36,7 +37,9 @@ public class AuthController {
             AuthenticationResponse response = new AuthenticationResponse(jwtToken, jwtTokenService.getExpirationTime());
             logger.info("token created: {} with expiration time of {}", response.getToken(),response.getExpirationTime());
             return ResponseEntity.ok(response);
-        }catch (Exception e){
+        }catch (AccountNotVerifiedException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }

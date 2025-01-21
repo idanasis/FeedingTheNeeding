@@ -68,6 +68,11 @@ public class AuthService {
             throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
         }
 
+        if(user.getDonor().getStatus() == RegistrationStatus.PENDING) {
+            logger.warn("Donor not verified for phone number: {}", authenticationRequest.getPhoneNumber());
+            throw new AccountNotVerifiedException("ACCOUNT_NOT_VERIFIED");
+        }
+
         try {
             // Verify password using PasswordEncoder
             if (!passwordEncoder.matches(authenticationRequest.getPassword(), user.getPasswordHash())) {
@@ -121,7 +126,7 @@ public class AuthService {
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
         donor.setAddress(registrationRequest.getAddress());
         donor.setRole(UserRole.DONOR);
-        donor.setStatus(RegistrationStatus.PENDING);
+        donor.setStatus(RegistrationStatus.NOT_VERIFIED);
         donor.setTimeOfDonation(0);
         //sendSms(donor);
 
@@ -226,6 +231,7 @@ public class AuthService {
                 donor.setVerified(true);
                 donor.setVerificationCode(null);
                 donor.setVerificationCodeExpiresAt(null);
+                donor.setStatus(RegistrationStatus.PENDING);
                 donorRepository.save(donor);
                 logger.info("end-verify donor, phoneNumber: {}", input.phoneNumber());
             }

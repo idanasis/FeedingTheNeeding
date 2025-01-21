@@ -39,12 +39,9 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Attach the CORS configuration here
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/cooking/**", "/driving/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
+                        .requestMatchers("/cooking/**", "/driving/**", "/social/**", "/user/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
                         .requestMatchers("/needer/**").hasAnyRole("ADMIN","STAFF")
-                        .requestMatchers("/social/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
-                        .requestMatchers("/user/**").hasAnyRole("ADMIN", "DONOR", "STAFF")
                         .anyRequest().hasRole("ADMIN")
-
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

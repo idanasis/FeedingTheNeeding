@@ -28,9 +28,11 @@ const Login: React.FC = () => {
             const { token } = await login(phoneNumber, password);
             localStorage.setItem('token', token);
             navigate('/');
-        } catch (err) {
-            setError('מספר טלפון או סיסמא לא נכונים');
-            console.error('Login error:', err);
+        } catch (error: any) {
+            if(error.response && error.response.status === 409)
+                setError("המשתמש אינו מאומת, אנא המתן ליצירת קשר מהרכזת")
+            else
+                setError('מספר טלפון או סיסמא לא נכונים');
         } finally {
             setLoading(false);
         }
