@@ -11,6 +11,7 @@ import jakarta.validation.Constraint;
 import jakarta.websocket.server.PathParam;
 import org.antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +38,8 @@ public class CookController {
     public CookController(CookingService cs) {this.cs = cs;}
 
     private String getAddressById(long id, String token){
+        restTemplate = new RestTemplate();
+
         String url = "http://localhost:8080/user/donor/donorLoc/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -57,14 +60,14 @@ public class CookController {
 
     private long getIdByToken(String token){
         // Add the token as a request parameter
+        restTemplate = new RestTemplate();
         String url = "http://localhost:8080/auth/user-id?token=" + token;
 
         // Add the authorization header
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
+        //headers.set("Authorization", token);
 
         HttpEntity<?> entity = new HttpEntity<>(headers);
-
         // Make the request
         ResponseEntity<Long> userIdResponse = restTemplate.exchange(
                 url,
@@ -72,13 +75,13 @@ public class CookController {
                 entity,
                 Long.class
         );
-
         long id = userIdResponse.getBody();
-
         return id;
     }
 
     private String getNameById(long id, String token){
+        restTemplate = new RestTemplate();
+
         String url = "http://localhost:8080/user/donor/donorName/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -97,6 +100,8 @@ public class CookController {
     }
 
     private String getPhoneNumberById(long id, String token){
+        restTemplate = new RestTemplate();
+
         String url = "http://localhost:8080/user/donor/donorPhone/" + id;
 
         HttpHeaders headers = new HttpHeaders();
@@ -177,10 +182,15 @@ public class CookController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF', 'DONOR')")
     @PostMapping("/constraints/latest")
-    public ResponseEntity<?> getLatestConstraints(@RequestBody LatestConstraintsRequestDto dto){
+    public ResponseEntity<?> getLatestConstraints(@RequestHeader("Authorization") String authorizationHeader,
+                                                  @RequestBody LatestConstraintsRequestDto request){
         try{
-            return ResponseEntity.ok(cs.getLatestCookConstraints(dto.cookId, dto.date));
+            LocalDate currDate = LocalDate.parse(request.date);
+            long id = getIdByToken(authorizationHeader);
+
+            return ResponseEntity.ok(cs.getLatestCookConstraints(id, currDate));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -208,7 +218,7 @@ public class CookController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @GetMapping("getPending/{date}")
+    @GetMapping("/getPending/{date}")
     public ResponseEntity<?> getPendingConstraintsByDate(@RequestHeader("Authorization") String authorizationHeader,
                                                          @PathVariable LocalDate date){
         try{
@@ -228,12 +238,11 @@ public class CookController {
         }
     }
 
-    @GetMapping("getConstraints/{date}")
+    @GetMapping("/getConstraints/{date}")
     public ResponseEntity<?> getConstraintsByDate(@RequestHeader("Authorization") String authorizationHeader,
                                                   @PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getConstraintsByDate(date);
-
             long id = getIdByToken(authorizationHeader);
             String name = getNameById(id, authorizationHeader);
             String phoneNumber = getPhoneNumberById(id, authorizationHeader);
@@ -250,7 +259,7 @@ public class CookController {
 
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PostMapping("acceptConstraint/{constraintId}")
+    @PostMapping("/acceptConstraint/{constraintId}")
     public ResponseEntity<?> acceptConstraintStatus(@PathVariable long constraintId){
         try{
             return ResponseEntity.ok(cs.changeStatusForConstraint(constraintId, Status.Accepted));
@@ -260,10 +269,20 @@ public class CookController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PostMapping("rejectConstraint/{constraintId}")
+    @PostMapping("/rejectConstraint/{constraintId}")
     public ResponseEntity<?> rejectConstraintStatus(@PathVariable long constraintId){
         try{
             return ResponseEntity.ok(cs.changeStatusForConstraint(constraintId, Status.Declined));
+        } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
+    @PostMapping("/undoConstraint/{constraintId}")
+    public ResponseEntity<?> undoConstraint(@PathVariable long constraintId) {
+        try{
+            return ResponseEntity.ok(cs.changeStatusForConstraint(constraintId, Status.Pending));
         } catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

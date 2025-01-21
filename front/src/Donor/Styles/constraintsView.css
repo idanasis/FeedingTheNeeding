@@ -39,7 +39,6 @@
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     padding: 24px;
-    overflow: hidden;
 }
 
 .table-section h2 {
@@ -47,6 +46,13 @@
     font-size: 20px;
     font-weight: 600;
     margin: 0 0 20px 0;
+}
+
+.table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
 }
 
 .loading-section {
@@ -78,6 +84,7 @@
 
 .constraints-table {
     width: 100%;
+    min-width: 800px;
     border-collapse: separate;
     border-spacing: 0;
 }
@@ -113,6 +120,51 @@
     background: #f8f9fa;
 }
 
+/* Constraints cell specific styles */
+.constraints-cell {
+    max-width: 300px;
+    padding: 8px 0;
+}
+
+.constraints-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.constraint-item {
+    background-color: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #4b5563;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+.constraints-ellipsis {
+    color: #6b7280;
+    font-weight: 600;
+    margin: 0 4px;
+}
+
+.expand-button {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: color 0.2s ease;
+}
+
+.expand-button:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
 /* Status Styles */
 .status-approved {
     background-color: #f0fdf4;
@@ -136,13 +188,21 @@
     box-shadow: 0 0 0 1px rgba(133, 77, 14, 0.1);
 }
 
-/* Hover effects for status indicators */
+/* Hover effects */
 .status-approved:hover {
     box-shadow: 0 0 0 2px rgba(22, 101, 52, 0.2);
 }
 
 .status-pending:hover {
     box-shadow: 0 0 0 2px rgba(133, 77, 14, 0.2);
+}
+
+/* Loading indicator */
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #718096;
+    font-size: 18px;
 }
 
 /* Responsive Styles */
@@ -165,12 +225,25 @@
 
     .table-section {
         padding: 16px;
-        overflow-x: auto;
     }
 
     .table-section h2 {
         font-size: 18px;
         margin-bottom: 16px;
+    }
+
+    .constraints-cell {
+        max-width: 200px;
+    }
+
+    .constraint-item {
+        font-size: 12px;
+        padding: 3px 6px;
+    }
+
+    .expand-button {
+        font-size: 12px;
+        padding: 3px 6px;
     }
 
     .constraints-table {
@@ -182,7 +255,6 @@
         padding: 12px 8px;
     }
 
-    /* Adjust status pills for mobile */
     .status-approved,
     .status-pending {
         padding: 4px 8px;
@@ -198,6 +270,15 @@
 
     .table-section h2 {
         font-size: 16px;
+    }
+
+    .constraints-cell {
+        max-width: 150px;
+    }
+
+    .constraint-item {
+        font-size: 11px;
+        padding: 2px 4px;
     }
 
     .constraints-table {

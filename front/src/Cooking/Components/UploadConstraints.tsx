@@ -73,7 +73,7 @@ const CookConstraints: React.FC = () => {
   };
 
   const handleFoodQuantityChange = (foodType: string, quantity: number) => {
-    if (quantity >= 0 && quantity <= (neededFood[foodType] || 0)) {
+    if (quantity >= 0) {
       setSelectedFood(prev => ({
         ...prev,
         [foodType]: quantity
@@ -196,7 +196,6 @@ const CookConstraints: React.FC = () => {
                         value={selectedFood[foodType] || 0}
                         onChange={(e) => handleFoodQuantityChange(foodType, parseInt(e.target.value))}
                         min="0"
-                        max={neededQuantity}
                       />
                     </div>
                   </div>

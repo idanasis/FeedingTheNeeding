@@ -3,14 +3,17 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:8080';
 
 export interface PendingCookDTO {
-    cookId: number; //change to string later - this is cook id?
+    id: number;
+    name: string;
     startTime: string;
     endTime: string;
-    platesNum: number;
-    location: string;
+    constraints: Record<string, number>;
+    address: string;
     date: string;
-    status: number; //not needed
+    status: string;
+    phoneNumber: string;
 }
+
 
 export interface DriverConstraints {
     driverId: number;
@@ -21,32 +24,33 @@ export interface DriverConstraints {
     requests: string;
 }
 
-export const getCookConstraints = async (cookId: number): Promise<PendingCookDTO[]> => {
+export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
     try {
-        console.log('Trying to retrive constraints for cook: ', cookId);
+        console.log('Trying to retrive constraints for cook ');
         const currentDate = new Date().toISOString().split('T')[0]; // Gets current date in YYYY-MM-DD format
 
-        const response = await axios.post(`${API_BASE_URL}/cooking/constraints/latest`, {
-                    cookId: cookId,
-                    date: currentDate
-                });
+        const token = localStorage.getItem('token');
 
-        console.log('Retrieved pending requests:', response.data);
+        if (!token) {
+            throw new Error('Authentication token not found');
+        }
+
+        const response = await axios.post(
+                    `${API_BASE_URL}/cooking/constraints/latest`,
+                    { date: currentDate }, // Send as an object
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                );
+
+        console.log('Retrieved Constraints:', response.data);
         return response.data;
-//         let duplicatedData: PendingCookDTO[] = [];
-//                 for(let i = 0; i < 10; i++) {
-//                     // For each copy, create new objects with slightly modified data
-//                     const newData = response.data.map((item: PendingCookDTO, index: number) => ({
-//                         ...item,
-//                         name: `${item.cookId} ${i + 1}`,  // Add number to name to distinguish entries
-//                         meal_amount: item.platesNum + i  // Slightly modify meal amount
-//                     }));
-//                     duplicatedData = [...duplicatedData, ...newData];
-//                 }
-//         return duplicatedData;
     } catch (error) {
-        console.error('Error fetching pending requests:', error);
-        throw new Error('Failed to fetch pending requests. Please try again later.');
+        console.error('Error fetching constraints:', error);
+        throw new Error('Failed to fetch constraints. Please try again later.');
     }
 };
 
