@@ -25,7 +25,6 @@ export interface DriverConstraints {
 
 export interface Visit{
     visitId: number;
-    route: string;
     address: string;
     firstName: string;
     lastName: string;
@@ -40,8 +39,8 @@ export interface DriverRoutes{
     routeId: number;
     driverId: number;
     date: string;
-    routes: List<Visit>;
-    isSubmitted: boolean;
+    visit: Visit[];
+    submitted: boolean;
 }
 
 
@@ -106,15 +105,12 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
         }
 };
 
-export const getDriverRoutes = async (): Promise<DriverRoutes> => {
+export const getDriverRoutes = async (date: string): Promise<DriverRoutes> => {
     try {
         const token = localStorage.getItem('token');
         if (!token) {
             throw new Error('Authentication token not found');
         }
-
-        // Get today's date in YYYY-MM-DD format
-        const today = new Date().toISOString().split('T')[0];
 
         const idResponse = await axios.get(`${API_BASE_URL}/auth/user-id`, {
             params: { token: token },
@@ -129,7 +125,7 @@ export const getDriverRoutes = async (): Promise<DriverRoutes> => {
         const response = await axios.get(
             `${API_BASE_URL}/driving/routes`, {
                 params: {
-                    date: today,
+                    date: date,
                     driverId: driverId
                 },
                 headers: {
