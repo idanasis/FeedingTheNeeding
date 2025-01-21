@@ -37,88 +37,6 @@ public class CookController {
 
     public CookController(CookingService cs) {this.cs = cs;}
 
-    private String getAddressById(long id, String token){
-        restTemplate = new RestTemplate();
-
-        String url = "http://localhost:8080/user/donor/donorLoc/" + id;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> donorResponse = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                String.class
-        );
-
-        String address = donorResponse.getBody();
-        return address;
-    }
-
-    private long getIdByToken(String token){
-        // Add the token as a request parameter
-        restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/auth/user-id?token=" + token;
-
-        // Add the authorization header
-        HttpHeaders headers = new HttpHeaders();
-        //headers.set("Authorization", token);
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-        // Make the request
-        ResponseEntity<Long> userIdResponse = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                Long.class
-        );
-        long id = userIdResponse.getBody();
-        return id;
-    }
-
-    private String getNameById(long id, String token){
-        restTemplate = new RestTemplate();
-
-        String url = "http://localhost:8080/user/donor/donorName/" + id;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-        ResponseEntity<String> donorResponse = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                String.class
-        );
-
-        String name = donorResponse.getBody();
-        return name;
-    }
-
-    private String getPhoneNumberById(long id, String token){
-        restTemplate = new RestTemplate();
-
-        String url = "http://localhost:8080/user/donor/donorPhone/" + id;
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        ResponseEntity<String> donorResponse = restTemplate.exchange(
-                url,
-                HttpMethod.GET,
-                entity,
-                String.class
-        );
-
-        String phoneNumber = donorResponse.getBody();
-        return phoneNumber;
-    }
 
     @PostMapping("/submit/constraints")
     public ResponseEntity<?> submitConstraints( @RequestHeader("Authorization") String authorizationHeader,
@@ -128,8 +46,9 @@ public class CookController {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authentication token");
             }
 
-            long id = getIdByToken(authorizationHeader);
-            String address = getAddressById(id, authorizationHeader);
+            Donor temp = cs.getDonorFromJwt(authorizationHeader);
+            String address = temp.getAddress();
+            long id = temp.getId();
 
             // Set the userId in the constraints object
             constraints.setCookId(id);
@@ -150,7 +69,6 @@ public class CookController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
 
     @PostMapping("updateConstraint")
     public ResponseEntity<?> updateConstraint(@RequestParam long constraintId, @RequestParam Map<String, Integer> constraint){
@@ -188,7 +106,7 @@ public class CookController {
                                                   @RequestBody LatestConstraintsRequestDto request){
         try{
             LocalDate currDate = LocalDate.parse(request.date);
-            long id = getIdByToken(authorizationHeader);
+            long id = cs.getDonorFromJwt(authorizationHeader).getId();
 
             return ResponseEntity.ok(cs.getLatestCookConstraints(id, currDate));
         } catch (Exception e){
@@ -203,9 +121,9 @@ public class CookController {
         try{
             List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
 
-            long id = getIdByToken(authorizationHeader);
-            String name = getNameById(id, authorizationHeader);
-            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
+            Donor donor = cs.getDonorFromJwt(authorizationHeader);
+            String name = donor.getFirstName() + " " + donor.getLastName();
+            String phoneNumber = donor.getPhoneNumber();
 
 
             List<PendingConstraintDTO> dtos = constraints.stream()
@@ -224,9 +142,9 @@ public class CookController {
         try{
             List<CookConstraints> constraints = cs.getPendingConstraints(date);
 
-            long id = getIdByToken(authorizationHeader);
-            String name = getNameById(id, authorizationHeader);
-            String phoneNumber = getPhoneNumberById(id, authorizationHeader);
+            Donor donor = cs.getDonorFromJwt(authorizationHeader);
+            String name = donor.getFirstName() + " " + donor.getLastName();
+            String phoneNumber = donor.getPhoneNumber();
 
             List<PendingConstraintDTO> dtos = constraints.stream()
                     .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
@@ -245,8 +163,8 @@ public class CookController {
             List<CookConstraints> constraints = cs.getConstraintsByDate(date);
 
             List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(constraint -> mapper.toDTO(constraint, getNameById(constraint.getCookId(), authorizationHeader),
-                            getPhoneNumberById(constraint.getCookId(), authorizationHeader)))
+                    .map(constraint -> mapper.toDTO(constraint, cs.getDonorFromId(constraint.getCookId()).getFirstName() + " " + cs.getDonorFromId(constraint.getCookId()).getLastName(),
+                            cs.getDonorFromId(constraint.getCookId()).getPhoneNumber()))
                     .collect(Collectors.toList());
 
             return ResponseEntity.ok(dtos);

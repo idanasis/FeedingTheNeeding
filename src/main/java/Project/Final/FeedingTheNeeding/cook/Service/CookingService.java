@@ -1,5 +1,9 @@
 package Project.Final.FeedingTheNeeding.cook.Service;
 
+import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
+import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
+import Project.Final.FeedingTheNeeding.User.Model.Donor;
+import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
@@ -18,13 +22,39 @@ import java.util.stream.Collectors;
 public class CookingService {
 
     private final CookConstraintsRepository ccr;
+    private final DonorRepository donorRepository;
+    private final JwtTokenService jwtTokenService;
 
     private static final Logger logger = LogManager.getLogger(CookingService.class);
 
-    public CookingService(CookConstraintsRepository ccr){
+    public CookingService(CookConstraintsRepository ccr, DonorRepository donorRepository, JwtTokenService jwtTokenService){
         logger.info("Cooking service create");
         this.ccr = ccr;
+        this.donorRepository = donorRepository;
+        this.jwtTokenService = jwtTokenService;
         logger.info("Cooking service created");
+    }
+
+    public Donor getDonorFromJwt(String token){
+        logger.info("start-get user id from token: {}", token);
+        if(token == null)
+            throw new IllegalArgumentException("invalid token");
+        if(token.startsWith("Bearer "))
+            token = token.substring(7);
+
+        String phoneNumber = jwtTokenService.extractUsername(token);
+        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
+        if(optionalDonor.isPresent()){
+            Donor donor = optionalDonor.get();
+            return donor;
+        }
+        else
+            throw new UserDoesntExistsException("donor not found");
+    }
+
+    public Donor getDonorFromId(long id){
+        logger.info("Getting name of donor with id: {}", id);
+        return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 
     public CookConstraints submitConstraints(CookConstraints constraints) {

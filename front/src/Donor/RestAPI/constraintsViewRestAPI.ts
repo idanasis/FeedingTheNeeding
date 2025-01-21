@@ -54,8 +54,7 @@ export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
     }
 };
 
-//need to add history for spesific driver also
-export const getDriverConstraints = async (driverId: number): Promise<DriverConstraints[]> => {
+export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
     try {
             const response = await axios.get(`${API_BASE_URL}/driving/constraints/driver/futureNotApproved${driverId}`);
             console.log('Retrieved pending requests:', response.data);
