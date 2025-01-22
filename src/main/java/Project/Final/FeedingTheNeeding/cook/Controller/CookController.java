@@ -127,7 +127,7 @@ public class CookController {
 
 
             List<PendingConstraintDTO> dtos = constraints.stream()
-                    .map(constraint -> mapper.toDTO(constraint, name, phoneNumber))
+                    .map(constraint -> mapper.toDTO(constraint, cs.getDonorFromId( constraint.getCookId()).getFirstName() +" " +cs.getDonorFromId( constraint.getCookId()).getLastName(), cs.getDonorFromId( constraint.getCookId()).getPhoneNumber()))
                     .collect(Collectors.toList());
             return ResponseEntity.ok(dtos);
         } catch(Exception e){
