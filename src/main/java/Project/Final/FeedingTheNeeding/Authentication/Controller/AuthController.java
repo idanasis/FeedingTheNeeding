@@ -80,6 +80,31 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/request-reset-password")
+    public ResponseEntity<?> requestResetPassword(@RequestParam String phoneNumber) {
+        try {
+            authService.initiatePasswordReset(phoneNumber);
+            return ResponseEntity.ok("Verification code sent to your phone number.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/confirm-reset-password")
+    public ResponseEntity<?> confirmResetPassword(
+            @RequestParam String phoneNumber,
+            @RequestParam String verificationCode,
+            @RequestParam String newPassword) {
+        try {
+            authService.confirmPasswordReset(phoneNumber, verificationCode, newPassword);
+            return ResponseEntity.ok("Password has been reset successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestParam String phoneNumber, @RequestParam String newPassword) {
         try {

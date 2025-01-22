@@ -161,6 +161,41 @@ public class AuthService {
         logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());
     }
 
+    public void initiatePasswordReset(String phoneNumber) {
+        logger.info("start-initiatePasswordReset,  phone number: {}", phoneNumber);
+        UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
+        if(credentials == null)
+            throw new UserDoesntExistsException("User not found");
+
+        String code = generateVerificationCode();
+        credentials.getDonor().setVerificationCode(code);
+        credentials.getDonor().setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+        donorRepository.save(credentials.getDonor());
+        // SEND THE CODE TO THE DONOR PHONE
+
+        logger.info("end-initiatePasswordReset, phone number: {}", phoneNumber);
+    }
+
+    public void confirmPasswordReset(String phoneNumber, String verificationCode, String newPassword) {
+        logger.info("start-confirmPasswordReset,  phone number: {}", phoneNumber);
+        UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
+        if(credentials == null)
+            throw new UserDoesntExistsException("User not found");
+
+        String code = credentials.getDonor().getVerificationCode();
+        if(code == null || credentials.getDonor().getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
+            throw new RuntimeException("Invalid verification code");
+
+        credentials.setPasswordHash(passwordEncoder.encode(newPassword));
+        credentials.setLastPasswordChangeAt(LocalDateTime.now());
+        userCredentialsRepository.save(credentials);
+
+        credentials.getDonor().setVerificationCode(null);
+        credentials.getDonor().setVerificationCodeExpiresAt(null);
+        donorRepository.save(credentials.getDonor());
+        logger.info("end-confirmPasswordReset, phone number: {}", phoneNumber);
+    }
+
     public void resetPassword(String phoneNumber, String newPassword) {
         logger.info("start-reset password, for phoneNumber: {}", phoneNumber);
         UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
