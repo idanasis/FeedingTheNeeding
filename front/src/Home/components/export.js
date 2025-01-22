@@ -6,6 +6,12 @@ import cooking from "../images/chef.svg";
 import give from "../images/give.svg";
 import share from "../images/share.svg";
 import avatar from "../images/avatar.webp";
+import rita from "../images/rita.jpg";
+import cookingRakaz from "../images/cookingRakaz.jpg";
+import driving from "../images/driving.jpg";
+import shibutzim from "../images/shibutzim.jpg";
+import social from "../images/social.jpg";
+
 import hanuka from "../images/hanuka.png";
 import purim from "../images/purim.png";
 import build from "../images/repair.svg";
@@ -111,28 +117,45 @@ export const planning = [
   
   
 ];
-
+export const oneMan=[
+    {
+    image: rita,
+    name: "ריטה פלוט שטרית",
+    about:`אני מאמינה שההתנדבות היא כלי משמעותי בחיזוק הקשר בין האזרח לקהילה
+ובהעצמת תחושת המסוגלות של המתנדב. כל התנדבות באשר היא מחוללת שינוי,
+וכשישנה עשייה, נתינה וחסד הלב מתרחב ובכך אנחנו מייצרים מעגלי השפעה
+לטובה אחד על השנייה.`,
+    post: "מנהלת הארגון",
+  },
+]
 
 export const people = [
   {
-    image: avatar,
-    name: "סמי חתוקה",
+    image: social,
+    name: "ליזה רוסומחו",
     about:
       "איזה דג מעלף הביאו לי אמלה",
-    post: "חוסה מקבל סיוע",
+    post: "רכזת קהילה",
+  },
+   {
+    image: shibutzim,
+    name: "יהל כהן",
+    about:
+      "איזה דג מעלף הביאו לי אמלה",
+    post: "רכזת שיבוצים",
   },
   {
-    image: avatar,
-    name: "שלמה בוסקילה",
+    image: cookingRakaz,
+    name: "אופק זיסו",
     about:
       "לראות את החיוך של האנשים עושה אותי מאושר",
-    post: "רכז",
+    post: "רכזת מבשלות",
   },
   {
-    image: avatar,
-    name: "איציק פדידה",
+    image: driving,
+    name: "אורין סעדון",
     about:
       "סיפוק שלא נמצא בשום מקום אחר",
-    post: "מתנדב",
+    post: "רכזת נהגים",
   },
 ];
