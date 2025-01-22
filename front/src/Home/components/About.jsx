@@ -1,23 +1,41 @@
 import React from 'react'
 import {motion} from 'framer-motion';
 import { slideUpVariants ,zoomInVariants} from './animation';
+import {oneMan} from './export';
 
 const About = () => {
   return (
     <div id='אודות'className='lg:w-[80%] w-[90%] m-auto py-[60px] flex lg:flex-row flex-col items-start gap-[50px] justify-between'>
       <motion.div
-       initial="hidden" whileInView="visible" variants={slideUpVariants} className=' lg:w-[60%] w-full flex flex-col justify-center items-start gap-6'>
+       initial="hidden" whileInView="visible" variants={slideUpVariants} className=' lg:w-[60%] w-full flex flex-col justify-center items-start gap-1'>
         <motion.h1 variants={slideUpVariants} className='text-red-500 text-2xl' >
           חזון
         </motion.h1>
         <motion.h1 variants={slideUpVariants} className='text-white uppercase text-[40px] font-bold' >
-          "תן לו משלו, שאתה ושלך-שלו" (פרק שלישי פרקי אבות)
+          "תן לו משלו, שאתה ושלך-שלו" (פרקי אבות, פרק ג')
         </motion.h1>
         <div className='w-[120px] h-[6px] bg-red-500'></div>
-        <p className='text-3xl italic text-gray-50 mt-[60px]'>אני מאמינה שההתנדבות היא כלי משמעותי בחיזוק הקשר בין האזרח לקהילה
-ובהעצמת תחושת המסוגלות של המתנדב. כל התנדבות באשר היא מחוללת שינוי,
-וכשישנה עשייה, נתינה וחסד הלב מתרחב ובכך אנחנו מייצרים מעגלי השפעה
-לטובה אחד על השנייה.</p>
+          {oneMan.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex flex-col justify-center items-center"
+                  >
+                    <div className="  p-3 pb-[70px] pt-[30px]">
+                      <p className="text-lg text-[22px] text-center text-white">{item.about}</p>
+                    </div>
+                    <div className="flex flex-col justify-center items-center gap-[5px]">
+                    <img
+                      src={item.image}
+                      alt="icon"
+                      className="mt-[-50px] rounded-full"
+                      width="100"
+                      height="100"
+                    />
+                     <h1 className="text-white text-27px font-semibold uppercase">{item.name}</h1>
+                     <h1 className="text-red-500 text-[22px]"> {item.post}</h1>
+                      </div> 
+                    </div>
+                ))}
       </motion.div>
       <motion.div
        variants={slideUpVariants} className='lg:w-[40%] w-full flex flex-col justify-center items-start gap-6'
