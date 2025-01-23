@@ -23,11 +23,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
@@ -45,21 +42,23 @@ public class UserControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private static final String USER_ENDPOINT = "/user";
-    private static final String ALL_USERS_ENDPOINT = "/Allusers";
-    private static final String DONORS_ENDPOINT = "/donors";
-    private static final String NEEDY_ENDPOINT = "/needy";
-    private static final String NEEDY_BY_PHONE_ENDPOINT = "/needy/{phoneNumber}";
-    private static final String DONOR_BY_PHONE_ENDPOINT = "/donor/{phoneNumber}";
-    private static final String DONOR_BY_ID_ENDPOINT = "/donor/donorId/{donorId}";
-    private static final String DONOR_PENDING_ENDPOINT = "/donor/pending";
-    private static final String DONOR_APPROVED_ENDPOINT = "/donor/approved";
+    // Endpoint Constants
+    private static final String BASE_ENDPOINT = "/user";
+    private static final String GET_ALL_USERS_ENDPOINT = "/Allusers";
+    private static final String GET_ALL_DONORS_ENDPOINT = "/donors";
+    private static final String GET_ALL_NEEDY_ENDPOINT = "/needy";
+    private static final String GET_NEEDY_BY_PHONE_ENDPOINT = "/needy/{phoneNumber}";
+    private static final String GET_DONOR_BY_PHONE_ENDPOINT = "/donor/{phoneNumber}";
+    private static final String GET_DONOR_BY_ID_ENDPOINT = "/donor/donorId/{donorId}";
+    private static final String GET_DONOR_PENDING_ENDPOINT = "/donor/pending";
+    private static final String GET_DONOR_APPROVED_ENDPOINT = "/donor/approved";
     private static final String UPDATE_DONOR_ENDPOINT = "/donor";
     private static final String DELETE_DONOR_ENDPOINT = "/donor/{id}";
-    private static final String DONOR_ADDRESS_ENDPOINT = "/donor/donorLoc/{donorId}";
-    private static final String DONOR_NAME_ENDPOINT = "/donor/donorName/{donorId}";
-    private static final String DONOR_PHONE_ENDPOINT = "/donor/donorPhone/{donorId}";
+    private static final String GET_DONOR_ADDRESS_ENDPOINT = "/donor/donorLoc/{donorId}";
+    private static final String GET_DONOR_NAME_ENDPOINT = "/donor/donorName/{donorId}";
+    private static final String GET_DONOR_PHONE_ENDPOINT = "/donor/donorPhone/{donorId}";
 
+    // Test Data Constants
     private static final String DONOR_FIRST_NAME_1 = "Alice";
     private static final String DONOR_FIRST_NAME_2 = "Bob";
     private static final String DONOR_PHONE_1 = "0500000000";
@@ -71,15 +70,17 @@ public class UserControllerTest {
     private static final String NEEDY_PHONE_2 = "0510000001";
 
     @Test
+    @DisplayName("GET /user/Allusers - Retrieve All Users")
     void testGetAllUsers() throws Exception {
-        BaseUser user1 = new Donor();
-        user1.setFirstName(DONOR_FIRST_NAME_1);
-        BaseUser user2 = new Needy();
-        user2.setFirstName(NEEDY_FIRST_NAME_1);
+        BaseUser donorUser = new Donor();
+        donorUser.setFirstName(DONOR_FIRST_NAME_1);
 
-        when(userService.getAll()).thenReturn(Arrays.asList(user1, user2));
+        BaseUser needyUser = new Needy();
+        needyUser.setFirstName(NEEDY_FIRST_NAME_1);
 
-        mockMvc.perform(get(USER_ENDPOINT + ALL_USERS_ENDPOINT)
+        when(userService.getAll()).thenReturn(Arrays.asList(donorUser, needyUser));
+
+        mockMvc.perform(get(BASE_ENDPOINT + GET_ALL_USERS_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].firstName").value(DONOR_FIRST_NAME_1))
@@ -87,15 +88,17 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("GET /user/donors - Retrieve All Donors")
     void testGetAllDonors() throws Exception {
         Donor donor1 = new Donor();
         donor1.setPhoneNumber(DONOR_PHONE_1);
+
         Donor donor2 = new Donor();
         donor2.setPhoneNumber(DONOR_PHONE_2);
 
         when(userService.getAllDonors()).thenReturn(Arrays.asList(donor1, donor2));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONORS_ENDPOINT)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_ALL_DONORS_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].phoneNumber").value(DONOR_PHONE_1))
@@ -103,15 +106,17 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("GET /user/needy - Retrieve All Needy Users")
     void testGetAllNeedyUsers() throws Exception {
         Needy needy1 = new Needy();
         needy1.setPhoneNumber(NEEDY_PHONE_1);
+
         Needy needy2 = new Needy();
         needy2.setPhoneNumber(NEEDY_PHONE_2);
 
         when(userService.getAllNeedyUsers()).thenReturn(Arrays.asList(needy1, needy2));
 
-        mockMvc.perform(get(USER_ENDPOINT + NEEDY_ENDPOINT)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_ALL_NEEDY_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].phoneNumber").value(NEEDY_PHONE_1))
@@ -119,54 +124,59 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("GET /user/needy/{phoneNumber} - Retrieve Needy by Phone Number (Success)")
     void testGetNeedyByPhoneNumber_Success() throws Exception {
         Needy needy = new Needy();
         needy.setPhoneNumber(NEEDY_PHONE_1);
 
         when(userService.getNeedyByPhoneNumber(NEEDY_PHONE_1)).thenReturn(needy);
 
-        mockMvc.perform(get(USER_ENDPOINT + NEEDY_BY_PHONE_ENDPOINT, NEEDY_PHONE_1)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_NEEDY_BY_PHONE_ENDPOINT, NEEDY_PHONE_1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.phoneNumber").value(NEEDY_PHONE_1));
     }
 
     @Test
+    @DisplayName("GET /user/needy/{phoneNumber} - Retrieve Needy by Phone Number (Not Found)")
     void testGetNeedyByPhoneNumber_NotFound() throws Exception {
         when(userService.getNeedyByPhoneNumber(NEEDY_PHONE_2))
                 .thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + NEEDY_BY_PHONE_ENDPOINT, NEEDY_PHONE_2)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_NEEDY_BY_PHONE_ENDPOINT, NEEDY_PHONE_2)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/{phoneNumber} - Retrieve Donor by Phone Number (Success)")
     void testGetDonorByPhoneNumber_Success() throws Exception {
         Donor donor = new Donor();
         donor.setPhoneNumber(DONOR_PHONE_1);
 
         when(userService.getDonorByPhoneNumber(DONOR_PHONE_1)).thenReturn(donor);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_BY_PHONE_ENDPOINT, DONOR_PHONE_1)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_BY_PHONE_ENDPOINT, DONOR_PHONE_1)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.phoneNumber").value(DONOR_PHONE_1));
     }
 
     @Test
+    @DisplayName("GET /user/donor/{phoneNumber} - Retrieve Donor by Phone Number (Not Found)")
     void testGetDonorByPhoneNumber_NotFound() throws Exception {
         when(userService.getDonorByPhoneNumber(DONOR_PHONE_2))
                 .thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_BY_PHONE_ENDPOINT, DONOR_PHONE_2)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_BY_PHONE_ENDPOINT, DONOR_PHONE_2)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorId/{donorId} - Retrieve Donor by ID (Success)")
     void testGetDonorById_Success() throws Exception {
         long donorId = 1L;
         Donor donor = new Donor();
@@ -174,71 +184,78 @@ public class UserControllerTest {
 
         when(userService.getDonorById(donorId)).thenReturn(donor);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_BY_ID_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_BY_ID_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(donorId));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorId/{donorId} - Retrieve Donor by ID (Not Found)")
     void testGetDonorById_NotFound() throws Exception {
         long donorId = 2L;
         when(userService.getDonorById(donorId)).thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_BY_ID_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_BY_ID_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/pending - Retrieve Pending Donors")
     void testGetDonorPending() throws Exception {
         Donor donor = new Donor();
         List<Donor> pendingDonors = Collections.singletonList(donor);
 
         when(userService.getDonorsPending()).thenReturn(pendingDonors);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_PENDING_ENDPOINT)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_PENDING_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").exists());
     }
 
     @Test
+    @DisplayName("GET /user/donor/approved - Retrieve Approved Donors")
     void testGetDonorApproved() throws Exception {
         Donor donor = new Donor();
         List<Donor> approvedDonors = Collections.singletonList(donor);
 
         when(userService.getDonorsApproved()).thenReturn(approvedDonors);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_APPROVED_ENDPOINT)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_APPROVED_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0]").exists());
     }
 
     @Test
-    void testUpdateDonor() throws Exception {
+    @DisplayName("PUT /user/donor - Update Donor (Success)")
+    void testUpdateDonor_Success() throws Exception {
         Donor donor = new Donor();
         donor.setId(1L);
         donor.setFirstName("UpdatedName");
 
         doNothing().when(userService).updateDonor(any(Donor.class));
 
-        mockMvc.perform(put(USER_ENDPOINT + UPDATE_DONOR_ENDPOINT)
+        mockMvc.perform(put(BASE_ENDPOINT + UPDATE_DONOR_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(donor)))
                 .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).updateDonor(any(Donor.class));
     }
 
     @Test
+    @DisplayName("PUT /user/donor - Update Donor (Failure)")
     void testUpdateDonor_Failure() throws Exception {
         Donor donor = new Donor();
         donor.setId(2L);
 
         doThrow(new UserDoesntExistsException("User not found")).when(userService).updateDonor(any(Donor.class));
 
-        mockMvc.perform(put(USER_ENDPOINT + UPDATE_DONOR_ENDPOINT)
+        mockMvc.perform(put(BASE_ENDPOINT + UPDATE_DONOR_ENDPOINT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(donor)))
                 .andExpect(status().isBadRequest())
@@ -246,27 +263,34 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("DELETE /user/donor/{id} - Delete Donor (Success)")
     void testDeleteDonor_Success() throws Exception {
         long donorId = 1L;
         doNothing().when(userService).deleteDonor(donorId);
 
-        mockMvc.perform(delete(USER_ENDPOINT + DELETE_DONOR_ENDPOINT, donorId)
+        mockMvc.perform(delete(BASE_ENDPOINT + DELETE_DONOR_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
+
+        verify(userService, times(1)).deleteDonor(donorId);
     }
 
     @Test
+    @DisplayName("DELETE /user/donor/{id} - Delete Donor (Failure)")
     void testDeleteDonor_Failure() throws Exception {
         long donorId = 2L;
         doThrow(new UserDoesntExistsException("User not found")).when(userService).deleteDonor(donorId);
 
-        mockMvc.perform(delete(USER_ENDPOINT + DELETE_DONOR_ENDPOINT, donorId)
+        mockMvc.perform(delete(BASE_ENDPOINT + DELETE_DONOR_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
+
+        verify(userService, times(1)).deleteDonor(donorId);
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorLoc/{donorId} - Retrieve Donor Address (Success)")
     void testGetDonorAddressById_Success() throws Exception {
         long donorId = 1L;
         Donor donor = new Donor();
@@ -274,24 +298,26 @@ public class UserControllerTest {
 
         when(userService.getDonorById(donorId)).thenReturn(donor);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_ADDRESS_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_ADDRESS_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("123 Main St"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorLoc/{donorId} - Retrieve Donor Address (Not Found)")
     void testGetDonorAddressById_NotFound() throws Exception {
         long donorId = 2L;
         when(userService.getDonorById(donorId)).thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_ADDRESS_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_ADDRESS_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorName/{donorId} - Retrieve Donor Name (Success)")
     void testGetDonorNameById_Success() throws Exception {
         long donorId = 1L;
         Donor donor = new Donor();
@@ -300,24 +326,26 @@ public class UserControllerTest {
 
         when(userService.getDonorById(donorId)).thenReturn(donor);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_NAME_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_NAME_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string("John Doe"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorName/{donorId} - Retrieve Donor Name (Not Found)")
     void testGetDonorNameById_NotFound() throws Exception {
         long donorId = 2L;
         when(userService.getDonorById(donorId)).thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_NAME_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_NAME_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorPhone/{donorId} - Retrieve Donor Phone Number (Success)")
     void testGetDonorPhoneNumberById_Success() throws Exception {
         long donorId = 1L;
         Donor donor = new Donor();
@@ -325,18 +353,19 @@ public class UserControllerTest {
 
         when(userService.getDonorById(donorId)).thenReturn(donor);
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_PHONE_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_PHONE_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(DONOR_PHONE_1));
     }
 
     @Test
+    @DisplayName("GET /user/donor/donorPhone/{donorId} - Retrieve Donor Phone Number (Not Found)")
     void testGetDonorPhoneNumberById_NotFound() throws Exception {
         long donorId = 2L;
         when(userService.getDonorById(donorId)).thenThrow(new UserDoesntExistsException("User not found"));
 
-        mockMvc.perform(get(USER_ENDPOINT + DONOR_PHONE_ENDPOINT, donorId)
+        mockMvc.perform(get(BASE_ENDPOINT + GET_DONOR_PHONE_ENDPOINT, donorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("User not found"));
