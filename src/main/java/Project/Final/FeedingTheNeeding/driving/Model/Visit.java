@@ -32,14 +32,17 @@ public class Visit {
     private String firstName;
     private String lastName;
     private String phoneNumber;
+    private int startHour;
     private int maxHour;
     @Enumerated(EnumType.STRING)
     private VisitStatus status;
     private int priority;
     @Column(length = 1000)
     private String note;
+    @Column(length = 1000)
+    private String additionalNotes;
     
-    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route,int priority) {
+    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route,int priority, int startHour, String additionalNotes) {
         this.address = address;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -49,6 +52,8 @@ public class Visit {
         this.note = note;
         this.route = route;
         this.priority = priority;
+        this.startHour = startHour;
+        this.additionalNotes = additionalNotes;
     }
     public long getVisitId() {
         return visitId;
