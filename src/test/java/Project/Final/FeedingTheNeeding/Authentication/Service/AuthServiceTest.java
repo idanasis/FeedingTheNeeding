@@ -382,7 +382,7 @@ public class AuthServiceTest {
         donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
         donor.setVerificationCode(verifyDonorDTO.verificationCode());
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setStatus(RegistrationStatus.NOT_VERIFIED);
+        donor.setStatus(RegistrationStatus.PENDING);
 
         when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
                 .thenReturn(Optional.of(donor));
@@ -418,7 +418,7 @@ public class AuthServiceTest {
         donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
         donor.setVerificationCode("wrongCode");
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setStatus(RegistrationStatus.NOT_VERIFIED);
+        donor.setStatus(RegistrationStatus.PENDING);
 
         when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
                 .thenReturn(Optional.of(donor));
@@ -438,7 +438,7 @@ public class AuthServiceTest {
         donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
         donor.setVerificationCode(verifyDonorDTO.verificationCode());
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().minusMinutes(1));
-        donor.setStatus(RegistrationStatus.NOT_VERIFIED);
+        donor.setStatus(RegistrationStatus.PENDING);
 
         when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
                 .thenReturn(Optional.of(donor));
