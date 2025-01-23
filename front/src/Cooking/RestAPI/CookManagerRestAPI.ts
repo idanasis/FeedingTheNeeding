@@ -1,6 +1,8 @@
 import axios from 'axios';
+import { Donor } from "../../Driving/models/Donor";
 
 const API_BASE_URL = 'http://localhost:8080';
+const userUrl = "http://localhost:8080/user";
 
 export interface PendingCookDTO {
     id: number;
@@ -164,3 +166,30 @@ export const undoAction = async (constraintId: number): Promise<Void> => {
         throw new Error('Failed to undo action. Please try again later.');
     }
 }
+
+export const getDonorApproved = async (): Promise<Donor[]> => {
+    console.log("Getting approved donors");
+    const response=await axios.get(`${userUrl}/donor/approved`,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    console.log("Got: ", response.data);
+    return await response.data as Donor[];
+}
+
+export const addNewConstraint = async (donorId: number, date: string, startTime: string, endTime: string, constraints: Record<string, number>): Promise<void> => {
+    try {
+        await axios.post(`${API_BASE_URL}/cooking/add/constraint`, {
+            donorId,
+            date,
+            startTime,
+            endTime,
+            constraints
+        }, {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+        console.log('New constraint added successfully');
+    } catch (error) {
+        console.error('Error adding new constraint:', error);
+        throw new Error('Failed to add new constraint. Please try again later.');
+    }
+};

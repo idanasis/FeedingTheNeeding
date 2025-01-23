@@ -6,6 +6,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
+import Project.Final.FeedingTheNeeding.cook.DTO.UserDTO;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
@@ -60,7 +61,24 @@ public class CookingService {
         constraints.setCookId(id);
         constraints.setLocation(address);
 
+        return submitConstraints(constraints);
+    }
+
+    public CookConstraints submitConstraints(CookConstraints constraints){
+        logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
+    }
+
+    public CookConstraints submitConstraints(UserDTO user){
+        logger.info("Adding new constraint created by manager");
+
+        long donorId = user.getDonorId();
+        String address = getDonorFromId(donorId).getAddress();
+
+        CookConstraints cc = new CookConstraints(user.getDonorId(), donorId,user.getStartTime(),user.getEndTime(),
+                user.getConstraints(), address ,user.getDate(), Status.Accepted);
+
+        return submitConstraints(cc);
     }
 
     public void updateConstraint(long constraintId, Map<String, Integer> constraint){

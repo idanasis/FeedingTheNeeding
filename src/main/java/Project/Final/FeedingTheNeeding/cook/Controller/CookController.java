@@ -4,6 +4,7 @@ import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.cook.DTO.LatestConstraintsRequestDto;
 import Project.Final.FeedingTheNeeding.cook.DTO.PendingConstraintDTO;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
+import Project.Final.FeedingTheNeeding.cook.DTO.UserDTO;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Service.CookingService;
 import Project.Final.FeedingTheNeeding.driving.Model.DriverConstraintId;
@@ -39,18 +40,10 @@ public class CookController {
     @PostMapping("/submit/constraints")
     public ResponseEntity<?> submitConstraints(@RequestBody CookConstraints constraints,
                                                @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
-        if (constraints == null) {
-            return ResponseEntity.badRequest().body("Constraints cannot be null");
-        }
-
         try{
-            System.out.println("Received constraints: " + constraints);
-
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authentication token");
             }
-            System.out.println("Received constraints: " + constraints);
-
             return ResponseEntity.ok(cs.submitConstraints(constraints, authorizationHeader));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -193,6 +186,16 @@ public class CookController {
         try{
             return ResponseEntity.ok(cs.changeStatusForConstraint(constraintId, Status.Pending));
         } catch(Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','STAFF')")
+    @PostMapping("/add/constraint")
+    public ResponseEntity<?> addConstraint(@RequestBody UserDTO user){
+        try{
+            return ResponseEntity.ok(cs.submitConstraints(user));
+        }catch(Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
