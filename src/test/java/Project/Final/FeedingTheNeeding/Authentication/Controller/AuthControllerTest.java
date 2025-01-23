@@ -12,6 +12,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.InvalidCredentialException;
+import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class AuthControllerTest {
     final int NEEDY_FAMILY_SIZE = 5;
     final String VERIFICATION_CODE = "123456";
     final String EMAIL = "test@test.com";
-
+    final long ID = 1L;
 
 
     @Test
@@ -86,7 +87,8 @@ public class AuthControllerTest {
         mockMvc.perform(post("/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid credentials"));
     }
 
     @Test
@@ -182,7 +184,7 @@ public class AuthControllerTest {
 
     @Test
     void testVerifyDonor_Failure() throws Exception {
-        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(EMAIL, "invalidCode");
+        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(PHONE_NUMBER, "invalidCode");
 
         doThrow(new RuntimeException("Invalid verification code"))
                 .when(authService).verifyDonor(verifyDonorDTO);
@@ -192,5 +194,148 @@ public class AuthControllerTest {
                         .content(objectMapper.writeValueAsString(verifyDonorDTO)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Invalid verification code"));
+    }
+
+    // New Tests for Logout Endpoint
+
+    @Test
+    void testLogout_Success_WithToken() throws Exception {
+        String authorizationHeader = "Bearer " + TOKEN;
+
+        doNothing().when(authService).logout(TOKEN);
+
+        mockMvc.perform(post("/auth/logout")
+                        .header("Authorization", authorizationHeader))
+                .andExpect(status().isOk())
+                .andExpect(content().string("logged out successfully"));
+    }
+
+    @Test
+    void testLogout_Success_NoToken() throws Exception {
+        mockMvc.perform(post("/auth/logout"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("No token provided. nothing to invalidate"));
+    }
+
+    @Test
+    void testLogout_Failure() throws Exception {
+        String authorizationHeader = "Bearer " + TOKEN;
+
+        doThrow(new RuntimeException("Invalid token")).when(authService).logout(TOKEN);
+
+        mockMvc.perform(post("/auth/logout")
+                        .header("Authorization", authorizationHeader))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid token"));
+    }
+
+    // New Tests for Request Reset Password Endpoint
+
+    @Test
+    void testRequestResetPassword_Success() throws Exception {
+        doNothing().when(authService).initiatePasswordReset(PHONE_NUMBER);
+
+        mockMvc.perform(post("/auth/request-reset-password")
+                        .param("phoneNumber", PHONE_NUMBER))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Verification code sent to your phone number."));
+    }
+
+    @Test
+    void testRequestResetPassword_Failure() throws Exception {
+        doThrow(new RuntimeException("Phone number not found")).when(authService).initiatePasswordReset(PHONE_NUMBER);
+
+        mockMvc.perform(post("/auth/request-reset-password")
+                        .param("phoneNumber", PHONE_NUMBER))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Phone number not found"));
+    }
+
+    // Updated Tests for Confirm Reset Password Endpoint
+
+    @Test
+    void testConfirmResetPassword_Success() throws Exception {
+        doNothing().when(authService).confirmPasswordReset(PHONE_NUMBER, VERIFICATION_CODE, PASSWORD);
+
+        mockMvc.perform(post("/auth/confirm-reset-password")
+                        .param("phoneNumber", PHONE_NUMBER)
+                        .param("verificationCode", VERIFICATION_CODE)
+                        .param("newPassword", PASSWORD))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password has been reset successfully."));
+    }
+
+    @Test
+    void testConfirmResetPassword_Unauthorized_Failure() throws Exception {
+        doThrow(new RuntimeException("Invalid verification code"))
+                .when(authService).confirmPasswordReset(PHONE_NUMBER, "wrongCode", PASSWORD);
+
+        mockMvc.perform(post("/auth/confirm-reset-password")
+                        .param("phoneNumber", PHONE_NUMBER)
+                        .param("verificationCode", "wrongCode")
+                        .param("newPassword", PASSWORD))
+                .andExpect(status().isUnauthorized())
+                .andExpect(content().string("Invalid verification code"));
+    }
+
+    @Test
+    void testResendVerificationCode_Success() throws Exception {
+        doNothing().when(authService).resendVerificationEmail(EMAIL);
+
+        mockMvc.perform(post("/auth/resend-email")
+                        .param("email", EMAIL))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Email code resend successfully"));
+    }
+
+    @Test
+    void testResendVerificationCode_Failure() throws Exception {
+        doThrow(new RuntimeException("Email not found")).when(authService).resendVerificationEmail(EMAIL);
+
+        mockMvc.perform(post("/auth/resend-email")
+                        .param("email", EMAIL))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Email not found"));
+    }
+
+    @Test
+    void testGetUserRoleFromJWT_Success() throws Exception {
+        UserRole role = UserRole.ADMIN;
+        when(authService.getUserRoleFromJWT(TOKEN)).thenReturn(role);
+
+        mockMvc.perform(get("/auth/user-role")
+                        .param("token", TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value("ADMIN"));
+    }
+
+    @Test
+    void testGetUserRoleFromJWT_Failure() throws Exception {
+        when(authService.getUserRoleFromJWT(TOKEN)).thenThrow(new RuntimeException("Invalid token"));
+
+        mockMvc.perform(get("/auth/user-role")
+                        .param("token", TOKEN))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid token"));
+    }
+
+    @Test
+    void testGetUserIDFromJWT_Success() throws Exception {
+        when(authService.getUserIDFromJWT(TOKEN)).thenReturn(ID);
+
+        mockMvc.perform(get("/auth/user-id")
+                        .param("token", TOKEN))
+                .andExpect(status().isOk())
+                .andExpect(content().string(String.valueOf(ID)));
+    }
+
+    @Test
+    void testGetUserIDFromJWT_Failure() throws Exception {
+        when(authService.getUserIDFromJWT(TOKEN)).thenThrow(new RuntimeException("Invalid token"));
+
+        mockMvc.perform(get("/auth/user-id")
+                        .param("token", TOKEN))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid token"));
     }
 }

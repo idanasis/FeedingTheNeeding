@@ -36,19 +36,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
-    private final SmsSender smsSender;
     private final JwtTokenService jwtTokenService;
 
     private static final Logger logger = LogManager.getLogger(AuthService.class);
 
-    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, @Qualifier("twilio") TwilioSmsSender smsSender, JwtTokenService jwtTokenService) {
+    public AuthService(DonorRepository donorRepository, NeedyRepository needyRepository, UserCredentialsRepository userCredentialsRepository, PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmailService emailService, JwtTokenService jwtTokenService) {
         this.donorRepository = donorRepository;
         this.needyRepository = needyRepository;
         this.userCredentialsRepository = userCredentialsRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.emailService = emailService;
-        this.smsSender = smsSender;
         this.jwtTokenService = jwtTokenService;
     }
 
@@ -128,7 +126,6 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.NOT_VERIFIED);
         donor.setTimeOfDonation(0);
-        //sendSms(donor);
 
         Donor savedDonor = donorRepository.save(donor);
 
@@ -235,17 +232,6 @@ public class AuthService {
         }
     }
 
-    public void sendSms(Donor donor) {
-        logger.info("start-send sms, for phoneNumber: {}", donor.getPhoneNumber());
-
-        String verificationCode = donor.getVerificationCode();
-        String message = verificationCode + "  :קוד האימות שלך הוא";
-        String phoneNumber = "+972" + donor.getPhoneNumber().substring(1);
-        SmsRequest smsRequest = new SmsRequest(phoneNumber, message);
-        smsSender.sendSms(smsRequest);
-        logger.info("end-send sms, for phoneNumber: {}", smsRequest.getPhoneNumber());
-    }
-
     public String generateVerificationCode() {
         logger.info("start-generate verification code");
         Random random = new Random();
@@ -290,26 +276,6 @@ public class AuthService {
             sendVerificationEmail(donor);
             donorRepository.save(donor);
             logger.info("end-resend verification code, email: {}", email);
-        }
-        else
-            throw new UserDoesntExistsException("donor not found");
-    }
-
-    public void resendVerificationSMSCode(String phoneNumber) {
-        logger.info("start-resend verification code, phoneNumber: {}", phoneNumber);
-        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
-        if(optionalDonor.isPresent()){
-            Donor donor = optionalDonor.get();
-            if(donor.isVerified())
-                throw new RuntimeException("account is already verified");
-
-            donor.setVerificationCode(generateVerificationCode());
-            donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
-
-            //sendSms(donor);
-
-            donorRepository.save(donor);
-            logger.info("end-resend verification code, phoneNumber: {}", phoneNumber);
         }
         else
             throw new UserDoesntExistsException("donor not found");
