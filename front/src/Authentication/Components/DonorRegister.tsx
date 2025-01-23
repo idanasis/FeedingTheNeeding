@@ -116,6 +116,19 @@ const DonorRegister: React.FC = () => {
                     </div>
                     <h2>הצטרפות לעמותה</h2>
 
+                    <div className="form-group">
+                        <label htmlFor="email">
+                            אימייל <span className="required-asterisk">*</span>
+                        </label>
+                        <input
+                            id="email"
+                            type="text"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
                     <div className="form-row">
                         <div className="form-group">
                             <label htmlFor="firstName">

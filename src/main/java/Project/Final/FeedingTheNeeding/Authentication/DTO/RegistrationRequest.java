@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class RegistrationRequest {
     @Email(message = "Invalid email format")
+    @NotEmpty
     private String email; // Optional email
 
     @NotEmpty(message = "Password is required")
