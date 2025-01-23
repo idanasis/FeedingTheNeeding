@@ -1,10 +1,12 @@
 package Project.Final.FeedingTheNeeding.cook.Service;
 
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
+import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
+import Project.Final.FeedingTheNeeding.cook.DTO.UserDTO;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
@@ -23,33 +25,23 @@ public class CookingService {
 
     private final CookConstraintsRepository ccr;
     private final DonorRepository donorRepository;
-    private final JwtTokenService jwtTokenService;
+    private final AuthService authService;
 
     private static final Logger logger = LogManager.getLogger(CookingService.class);
 
-    public CookingService(CookConstraintsRepository ccr, DonorRepository donorRepository, JwtTokenService jwtTokenService){
+    public CookingService(CookConstraintsRepository ccr,AuthService authService, DonorRepository donorRepository){
         logger.info("Cooking service create");
         this.ccr = ccr;
+        this.authService = authService;
         this.donorRepository = donorRepository;
-        this.jwtTokenService = jwtTokenService;
         logger.info("Cooking service created");
     }
 
-    public Donor getDonorFromJwt(String token){
+    public long getDonorIdFromJwt(String token){
         logger.info("start-get user id from token: {}", token);
-        if(token == null)
-            throw new IllegalArgumentException("invalid token");
-        if(token.startsWith("Bearer "))
-            token = token.substring(7);
-
-        String phoneNumber = jwtTokenService.extractUsername(token);
-        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
-        if(optionalDonor.isPresent()){
-            Donor donor = optionalDonor.get();
-            return donor;
-        }
-        else
-            throw new UserDoesntExistsException("donor not found");
+        long id = authService.getUserIDFromJWT(token);
+        logger.info("Successfully got user id from token");
+        return id;
     }
 
     public Donor getDonorFromId(long id){
@@ -57,9 +49,36 @@ public class CookingService {
         return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 
-    public CookConstraints submitConstraints(CookConstraints constraints) {
+    public CookConstraints submitConstraints(CookConstraints constraints, String token) {
+        logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
+        System.out.println("Received constraints: " + constraints);
+
+        long id = getDonorIdFromJwt(token);
+        Donor temp = getDonorFromId(id);
+        String address = temp.getAddress();
+
+        // Set the userId in the constraints object
+        constraints.setCookId(id);
+        constraints.setLocation(address);
+
+        return submitConstraints(constraints);
+    }
+
+    public CookConstraints submitConstraints(CookConstraints constraints){
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
+    }
+
+    public CookConstraints submitConstraints(UserDTO user){
+        logger.info("Adding new constraint created by manager");
+
+        long donorId = user.getDonorId();
+        String address = getDonorFromId(donorId).getAddress();
+
+        CookConstraints cc = new CookConstraints(user.getDonorId(), donorId,user.getStartTime(),user.getEndTime(),
+                user.getConstraints(), address ,user.getDate(), Status.Accepted);
+
+        return submitConstraints(cc);
     }
 
     public void updateConstraint(long constraintId, Map<String, Integer> constraint){
@@ -87,8 +106,12 @@ public class CookingService {
         return constraints;
     }
 
-    public List<CookConstraints> getLatestCookConstraints(long cookId, LocalDate date){
-        logger.info("getCookConstraints of cook id= {}", cookId);
+    public List<CookConstraints> getLatestCookConstraints(LocalDate date, String token){
+        logger.info("getCookConstraints of cook with unknown id");
+
+        long cookId = getDonorIdFromJwt(token);
+
+
         List<CookConstraints> constraints = ccr.findConstraintsByCookId(cookId);
         List<CookConstraints> filteredConstraints = constraints.stream()
                 .filter(constraint -> !constraint.getDate().isBefore(date))
