@@ -106,7 +106,7 @@ const NeedyPendingTable = () => {
       
       return (
         <>
-          <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.firstName}{row.lastName}</TableCell>
+          <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.firstName} {row.lastName}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.phoneNumber}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.familySize}</TableCell>
