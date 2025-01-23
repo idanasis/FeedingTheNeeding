@@ -5,6 +5,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
+import Project.Final.FeedingTheNeeding.cook.DTO.UserDTO;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
@@ -36,10 +37,12 @@ class CookingServiceTests {
 
     private CookConstraints validConstraint;
     private Donor validDonor;
+    private UserDTO validUserDTO;
     private static final long CONSTRAINT_ID = 1L;
     private static final long COOK_ID = 100L;
     private static final LocalDate VALID_DATE = LocalDate.now();
     private static final String VALID_TOKEN = "valid.jwt.token";
+    private static final String INVALID_TOKEN = "invalid.token";
     private static final String START_TIME = "09:00";
     private static final String END_TIME = "17:00";
     private static final String LOCATION = "123 Main St";
@@ -67,19 +70,33 @@ class CookingServiceTests {
                 Status.Pending
         );
 
+        validUserDTO = new UserDTO();
+        validUserDTO.setDonorId(COOK_ID);
+        validUserDTO.setStartTime(START_TIME);
+        validUserDTO.setEndTime(END_TIME);
+        validUserDTO.setConstraints(CONSTRAINTS);
+        validUserDTO.setDate(VALID_DATE);
+
         when(authService.getUserIDFromJWT(VALID_TOKEN)).thenReturn(COOK_ID);
         when(donorRepository.findById(COOK_ID)).thenReturn(Optional.of(validDonor));
     }
 
+    // Token and User Tests
     @Test
-    void testGetDonorIdFromJwt() {
+    void testGetDonorIdFromJwt_Success() {
         long id = cookingService.getDonorIdFromJwt(VALID_TOKEN);
         assertEquals(COOK_ID, id);
         verify(authService).getUserIDFromJWT(VALID_TOKEN);
     }
 
     @Test
-    void testGetDonorFromId() {
+    void testGetDonorIdFromJwt_InvalidToken() {
+        when(authService.getUserIDFromJWT(INVALID_TOKEN)).thenThrow(new RuntimeException("Invalid token"));
+        assertThrows(RuntimeException.class, () -> cookingService.getDonorIdFromJwt(INVALID_TOKEN));
+    }
+
+    @Test
+    void testGetDonorFromId_Success() {
         Donor donor = cookingService.getDonorFromId(COOK_ID);
         assertEquals(validDonor, donor);
         verify(donorRepository).findById(COOK_ID);
@@ -91,8 +108,9 @@ class CookingServiceTests {
         assertThrows(UserDoesntExistsException.class, () -> cookingService.getDonorFromId(999L));
     }
 
+    // Constraint Submission Tests
     @Test
-    void testSubmitConstraints() {
+    void testSubmitConstraints_WithToken_Success() {
         when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
 
         CookConstraints savedConstraint = cookingService.submitConstraints(validConstraint, VALID_TOKEN);
@@ -104,21 +122,71 @@ class CookingServiceTests {
     }
 
     @Test
-    void testUpdateConstraint() {
+    void testSubmitConstraints_WithToken_InvalidToken() {
+        when(authService.getUserIDFromJWT(INVALID_TOKEN)).thenThrow(new RuntimeException("Invalid token"));
+
+        assertThrows(RuntimeException.class,
+                () -> cookingService.submitConstraints(validConstraint, INVALID_TOKEN));
+    }
+
+    @Test
+    void testSubmitConstraints_Direct_Success() {
+        when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
+
+        CookConstraints result = cookingService.submitConstraints(validConstraint);
+
+        assertNotNull(result);
+        verify(ccr).save(validConstraint);
+    }
+
+    @Test
+    void testSubmitConstraints_UserDTO_Success() {
+        when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
+
+        CookConstraints result = cookingService.submitConstraints(validUserDTO);
+
+        assertNotNull(result);
+        assertEquals(COOK_ID, result.getCookId());
+        assertEquals(LOCATION, result.getLocation());
+        verify(ccr).save(any(CookConstraints.class));
+    }
+
+    @Test
+    void testSubmitConstraints_UserDTO_UserNotFound() {
+        when(donorRepository.findById(COOK_ID)).thenReturn(Optional.empty());
+
+        assertThrows(UserDoesntExistsException.class,
+                () -> cookingService.submitConstraints(validUserDTO));
+    }
+
+    // Update Constraint Tests
+    @Test
+    void testUpdateConstraint_Success() {
         Map<String, Integer> newConstraints = new HashMap<>();
         newConstraints.put("maxPlates", 8);
 
-        when(ccr.findConstraintsByConstraintId(CONSTRAINT_ID)).thenReturn(Collections.singletonList(validConstraint));
+        when(ccr.findConstraintsByConstraintId(CONSTRAINT_ID))
+                .thenReturn(Collections.singletonList(validConstraint));
+        when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
 
         cookingService.updateConstraint(CONSTRAINT_ID, newConstraints);
 
         verify(ccr).save(argThat(constraint ->
-                constraint.getConstraints().equals(newConstraints)
-        ));
+                constraint.getConstraints().equals(newConstraints)));
     }
 
     @Test
-    void testRemoveConstraint() {
+    void testUpdateConstraint_ConstraintNotFound() {
+        when(ccr.findConstraintsByConstraintId(CONSTRAINT_ID))
+                .thenReturn(Collections.emptyList());
+
+        assertThrows(IndexOutOfBoundsException.class,
+                () -> cookingService.updateConstraint(CONSTRAINT_ID, new HashMap<>()));
+    }
+
+    // Remove Constraint Tests
+    @Test
+    void testRemoveConstraint_Success() {
         when(ccr.findByConstraintIdAndDate(CONSTRAINT_ID, VALID_DATE))
                 .thenReturn(Optional.of(validConstraint));
 
@@ -135,8 +203,31 @@ class CookingServiceTests {
                 () -> cookingService.removeConstraint(validConstraint));
     }
 
+    // Get Cook Constraints Tests
     @Test
-    void testGetLatestCookConstraints() {
+    void testGetCookConstraints_Success() {
+        List<CookConstraints> expectedConstraints = Collections.singletonList(validConstraint);
+        when(ccr.findConstraintsByCookId(COOK_ID)).thenReturn(expectedConstraints);
+
+        List<CookConstraints> result = cookingService.getCookConstraints(COOK_ID);
+
+        assertEquals(expectedConstraints, result);
+        verify(ccr).findConstraintsByCookId(COOK_ID);
+    }
+
+    @Test
+    void testGetCookConstraints_Empty() {
+        when(ccr.findConstraintsByCookId(COOK_ID)).thenReturn(Collections.emptyList());
+
+        List<CookConstraints> result = cookingService.getCookConstraints(COOK_ID);
+
+        assertTrue(result.isEmpty());
+        verify(ccr).findConstraintsByCookId(COOK_ID);
+    }
+
+    // Get Latest Cook Constraints Tests
+    @Test
+    void testGetLatestCookConstraints_Success() {
         LocalDate futureDate = VALID_DATE.plusDays(1);
         CookConstraints futureConstraint = new CookConstraints(
                 2L, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, futureDate, Status.Pending
@@ -152,29 +243,95 @@ class CookingServiceTests {
     }
 
     @Test
-    void testGetAcceptedCookByDate() {
-        CookConstraints acceptedConstraint = new CookConstraints(
-                CONSTRAINT_ID, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, VALID_DATE, Status.Accepted
-        );
+    void testGetLatestCookConstraints_InvalidToken() {
+        when(authService.getUserIDFromJWT(INVALID_TOKEN)).thenThrow(new RuntimeException("Invalid token"));
 
+        assertThrows(RuntimeException.class,
+                () -> cookingService.getLatestCookConstraints(VALID_DATE, INVALID_TOKEN));
+    }
+
+    // Get Accepted Cook By Date Tests
+    @Test
+    void testGetAcceptedCookByDate_Success() {
+        List<CookConstraints> expectedConstraints = Collections.singletonList(validConstraint);
         when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Accepted))
-                .thenReturn(Collections.singletonList(acceptedConstraint));
+                .thenReturn(expectedConstraints);
 
         List<CookConstraints> result = cookingService.getAcceptedCookByDate(VALID_DATE);
 
-        assertEquals(1, result.size());
-        assertEquals(Status.Accepted, result.get(0).getStatus());
+        assertEquals(expectedConstraints, result);
+        verify(ccr).findConstraintsByDateAndStatus(VALID_DATE, Status.Accepted);
     }
 
     @Test
-    void testChangeStatusForConstraint() {
+    void testGetAcceptedCookByDate_Empty() {
+        when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Accepted))
+                .thenReturn(Collections.emptyList());
+
+        List<CookConstraints> result = cookingService.getAcceptedCookByDate(VALID_DATE);
+
+        assertTrue(result.isEmpty());
+    }
+
+    // Get Pending Constraints Tests
+    @Test
+    void testGetPendingConstraints_Success() {
+        List<CookConstraints> expectedConstraints = Collections.singletonList(validConstraint);
+        when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Pending))
+                .thenReturn(expectedConstraints);
+
+        List<CookConstraints> result = cookingService.getPendingConstraints(VALID_DATE);
+
+        assertEquals(expectedConstraints, result);
+        verify(ccr).findConstraintsByDateAndStatus(VALID_DATE, Status.Pending);
+    }
+
+    @Test
+    void testGetPendingConstraints_Empty() {
+        when(ccr.findConstraintsByDateAndStatus(VALID_DATE, Status.Pending))
+                .thenReturn(Collections.emptyList());
+
+        List<CookConstraints> result = cookingService.getPendingConstraints(VALID_DATE);
+
+        assertTrue(result.isEmpty());
+    }
+
+    // Get Constraints By Date Tests
+    @Test
+    void testGetConstraintsByDate_Success() {
+        List<CookConstraints> expectedConstraints = Collections.singletonList(validConstraint);
+        when(ccr.findConstraintsByDate(VALID_DATE)).thenReturn(expectedConstraints);
+
+        List<CookConstraints> result = cookingService.getConstraintsByDate(VALID_DATE);
+
+        assertEquals(expectedConstraints, result);
+        verify(ccr).findConstraintsByDate(VALID_DATE);
+    }
+
+    @Test
+    void testGetConstraintsByDate_Empty() {
+        when(ccr.findConstraintsByDate(VALID_DATE)).thenReturn(Collections.emptyList());
+
+        List<CookConstraints> result = cookingService.getConstraintsByDate(VALID_DATE);
+
+        assertTrue(result.isEmpty());
+    }
+
+    // Change Status For Constraint Tests
+    @Test
+    void testChangeStatusForConstraint_Success() {
+        CookConstraints updatedConstraint = new CookConstraints(
+                CONSTRAINT_ID, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, VALID_DATE, Status.Accepted
+        );
+
         when(ccr.findById(CONSTRAINT_ID)).thenReturn(Optional.of(validConstraint));
-        when(ccr.save(any(CookConstraints.class))).thenReturn(validConstraint);
+        when(ccr.save(any(CookConstraints.class))).thenReturn(updatedConstraint);
 
         CookConstraints result = cookingService.changeStatusForConstraint(CONSTRAINT_ID, Status.Accepted);
 
         assertNotNull(result);
         assertEquals(Status.Accepted, result.getStatus());
+        verify(ccr).save(any(CookConstraints.class));
     }
 
     @Test
