@@ -9,6 +9,7 @@ import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -329,5 +330,48 @@ public class NeederTrackingControllerTest {
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].date").value(DATE.toString()));
     }
+
+    @Test
+    public void testAddNeeder_InvalidInput() throws Exception {
+        NeederTracking invalidNeederTracking = new NeederTracking(); // Missing required fields
+
+        mockMvc.perform(post("/social")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidNeederTracking)))
+                .andExpect(status().isBadRequest()); // Assuming @Valid annotations on DTO
+    }
+
+
+    @Test
+    public void testGetNeederTrackingById_NotFound() throws Exception {
+        Mockito.when(neederTrackingService.getNeederTrackById(NEEDER_TRACKING_ID))
+                .thenThrow(new EntityNotFoundException("NeederTracking not found"));
+
+        mockMvc.perform(get("/social/{id}", NEEDER_TRACKING_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testDeleteNeederTracking_NotFound() throws Exception {
+        Mockito.doThrow(new EntityNotFoundException("NeederTracking not found"))
+                .when(neederTrackingService).deleteNeederTrack(NEEDER_TRACKING_ID);
+
+        mockMvc.perform(delete("/social/{id}", NEEDER_TRACKING_ID))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testGetAllNeeders_EmptyDate() throws Exception {
+        mockMvc.perform(get("/social/getNeedersByDate")
+                        .param("date", "")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
 
 }
