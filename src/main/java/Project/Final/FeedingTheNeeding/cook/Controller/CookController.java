@@ -36,24 +36,22 @@ public class CookController {
 
     public CookController(CookingService cs) {this.cs = cs;}
 
-
     @PostMapping("/submit/constraints")
-    public ResponseEntity<?> submitConstraints( @RequestHeader("Authorization") String authorizationHeader,
-                                                @RequestBody CookConstraints constraints){
+    public ResponseEntity<?> submitConstraints(@RequestBody CookConstraints constraints,
+                                               @RequestHeader(value = "Authorization", required = false) String authorizationHeader){
+        if (constraints == null) {
+            return ResponseEntity.badRequest().body("Constraints cannot be null");
+        }
+
         try{
+            System.out.println("Received constraints: " + constraints);
+
             if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid authentication token");
             }
+            System.out.println("Received constraints: " + constraints);
 
-            long id = cs.getDonorIdFromJwt(authorizationHeader);
-            Donor temp = cs.getDonorFromId(id);
-            String address = temp.getAddress();
-
-            // Set the userId in the constraints object
-            constraints.setCookId(id);
-            constraints.setLocation(address);
-
-            return ResponseEntity.ok(cs.submitConstraints(constraints));
+            return ResponseEntity.ok(cs.submitConstraints(constraints, authorizationHeader));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -108,10 +106,7 @@ public class CookController {
     public ResponseEntity<?> getLatestConstraints(@RequestHeader("Authorization") String authorizationHeader,
                                                   @RequestBody LatestConstraintsRequestDto request){
         try{
-            LocalDate currDate = LocalDate.parse(request.date);
-            long id = cs.getDonorIdFromJwt(authorizationHeader);
-
-            return ResponseEntity.ok(cs.getLatestCookConstraints(id, currDate));
+            return ResponseEntity.ok(cs.getLatestCookConstraints(LocalDate.parse(request.date), authorizationHeader));
         } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }

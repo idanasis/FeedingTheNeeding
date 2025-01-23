@@ -48,8 +48,18 @@ public class CookingService {
         return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 
-    public CookConstraints submitConstraints(CookConstraints constraints) {
+    public CookConstraints submitConstraints(CookConstraints constraints, String token) {
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
+        System.out.println("Received constraints: " + constraints);
+
+        long id = getDonorIdFromJwt(token);
+        Donor temp = getDonorFromId(id);
+        String address = temp.getAddress();
+
+        // Set the userId in the constraints object
+        constraints.setCookId(id);
+        constraints.setLocation(address);
+
         return ccr.save(constraints);
     }
 
@@ -78,8 +88,12 @@ public class CookingService {
         return constraints;
     }
 
-    public List<CookConstraints> getLatestCookConstraints(long cookId, LocalDate date){
-        logger.info("getCookConstraints of cook id= {}", cookId);
+    public List<CookConstraints> getLatestCookConstraints(LocalDate date, String token){
+        logger.info("getCookConstraints of cook with unknown id");
+
+        long cookId = getDonorIdFromJwt(token);
+
+
         List<CookConstraints> constraints = ccr.findConstraintsByCookId(cookId);
         List<CookConstraints> filteredConstraints = constraints.stream()
                 .filter(constraint -> !constraint.getDate().isBefore(date))
