@@ -79,13 +79,6 @@ public class DrivingFascade {
         logger.info("createRoute done");
         return route;
     }
-    public Route createRoute(long driverId, LocalDate date){
-        logger.info("createRoute with driver id={} and date={}", driverId, date);
-        Route route = new Route(driverId, date);
-        routeRepository.save(route);
-        logger.info("createRoute with driver id={} and date={} done", driverId, date);
-        return route;
-    }
     public Route updateRoute(Route route){
         logger.info("updateRoute with route id={}", route.getRouteId());
         for(Visit visit : route.getVisit()){

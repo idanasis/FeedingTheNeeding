@@ -176,29 +176,6 @@ public class DrivingControllerTest {
         verify(drivingService, times(1)).createRoute(date);
     }
     @Test
-    void testCreateRouteWithDriver() throws Exception {
-        when(drivingService.createRoute(driverId, date)).thenReturn(route);
-
-        mockMvc.perform(post("/driving/routes/create/driver")
-                .param("driverId", driverId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isOk());
-
-        verify(drivingService, times(1)).createRoute(driverId, date);
-    }
- 
-    @Test
-    void testCreateRouteWithDriverFail() throws Exception {
-        when(drivingService.createRoute(driverId, date)).thenThrow(new IllegalArgumentException());
-
-        mockMvc.perform(post("/driving/routes/create/driver")
-                .param("driverId", driverId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isBadRequest());
-
-        verify(drivingService, times(1)).createRoute(driverId, date);
-    }
-    @Test
     void testSetDriverIdToRoute() throws Exception {
         mockMvc.perform(put("/driving/routes/{routeId}/driver/{driverId}", routeId, driverId))
                 .andExpect(status().isOk());

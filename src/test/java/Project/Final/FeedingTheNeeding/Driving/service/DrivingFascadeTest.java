@@ -334,6 +334,36 @@ void testGetRoutesEmpty() {
 
     verify(routeRepository, times(1)).findRoutesByDate(drivingDate);
 }
+@Test
+void testUpdateRoute() {
+    when(routeRepository.save(any(Route.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    Route updatedRoute = drivingFascade.updateRoute(route);
+
+    assertNotNull(updatedRoute);
+    assertEquals(route.getRouteId(), updatedRoute.getRouteId());
+    assertEquals(route.getDate(), updatedRoute.getDate());
+    verify(routeRepository, times(1)).save(route);
+}
+
+@Test
+void testUpdateRouteWithVisits() {
+    // Add a visit to the route
+    visit.setRoute(null);
+    route.setVisit(List.of(visit));
+
+    when(routeRepository.save(any(Route.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+    Route updatedRoute = drivingFascade.updateRoute(route);
+
+    assertNotNull(updatedRoute);
+    assertEquals(route.getRouteId(), updatedRoute.getRouteId());
+    assertEquals(route.getDate(), updatedRoute.getDate());
+    assertEquals(route, updatedRoute.getVisit().get(0).getRoute()); // Ensure visits are updated with the route
+
+    verify(routeRepository, times(1)).save(route);
+}
+
 
 
 }
