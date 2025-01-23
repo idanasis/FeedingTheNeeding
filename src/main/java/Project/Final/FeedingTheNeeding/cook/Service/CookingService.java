@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.cook.Service;
 
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
+import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
 import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
@@ -23,33 +24,23 @@ public class CookingService {
 
     private final CookConstraintsRepository ccr;
     private final DonorRepository donorRepository;
-    private final JwtTokenService jwtTokenService;
+    private final AuthService authService;
 
     private static final Logger logger = LogManager.getLogger(CookingService.class);
 
-    public CookingService(CookConstraintsRepository ccr, DonorRepository donorRepository, JwtTokenService jwtTokenService){
+    public CookingService(CookConstraintsRepository ccr,AuthService authService, DonorRepository donorRepository){
         logger.info("Cooking service create");
         this.ccr = ccr;
+        this.authService = authService;
         this.donorRepository = donorRepository;
-        this.jwtTokenService = jwtTokenService;
         logger.info("Cooking service created");
     }
 
-    public Donor getDonorFromJwt(String token){
+    public long getDonorIdFromJwt(String token){
         logger.info("start-get user id from token: {}", token);
-        if(token == null)
-            throw new IllegalArgumentException("invalid token");
-        if(token.startsWith("Bearer "))
-            token = token.substring(7);
-
-        String phoneNumber = jwtTokenService.extractUsername(token);
-        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(phoneNumber);
-        if(optionalDonor.isPresent()){
-            Donor donor = optionalDonor.get();
-            return donor;
-        }
-        else
-            throw new UserDoesntExistsException("donor not found");
+        long id = authService.getUserIDFromJWT(token);
+        logger.info("Successfully got user id from token");
+        return id;
     }
 
     public Donor getDonorFromId(long id){
