@@ -37,10 +37,11 @@ public class RouteTest {
     final String note = "some Note", note2 = "some another note";
     final long driverId = 1,driverId2 = 2;
     final LocalDate date = LocalDate.now(),date2 = LocalDate.now().plusDays(1);
+    final String additionalNotes = "additional notes";
     @BeforeEach
     void setUp() {
         route = new Route(driverId, date);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour);
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour,"");
     }
     @Test
     void testCreateFindRoute() {
@@ -151,6 +152,7 @@ public class RouteTest {
         visit2.setNote(note2);
         route1.addVisit(visit2);
         visit2.setStartHour(startHour+1);
+        visit2.setAdditionalNotes(additionalNotes);
         routeRepository.save(route1);
         Route route2 = routeRepository.findById(route.getRouteId()).get();
         assertEquals(date2,route2.getDate());
@@ -165,6 +167,7 @@ public class RouteTest {
         assertEquals(note2,route2.getVisit().get(0).getNote());
         assertEquals(priority2, route2.getVisit().get(0).getPriority());
         assertEquals(route2.getVisit().get(0).getStartHour(), startHour+1);
+        assertEquals(route2.getVisit().get(0).getAdditionalNotes(), additionalNotes);
     }
 
 }

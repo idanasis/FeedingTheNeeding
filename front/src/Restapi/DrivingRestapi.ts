@@ -54,11 +54,10 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         phoneNumber:neederTracking.needyPhoneNumber,
         address:neederTracking.needyAddress,
         notes:neederTracking.additionalNotes,
-        startTime:0,
+        startTime:"0",
         maxHour:0,
         status:"Deliver",
-        dietaryPreferences:neederTracking.dietaryPreferences,
-        familySize:neederTracking.needyFamilySize
+        additionalNotes :neederTracking.needyFamilySize +" "+neederTracking.dietaryPreferences
     }
 }
 export const updateRoute=async(route:Route)=>{
@@ -115,7 +114,8 @@ const transformCookingConstraintProjectionToVisit=(visit:Visit)=>{
         lastName:visit.name!.split(' ')[1],
         phoneNumber:visit.phoneNumber,
         address:visit.address,
-        notes:constraintsString,
+        additionalNotes:constraintsString,
+        notes: "אין",
         startTime:visit.startTime,
         maxHour:Number.parseInt(visit.endTime!),
         status:"Pickup",
