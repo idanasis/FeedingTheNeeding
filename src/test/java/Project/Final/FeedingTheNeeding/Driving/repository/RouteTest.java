@@ -33,14 +33,14 @@ public class RouteTest {
     final String firstName = "John";
     final String lastName = "Doe";
     final String phoneNumber = "0541234567";
-    final int maxHour = 14,maxHour2=15, priority = 1,priority2=2;
+    final int maxHour = 14,maxHour2=15, priority = 1,priority2=2,startHour=10;
     final String note = "some Note", note2 = "some another note";
     final long driverId = 1,driverId2 = 2;
     final LocalDate date = LocalDate.now(),date2 = LocalDate.now().plusDays(1);
     @BeforeEach
     void setUp() {
         route = new Route(driverId, date);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority);
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour);
     }
     @Test
     void testCreateFindRoute() {
@@ -150,6 +150,7 @@ public class RouteTest {
         visit2.setStatus(VisitStatus.Deliver);
         visit2.setNote(note2);
         route1.addVisit(visit2);
+        visit2.setStartHour(startHour+1);
         routeRepository.save(route1);
         Route route2 = routeRepository.findById(route.getRouteId()).get();
         assertEquals(date2,route2.getDate());
@@ -163,6 +164,7 @@ public class RouteTest {
         assertEquals(VisitStatus.Deliver,route2.getVisit().get(0).getStatus());
         assertEquals(note2,route2.getVisit().get(0).getNote());
         assertEquals(priority2, route2.getVisit().get(0).getPriority());
+        assertEquals(route2.getVisit().get(0).getStartHour(), startHour+1);
     }
 
 }

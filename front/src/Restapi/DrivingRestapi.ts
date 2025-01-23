@@ -54,6 +54,7 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         phoneNumber:neederTracking.needyPhoneNumber,
         address:neederTracking.needyAddress,
         notes:neederTracking.additionalNotes,
+        startTime:0,
         maxHour:0,
         status:"Deliver",
         dietaryPreferences:neederTracking.dietaryPreferences,
