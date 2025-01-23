@@ -41,6 +41,7 @@ export const getDonor=async(id:number)=>{
 export const getNeedersHere=async (date: Date)=>{
     const response =  await axios.get(socialUrl+"getNeedersHere?date="+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    console.log(response)
     const neederTracking= response.data as NeederTrackingProjectionModel[];
     return neederTracking.map((neederTracking:NeederTrackingProjectionModel)=>transformNeederTrackingProjectionToVisit(neederTracking));
 }
@@ -55,7 +56,8 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         notes:neederTracking.additionalNotes,
         maxHour:0,
         status:"Deliver",
-        dietaryPreferences:neederTracking.dietaryPreferences
+        dietaryPreferences:neederTracking.dietaryPreferences,
+        familySize:neederTracking.needyFamilySize
     }
 }
 export const updateRoute=async(route:Route)=>{

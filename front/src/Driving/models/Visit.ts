@@ -16,4 +16,5 @@ export interface Visit {
     constraints?: [string, number][];
     startTime?: string;
     endTime?: string;
+    familySize?: number;
   }
