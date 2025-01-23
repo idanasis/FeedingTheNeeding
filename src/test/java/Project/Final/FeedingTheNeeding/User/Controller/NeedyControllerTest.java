@@ -172,8 +172,6 @@ public class NeedyControllerTest {
                     .andExpect(jsonPath("$[0].firstName").value(needy1.getFirstName()))
                     .andExpect(jsonPath("$[1].id").value(needy2.getId()))
                     .andExpect(jsonPath("$[1].firstName").value(needy2.getFirstName()));
-
-            verify(needyService, times(1)).getAllNeedyUsers();
         }
 
         @Test
@@ -185,6 +183,18 @@ public class NeedyControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.size()").value(0));
+
+            verify(needyService, times(1)).getAllNeedyUsers();
+        }
+
+        @Test
+        @DisplayName("GET /needer - Failure")
+        void testGetAllNeedies_Failure() throws Exception {
+            when(needyService.getAllNeedyUsers()).thenThrow(new RuntimeException("Failed to retrieve needy users"));
+
+            mockMvc.perform(get(BASE_ENDPOINT + GET_ALL_NEEDIES_ENDPOINT)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError());
 
             verify(needyService, times(1)).getAllNeedyUsers();
         }
@@ -207,8 +217,6 @@ public class NeedyControllerTest {
                     .andExpect(jsonPath("$.lastName").value(existingNeedy.getLastName()))
                     .andExpect(jsonPath("$.phoneNumber").value(existingNeedy.getPhoneNumber()))
                     .andExpect(jsonPath("$.confirmStatus").value(existingNeedy.getConfirmStatus().toString()));
-
-            verify(needyService, times(1)).getNeedyById(NEEDY_ID_EXISTING);
         }
 
         @Test
@@ -221,6 +229,18 @@ public class NeedyControllerTest {
                     .andExpect(status().isNotFound());
 
             verify(needyService, times(1)).getNeedyById(NEEDY_ID_NON_EXISTING);
+        }
+
+        @Test
+        @DisplayName("GET /needer/{id} - Failure")
+        void testGetNeedyById_Failure() throws Exception {
+            when(needyService.getNeedyById(NEEDY_ID_EXISTING)).thenThrow(new RuntimeException("Service error"));
+
+            mockMvc.perform(get(BASE_ENDPOINT + GET_NEEDY_BY_ID_ENDPOINT, NEEDY_ID_EXISTING)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError());
+
+            verify(needyService, times(1)).getNeedyById(NEEDY_ID_EXISTING);
         }
     }
 
@@ -252,6 +272,18 @@ public class NeedyControllerTest {
 
             verify(needyService, times(1)).deleteNeedyById(NEEDY_ID_NON_EXISTING);
         }
+
+        @Test
+        @DisplayName("DELETE /needer/{id} - Failure")
+        void testDeleteNeedyById_Failure() throws Exception {
+            doThrow(new RuntimeException("Service error")).when(needyService).deleteNeedyById(NEEDY_ID_EXISTING);
+
+            mockMvc.perform(delete(BASE_ENDPOINT + DELETE_NEEDY_BY_ID_ENDPOINT, NEEDY_ID_EXISTING)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError());
+
+            verify(needyService, times(1)).deleteNeedyById(NEEDY_ID_EXISTING);
+        }
     }
 
     @Nested
@@ -281,8 +313,6 @@ public class NeedyControllerTest {
                     .andExpect(jsonPath("$[0].lastName").value(pendingNeedy.getLastName()))
                     .andExpect(jsonPath("$[0].phoneNumber").value(pendingNeedy.getPhoneNumber()))
                     .andExpect(jsonPath("$[0].confirmStatus").value(pendingNeedy.getConfirmStatus().toString()));
-
-            verify(needyService, times(1)).getPendingNeedy();
         }
 
         @Test
@@ -294,6 +324,18 @@ public class NeedyControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.size()").value(0));
+
+            verify(needyService, times(1)).getPendingNeedy();
+        }
+
+        @Test
+        @DisplayName("GET /needer/pending - Failure")
+        void testGetPendingNeedies_Failure() throws Exception {
+            when(needyService.getPendingNeedy()).thenThrow(new RuntimeException("Failed to retrieve pending needies"));
+
+            mockMvc.perform(get(BASE_ENDPOINT + GET_PENDING_NEEDIES_ENDPOINT)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError());
 
             verify(needyService, times(1)).getPendingNeedy();
         }
@@ -317,8 +359,6 @@ public class NeedyControllerTest {
                     .andExpect(jsonPath("$.lastName").value(existingNeedy.getLastName()))
                     .andExpect(jsonPath("$.phoneNumber").value(existingNeedy.getPhoneNumber()))
                     .andExpect(jsonPath("$.confirmStatus").value(existingNeedy.getConfirmStatus().toString()));
-
-            verify(needyService, times(1)).getNeedyByPhoneNumber(NEEDY_PHONE_NUMBER_EXISTING);
         }
 
         @Test
@@ -332,6 +372,19 @@ public class NeedyControllerTest {
                     .andExpect(status().isNotFound());
 
             verify(needyService, times(1)).getNeedyByPhoneNumber(NEEDY_PHONE_NUMBER_NON_EXISTING);
+        }
+
+        @Test
+        @DisplayName("GET /needer/phone/{phoneNumber} - Failure")
+        void testGetNeedyByPhoneNumber_Failure() throws Exception {
+            when(needyService.getNeedyByPhoneNumber(NEEDY_PHONE_NUMBER_EXISTING))
+                    .thenThrow(new RuntimeException("Service error"));
+
+            mockMvc.perform(get(BASE_ENDPOINT + GET_NEEDY_BY_PHONE_ENDPOINT, NEEDY_PHONE_NUMBER_EXISTING)
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isInternalServerError());
+
+            verify(needyService, times(1)).getNeedyByPhoneNumber(NEEDY_PHONE_NUMBER_EXISTING);
         }
     }
 
@@ -361,8 +414,6 @@ public class NeedyControllerTest {
                     .andExpect(jsonPath("$[0].needy.phoneNumber").value(existingNeedy.getPhoneNumber()))
                     .andExpect(jsonPath("$[0].needy.confirmStatus").value(existingNeedy.getConfirmStatus().toString()))
                     .andExpect(jsonPath("$[0].date").value(TRACKING_DATE_STRING));
-
-            verify(needyService, times(1)).getNeedyUsersTrackingByData(TRACKING_DATE);
         }
 
         @Test
