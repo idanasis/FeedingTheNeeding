@@ -1,11 +1,15 @@
 package Project.Final.FeedingTheNeeding.SystemTests;
 
+import Project.Final.FeedingTheNeeding.Authentication.DTO.AuthenticationRequest;
 import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
 import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.FeedingTheNeedingApplication;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
+import Project.Final.FeedingTheNeeding.driving.Model.Route;
+import Project.Final.FeedingTheNeeding.driving.Model.Visit;
+import Project.Final.FeedingTheNeeding.driving.Model.VisitStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,6 +156,24 @@ public class SystemTestsImpl {
                 .andExpect(status().isOk());
 
         // === Step 8: Donor1 Adds Cooking Constraint ===
+        AuthenticationRequest authenticationRequest=new AuthenticationRequest();
+        authenticationRequest.setPhoneNumber("0531223421");
+        authenticationRequest.setPassword("12345678");
+        MvcResult donor1LoginResult = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authenticationRequest)))
+                .andExpect(status().isOk())
+                .andReturn();
+        String tokenDonor1=objectMapper.readTree(donor1LoginResult.getResponse().getContentAsString()).get("token").textValue();
+        AuthenticationRequest authenticationRequest2=new AuthenticationRequest();
+        authenticationRequest2.setPhoneNumber("0578787877");
+        authenticationRequest2.setPassword("12345678");
+        MvcResult donor2LoginResult = mockMvc.perform(post("/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(authenticationRequest2)))
+                .andExpect(status().isOk())
+                .andReturn();
+        String tokenDonor2=objectMapper.readTree(donor2LoginResult.getResponse().getContentAsString()).get("token").textValue();
         String cookingConstraintJson = """
             {
                 "cookId": %d,
@@ -165,11 +187,11 @@ public class SystemTestsImpl {
 
         mockMvc.perform(post("/cooking/submit/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(cookingConstraintJson))
-                .andExpect(status().isCreated());
+                        .content(cookingConstraintJson).header("Authorization", "Bearer " + tokenDonor1))
+                .andExpect(status().isOk());
 
         // === Step 9: Admin Accepts Donor1 Cooking Constraint ===
-        int constraintId = 123;
+        int constraintId = 1;
         mockMvc.perform(post("/cooking/acceptConstraint/" + constraintId))
                 .andExpect(status().isOk());
 
@@ -188,86 +210,73 @@ public class SystemTestsImpl {
         mockMvc.perform(post("/driving/constraints")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(drivingConstraintJson))
-                .andExpect(status().isCreated())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.driverId").value(2))
                 .andExpect(jsonPath("$.requests").value("Available for driving on weekends"));
 
         // === Step 11: Admin Creates Route ===
-        String routeJson = """
-            {
-                "date": "%s"
-            }
-        """.formatted(LocalDate.now());
 
-        MvcResult createRouteResult = mockMvc.perform(post("/api/routes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(routeJson))
-                .andExpect(status().isCreated())
+
+        MvcResult createRouteResult = mockMvc.perform(post("/driving/routes/create?date="+LocalDate.now())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andReturn();
 
-        Long routeId = objectMapper.readTree(createRouteResult.getResponse().getContentAsString()).get("id").asLong();
+        Long routeId = objectMapper.readTree(createRouteResult.getResponse().getContentAsString()).get("routeId").asLong();
 
         // === Step 12: Admin Adds Donor2 as Driver, and Visits for Donor1 and Needy ===
-        String updatedRouteJson = """
-            {
-                "routeId": %d,
-                "driverId": %d,
-                "isSubmitted": true,
-                "visit": [
-                    {
-                        "firstName": "Donor1",
-                        "lastName": "Name",
-                        "phoneNumber": "1234567890",
-                        "address": "Donor1 Address",
-                        "maxHour": 1,
-                        "status": "PENDING",
-                        "priority": 1,
-                        "note": "Visit for Donor1",
-                        "visitType": "COOK",
-                        "entityId": %d
-                    },
-                    {
-                        "firstName": "Needy",
-                        "lastName": "Name",
-                        "phoneNumber": "9876543210",
-                        "address": "Needy Address",
-                        "maxHour": 2,
-                        "status": "PENDING",
-                        "priority": 1,
-                        "note": "Visit for Needy",
-                        "visitType": "DELIVER",
-                        "entityId": %d
-                    }
-                ]
-            }
-        """.formatted(routeId, 2, 1, needy.getId());
+        Visit donorVisit = new Visit();
+        donorVisit.setFirstName("Donor1");
+        donorVisit.setLastName("Name");
+        donorVisit.setPhoneNumber("1234567890");
+        donorVisit.setAddress("Donor1 Address");
+        donorVisit.setMaxHour(1);
+        donorVisit.setStatus(VisitStatus.Pickup);
+        donorVisit.setPriority(1);
+        donorVisit.setNote("Visit for Donor1");
 
-        mockMvc.perform(patch("/api/routes/updateRoute")
+        Visit needyVisit = new Visit();
+        needyVisit.setFirstName("Needy");
+        needyVisit.setLastName("Name");
+        needyVisit.setPhoneNumber("9876543210");
+        needyVisit.setAddress("Needy Address");
+        needyVisit.setMaxHour(2);
+        needyVisit.setStatus(VisitStatus.Deliver);
+        needyVisit.setPriority(1);
+        needyVisit.setNote("Visit for Needy");
+
+
+        // Populate route
+        Route route = new Route();
+        route.setRouteId(routeId); // Example route ID
+        route.setDriverId(donor2.getId()); // Example driver ID
+        route.setSubmitted(true);
+        route.setVisit(Arrays.asList(donorVisit, needyVisit));
+        route.setDate(LocalDate.now());
+        mockMvc.perform(patch("/driving/routes/updateRoute")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(updatedRouteJson))
+                        .content(objectMapper.writeValueAsString(route)))
                 .andExpect(status().isOk());
 
         // === Step 13: Donor1 Checks Cooking Inlay ===
         String currentDate = LocalDate.now().toString();
 
         mockMvc.perform(post("/cooking/constraints/latest")
-                        .contentType(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON).header("Authorization", "Bearer " + tokenDonor1)
                         .content("""
                             {
                                 "date": "%s"
                             }
                         """.formatted(currentDate)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].status").value("true"))
+                .andExpect(jsonPath("$[0].status").value("Accepted"))
                 .andExpect(jsonPath("$[0].constraints").exists())
                 .andExpect(jsonPath("$[0].constraints['vegetarian']").value(1));
 
         // === Step 14: Donor2 Checks Driving Inlay ===
-        mockMvc.perform(get("/driving/constraints/driver/futureNotApproved")
-                        .param("driverId", "2"))
+        mockMvc.perform(get("/driving/routes/getRoutes?date="+LocalDate.now()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].status").value("true"))
-                .andExpect(jsonPath("$[0].requests").exists())
-                .andExpect(jsonPath("$[0].requests[0]").value("Drive route 2025-01-23"));
+                .andExpect(jsonPath("$[0].driverId").value(donor2.getId()))
+                .andExpect(jsonPath("$[0].submitted").value(true));
     }
 }

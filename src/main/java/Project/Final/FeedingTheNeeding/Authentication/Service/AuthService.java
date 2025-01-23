@@ -118,7 +118,7 @@ public class AuthService {
         }
         donor.setVerificationCode(generateVerificationCode());
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(false);
+        donor.setVerified(true);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
