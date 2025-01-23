@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Authentication.Controller;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.*;
+import Project.Final.FeedingTheNeeding.Authentication.Exception.AccountNotVerifiedException;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Service.AuthService;
@@ -36,7 +37,9 @@ public class AuthController {
             AuthenticationResponse response = new AuthenticationResponse(jwtToken, jwtTokenService.getExpirationTime());
             logger.info("token created: {} with expiration time of {}", response.getToken(),response.getExpirationTime());
             return ResponseEntity.ok(response);
-        }catch (Exception e){
+        }catch (AccountNotVerifiedException e){
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+        } catch (Exception e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -73,6 +76,31 @@ public class AuthController {
             authService.registerNeedy(needyRegistrationRequest);
             return ResponseEntity.ok("Needy successfully registered");
         }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/request-reset-password")
+    public ResponseEntity<?> requestResetPassword(@RequestParam String phoneNumber) {
+        try {
+            authService.initiatePasswordReset(phoneNumber);
+            return ResponseEntity.ok("Verification code sent to your phone number.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/confirm-reset-password")
+    public ResponseEntity<?> confirmResetPassword(
+            @RequestParam String phoneNumber,
+            @RequestParam String verificationCode,
+            @RequestParam String newPassword) {
+        try {
+            authService.confirmPasswordReset(phoneNumber, verificationCode, newPassword);
+            return ResponseEntity.ok("Password has been reset successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
