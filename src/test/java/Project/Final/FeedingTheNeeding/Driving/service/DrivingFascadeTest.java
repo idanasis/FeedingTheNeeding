@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -258,5 +259,81 @@ class DrivingFascadeTest {
                 () -> drivingFascade.removeAddressFromRoute(routeId, visit)
         );
     }
+    @Test
+void testGetDriverFutureConstraintsHaventConfirmed() {
+    List<DriverConstraint> constraints = List.of(driverConstraint);
+    when(driverConstraintsRepository.findConstraintsByDriverId(driverId)).thenReturn(constraints);
+
+    List<DriverConstraint> result = drivingFascade.getDriverFutureConstraintsHaventConfirmed(driverId);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(driverConstraint, result.get(0));
+
+    verify(driverConstraintsRepository, times(1)).findConstraintsByDriverId(driverId);
+}
+
+@Test
+void testGetDriverFutureConstraintsHaventConfirmedEmpty() {
+    when(driverConstraintsRepository.findConstraintsByDriverId(driverId)).thenReturn(Collections.emptyList());
+
+    List<DriverConstraint> result = drivingFascade.getDriverFutureConstraintsHaventConfirmed(driverId);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+
+    verify(driverConstraintsRepository, times(1)).findConstraintsByDriverId(driverId);
+}
+@Test
+void testGetRoutesByDriverId() {
+    List<Route> routes = List.of(route);
+    when(routeRepository.findRoutesByDriverId(driverId)).thenReturn(routes);
+
+    List<Route> result = drivingFascade.getRoutesByDriverId(driverId);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(route, result.get(0));
+
+    verify(routeRepository, times(1)).findRoutesByDriverId(driverId);
+}
+
+@Test
+void testGetRoutesByDriverIdEmpty() {
+    when(routeRepository.findRoutesByDriverId(driverId)).thenReturn(Collections.emptyList());
+
+    List<Route> result = drivingFascade.getRoutesByDriverId(driverId);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+
+    verify(routeRepository, times(1)).findRoutesByDriverId(driverId);
+}
+@Test
+void testGetRoutes() {
+    List<Route> routes = List.of(route);
+    when(routeRepository.findRoutesByDate(drivingDate)).thenReturn(routes);
+
+    List<Route> result = drivingFascade.getRoutes(drivingDate);
+
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(route, result.get(0));
+
+    verify(routeRepository, times(1)).findRoutesByDate(drivingDate);
+}
+
+@Test
+void testGetRoutesEmpty() {
+    when(routeRepository.findRoutesByDate(drivingDate)).thenReturn(Collections.emptyList());
+
+    List<Route> result = drivingFascade.getRoutes(drivingDate);
+
+    assertNotNull(result);
+    assertTrue(result.isEmpty());
+
+    verify(routeRepository, times(1)).findRoutesByDate(drivingDate);
+}
+
 
 }
