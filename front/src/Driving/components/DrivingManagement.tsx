@@ -259,9 +259,9 @@ const DrivingManager = () => {
         <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
         {visit.startTime?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startTime}:00</Typography>:null}
-        <Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
+        {visit.maxHour!==0?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>:null}
         <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
-        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.dietaryPreferences}</Typography>:null}
+        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.familySize} {visit.dietaryPreferences}</Typography>:null}
       </CardContent>
     </Card>
   );

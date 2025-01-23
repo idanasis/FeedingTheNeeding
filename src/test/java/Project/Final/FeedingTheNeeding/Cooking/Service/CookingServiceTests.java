@@ -1,9 +1,11 @@
-package Project.Final.FeedingTheNeeding.cook.Service;
+package Project.Final.FeedingTheNeeding.Cooking.Service;
 
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
 import Project.Final.FeedingTheNeeding.cook.Exceptions.CookConstraintsNotExistException;
 import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
+import Project.Final.FeedingTheNeeding.cook.Service.CookingService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
