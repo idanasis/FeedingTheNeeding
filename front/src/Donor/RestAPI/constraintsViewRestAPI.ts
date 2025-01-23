@@ -31,7 +31,7 @@ export interface Visit{
     phoneNumber: string;
     maxHour: string;
     status: string;
-    priority: int;
+    priority: number;
     note: string
 }
 
