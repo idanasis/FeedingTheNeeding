@@ -4,6 +4,7 @@ import dayjs from "dayjs";
 import { Donor } from "../../models/DonorModel";
 import { deleteDonor, getDonorApproved, updateDonor } from "../../Restapi/DonorRestapi";
 import FeedingLogo from '../../Authentication/Images/logo.png';
+import DiveHeader from "../../GoPage/DiveHeader";
 
 const DonorTable = () => {
   const [editableDonors, setEditableDonors] = useState<Donor[]>([]);
@@ -53,6 +54,8 @@ const DonorTable = () => {
     }
   }
   return (
+    <>
+    <DiveHeader />
     <div className="donor-table-container">
       <img
         src={FeedingLogo}
@@ -147,6 +150,7 @@ const DonorTable = () => {
 </table>
 
     </div>
+    </>
   );
 };
 
