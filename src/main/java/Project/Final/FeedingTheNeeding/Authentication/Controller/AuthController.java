@@ -135,16 +135,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/resend-sms")
-    public ResponseEntity<?> resendVerificationSMSCode(@RequestParam String phoneNumber) {
-        try{
-            authService.resendVerificationSMSCode(phoneNumber);
-            return ResponseEntity.ok("Phone number code resend successfully");
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/user-role")
     public ResponseEntity<?> getUserRoleFromJWT(@RequestParam String token) {
