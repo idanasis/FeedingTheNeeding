@@ -47,7 +47,7 @@ const DonorRegister: React.FC = () => {
         try{
             await verifyDonor(formData.phoneNumber, verificationCode);
             setShowVerificationPopup(false);
-            setSuccessMessage(true)
+             setSuccessMessage(true)
         }catch (err: any) {
             setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
         }
@@ -57,7 +57,6 @@ const DonorRegister: React.FC = () => {
         setError(null);
         try {
             await resendVerificationSMSCode(formData.phoneNumber);
-            console.log('Verification code resent successfully');
         } catch (err: any) {
             setError(err.message || 'שגיאה בשליחת קוד האימות מחדש. אנא נסה שוב.');
         }
@@ -94,7 +93,7 @@ const DonorRegister: React.FC = () => {
 
         try {
             await registerDonor(formData);
-            setShowVerificationPopup(true)
+            setSuccessMessage(true)
         } catch (error: any){
             if(error.message === "User already exists")
                 setError("מספר הטלפון כבר קיים במערכת")
@@ -259,41 +258,41 @@ const DonorRegister: React.FC = () => {
                 </form>
             </div>
 
-            {showVerificationPopup && (
-                <>
-                    <div className="overlay"></div>
-                    <div className="success-popup">
-                        <p>אנא הזן את קוד האימות שנשלח אליך:</p>
-                        {error && <p className="error-message">{error}</p>}
-                        <input
-                            type="text"
-                            maxLength={6}
-                            placeholder="הזן קוד אימות"
-                            value={verificationCode}
-                            onChange={(e) => {
-                                const val = e.target.value.replace(/\D/g, ''); // digits only
-                                setVerificationCode(val);
-                            }}
-                            style={{
-                                width: "100%",
-                                padding: "10px",
-                                border: "1px solid #ddd",
-                                borderRadius: "6px",
-                                marginBottom: "15px",
-                                fontSize: "14px",
-                                textAlign: "center"
-                            }}
-                        />
-                        <button onClick={handleVerification}>אמת קוד</button>
-                        <p className="resend-container">
-                            לא קיבלת קוד אימות?
-                            <button className="resend-link" onClick={handleResendCode}>
-                                שלח שוב
-                            </button>
-                        </p>
-                    </div>
-                </>
-            )}
+            {/*{showVerificationPopup && (*/}
+            {/*    <>*/}
+            {/*        <div className="overlay"></div>*/}
+            {/*        <div className="success-popup">*/}
+            {/*            <p>אנא הזן את קוד האימות שנשלח אליך:</p>*/}
+            {/*            {error && <p className="error-message">{error}</p>}*/}
+            {/*            <input*/}
+            {/*                type="text"*/}
+            {/*                maxLength={6}*/}
+            {/*                placeholder="הזן קוד אימות"*/}
+            {/*                value={verificationCode}*/}
+            {/*                onChange={(e) => {*/}
+            {/*                    const val = e.target.value.replace(/\D/g, ''); // digits only*/}
+            {/*                    setVerificationCode(val);*/}
+            {/*                }}*/}
+            {/*                style={{*/}
+            {/*                    width: "100%",*/}
+            {/*                    padding: "10px",*/}
+            {/*                    border: "1px solid #ddd",*/}
+            {/*                    borderRadius: "6px",*/}
+            {/*                    marginBottom: "15px",*/}
+            {/*                    fontSize: "14px",*/}
+            {/*                    textAlign: "center"*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*            <button onClick={handleVerification}>אמת קוד</button>*/}
+            {/*            <p className="resend-container">*/}
+            {/*                לא קיבלת קוד אימות?*/}
+            {/*                <button className="resend-link" onClick={handleResendCode}>*/}
+            {/*                    שלח שוב*/}
+            {/*                </button>*/}
+            {/*            </p>*/}
+            {/*        </div>*/}
+            {/*    </>*/}
+            {/*)}*/}
 
             {successMessage && (
                 <>
