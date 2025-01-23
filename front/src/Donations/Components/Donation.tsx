@@ -6,6 +6,8 @@ import QRCodeImg from '../Images/QRcode.png';
 import CreditCardImg from '../Images/CreditCardPhoto.png';
 import PayBoxImg from '../Images/payboxPhoto.png';
 import BitImg from '../Images/bitPhoto.png';
+import DiveHeader from '../../GoPage/DiveHeader';
+
 
 const DonationPage: React.FC = () => {
     const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -32,6 +34,8 @@ const DonationPage: React.FC = () => {
     };
 
     return (
+        <>
+            <DiveHeader />
         <div className="donation-page">
             <div className="donation-container">
                 <div className="donation-header">
@@ -108,6 +112,7 @@ const DonationPage: React.FC = () => {
                 </div>
             </div>
         </div>
+            </>
     );
 };
 
