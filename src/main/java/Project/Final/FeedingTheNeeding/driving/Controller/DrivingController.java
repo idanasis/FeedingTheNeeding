@@ -86,15 +86,6 @@ public class DrivingController {
         }
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
-    @PostMapping("/routes/create/driver")
-    public ResponseEntity<?> createRouteWithDriver(@RequestParam Long driverId, @RequestParam LocalDate date) {
-        try {
-            return ResponseEntity.ok(drivingService.createRoute(driverId, date));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @PutMapping("/routes/{routeId}/driver/{driverId}")

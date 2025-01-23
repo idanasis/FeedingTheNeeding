@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Driving.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -91,7 +92,17 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).removeConstraint(constraintId);
     }
+    @Test
+    void testRemoveConstraintFail() throws Exception {
+        DriverConstraintId constraintId = new DriverConstraintId(driverId, date);
+        doThrow(new IllegalArgumentException()).when(drivingService).removeConstraint(constraintId);
+        mockMvc.perform(delete("/driving/constraints")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(constraintId)))
+                .andExpect(status().isBadRequest());
 
+        verify(drivingService, times(1)).removeConstraint(constraintId);
+    }
     @Test
     void testGetDateConstraints() throws Exception {
         when(drivingService.getDateConstraints(any(LocalDate.class))).thenReturn(Collections.emptyList());
@@ -165,29 +176,6 @@ public class DrivingControllerTest {
         verify(drivingService, times(1)).createRoute(date);
     }
     @Test
-    void testCreateRouteWithDriver() throws Exception {
-        when(drivingService.createRoute(driverId, date)).thenReturn(route);
-
-        mockMvc.perform(post("/driving/routes/create/driver")
-                .param("driverId", driverId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isOk());
-
-        verify(drivingService, times(1)).createRoute(driverId, date);
-    }
- 
-    @Test
-    void testCreateRouteWithDriverFail() throws Exception {
-        when(drivingService.createRoute(driverId, date)).thenThrow(new IllegalArgumentException());
-
-        mockMvc.perform(post("/driving/routes/create/driver")
-                .param("driverId", driverId.toString())
-                .param("date", date.toString()))
-                .andExpect(status().isBadRequest());
-
-        verify(drivingService, times(1)).createRoute(driverId, date);
-    }
-    @Test
     void testSetDriverIdToRoute() throws Exception {
         mockMvc.perform(put("/driving/routes/{routeId}/driver/{driverId}", routeId, driverId))
                 .andExpect(status().isOk());
@@ -210,7 +198,14 @@ public class DrivingControllerTest {
 
         verify(drivingService, times(1)).removeRoute(routeId);
     }
+    @Test
+    void testRemoveRouteFail() throws Exception {
+        doThrow(new IllegalArgumentException()).when(drivingService).removeRoute(routeId);
+        mockMvc.perform(delete("/driving/routes/{routeId}", routeId))
+                .andExpect(status().isBadRequest());
 
+        verify(drivingService, times(1)).removeRoute(routeId);
+    }
     @Test
     void testSubmitAllRoutes() throws Exception {
         mockMvc.perform(post("/driving/routes/submitAll/{date}", date.toString()))
@@ -276,5 +271,80 @@ public class DrivingControllerTest {
                 .andExpect(status().isBadRequest());
         verify(drivingService, times(1)).viewHistory();
     }
+    @Test
+    void testGetRoutes() throws Exception {
+        LocalDate date = LocalDate.of(2023, 12, 28);
+        when(drivingService.getRoutes(date)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/driving/routes/getRoutes")
+                .param("date", date.toString())) // Add the date parameter
+                .andExpect(status().isOk());
+
+        verify(drivingService, times(1)).getRoutes(date);
+    }
+
+    @Test
+    void testGetRoutesFail() throws Exception {
+        String invalidDate = "invalid-date";
+        when(drivingService.getRoutes(any())).thenThrow(new IllegalArgumentException("Invalid date format"));
+
+        mockMvc.perform(get("/driving/routes/getRoutes")
+                .param("date", invalidDate)) // Invalid date parameter
+                .andExpect(status().isBadRequest());
+
+        verify(drivingService, never()).getRoutes(any()); // No service call since parsing failed
+    }
+    @Test
+    void testGetDriverFutureConstraintsHaventConfirmed() throws Exception {
+        long driverId = 123L;
+        when(drivingService.getDriverFutureConstraintsHaventConfirmed(driverId))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/driving/constraints/driver/futureNotApproved")
+                .param("driverId", Long.toString(driverId))) // Add driverId parameter
+                .andExpect(status().isOk());
+
+        verify(drivingService, times(1)).getDriverFutureConstraintsHaventConfirmed(driverId);
+    }
+
+@Test
+void testGetDriverFutureConstraintsHaventConfirmedFail() throws Exception {
+    String invalidDriverId = "not-a-number";
+    when(drivingService.getDriverFutureConstraintsHaventConfirmed(anyLong()))
+            .thenThrow(new IllegalArgumentException("Invalid driverId"));
+
+    mockMvc.perform(get("/driving/constraints/driver/futureNotApproved")
+            .param("driverId", invalidDriverId)) // Invalid driverId parameter
+            .andExpect(status().isBadRequest());
+
+    verify(drivingService, never()).getDriverFutureConstraintsHaventConfirmed(anyLong()); // No service call since parsing failed
+}
+@Test
+void testUpdateRoute() throws Exception {
+    Route route = new Route(); // Use a mock or create a dummy Route object
+    when(drivingService.updateRoute(route)).thenReturn(route);
+
+    mockMvc.perform(patch("/driving/routes/updateRoute")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(route))) // Send the Route object as JSON
+            .andExpect(status().isOk());
+
+    verify(drivingService, times(1)).updateRoute(route);
+}
+
+@Test
+void testUpdateRouteFail() throws Exception {
+    Route route = new Route(); // Use a mock or create a dummy Route object
+    when(drivingService.updateRoute(route)).thenThrow(new IllegalArgumentException("Invalid route data"));
+
+    mockMvc.perform(patch("/driving/routes/updateRoute")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(route))) // Send the Route object as JSON
+            .andExpect(status().isBadRequest());
+
+    verify(drivingService, times(1)).updateRoute(route);
+}
+
+
 }
 
