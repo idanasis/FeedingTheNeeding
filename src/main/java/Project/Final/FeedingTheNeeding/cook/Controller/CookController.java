@@ -112,6 +112,7 @@ public class CookController {
             List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
 
             List<PendingConstraintDTO> dtos = constraints.stream()
+
                     .map(constraint -> mapper.toDTO(constraint,
                             cs.getDonorFromId(constraint.getCookId()).getFirstName() + " " + cs.getDonorFromId(constraint.getCookId()).getLastName(),
                             cs.getDonorFromId(constraint.getCookId()).getPhoneNumber()))

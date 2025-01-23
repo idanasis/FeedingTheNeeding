@@ -13,4 +13,5 @@ public interface NeederTrackingProjection {
     String getDietaryPreferences();
     String getAdditionalNotes();
     LocalDate getDate();
+    int getNeedyFamilySize();
 }

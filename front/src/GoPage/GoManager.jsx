@@ -2,23 +2,26 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import client1 from "../Home/images/avatar.webp";
+import cook from "../Home/images/dish.svg";
+import GoSocial from "../Home/images/GoSocial.svg";
+import GoCar from "../Home/images/GoCar.svg";
 
 const GoManager = () => {
   const navigate = useNavigate();
 
   const managers = [
     {
-      name: "שרה כהן",
-      post: "רכזת מבשלות",
-      image: client1,
+      name: "בישול",
+      post: "",
+      image: cook,
       pages: [
         { name: "ניהול בישולים", path: "/cookManager" },
       ]
     },
     {
-      name: "דוד לוי",
-      post: "רכזת קהילה",
-      image: client1,
+      name: "קהילה",
+      post: "",
+      image: GoSocial,
       pages: [
         { name: "מעקב חוסים", path: "/social" },
         { name: "מעקב מתנדבים ", path: "/donors" },
@@ -27,9 +30,9 @@ const GoManager = () => {
       ]
     },
     {
-      name: "מיכל רוזן",
-      post: "רכזת נהגים",
-      image: client1,
+      name: "נסיעות",
+      post: "",
+      image: GoCar,
       pages: [
         { name: "ניהול נסיעות", path: "/driving" },
       ]
@@ -87,12 +90,16 @@ const GoManager = () => {
                 ))}
               </div>
               <div className="flex flex-col justify-center items-center gap-[10px] mt-4">
-                <img
-                  src={manager.image}
-                  alt={manager.name}
-                  className="w-[80px] h-[80px] rounded-full"
-                />
-                <h1 className="text-white text-[27px] font-semibold uppercase">
+                <div className="p-1 rounded-full bg-red-500">
+                  <div className="bg-white rounded-full p-1">
+                    <img
+                      src={manager.image}
+                      alt={manager.name}
+                      className="w-[60px] h-[60px] rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <h1 className="text-white text-[22px] font-semibold uppercase">
                   {manager.name}
                 </h1>
                 <h1 className="text-red-500 text-[22px]">{manager.post}</h1>

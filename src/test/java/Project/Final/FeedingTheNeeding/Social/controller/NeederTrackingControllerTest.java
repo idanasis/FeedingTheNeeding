@@ -9,6 +9,7 @@ import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,7 +264,10 @@ public class NeederTrackingControllerTest {
             public String getNeedyAddress() {
                 return mockNeederTracking.getNeedy().getAddress();
             }
-            
+            @Override
+            public int getNeedyFamilySize() {
+                return mockNeederTracking.getNeedy().getFamilySize();
+            }
         };
 
         // Mock the service method to return a list with this projection
@@ -328,6 +332,164 @@ public class NeederTrackingControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1))
                 .andExpect(jsonPath("$[0].date").value(DATE.toString()));
+    }
+
+    @Test
+    public void testAddNeeder_InvalidInput() throws Exception {
+        NeederTracking invalidNeederTracking = new NeederTracking(); // Missing required fields
+
+        mockMvc.perform(post("/social")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidNeederTracking)))
+                .andExpect(status().isBadRequest()); // Assuming @Valid annotations on DTO
+    }
+
+
+    @Test
+    public void testGetNeederTrackingById_NotFound() throws Exception {
+        Mockito.when(neederTrackingService.getNeederTrackById(NEEDER_TRACKING_ID))
+                .thenThrow(new EntityNotFoundException("NeederTracking not found"));
+
+        mockMvc.perform(get("/social/{id}", NEEDER_TRACKING_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testDeleteNeederTracking_NotFound() throws Exception {
+        Mockito.doThrow(new EntityNotFoundException("NeederTracking not found"))
+                .when(neederTrackingService).deleteNeederTrack(NEEDER_TRACKING_ID);
+
+        mockMvc.perform(delete("/social/{id}", NEEDER_TRACKING_ID))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testGetAllNeeders_EmptyDate() throws Exception {
+        mockMvc.perform(get("/social/getNeedersByDate")
+                        .param("date", "")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
+    public void testGetAllNeededFoodByDate() throws Exception {
+        // Arrange
+        Needy needy1 = new Needy();
+        needy1.setFamilySize(4);
+
+        Needy needy2 = new Needy();
+        needy2.setFamilySize(3);
+
+        NeederTracking tracking1 = new NeederTracking();
+        tracking1.setNeedy(needy1);
+        tracking1.setDietaryPreferences("Vegetarian");
+        tracking1.setDate(DATE);
+
+        NeederTracking tracking2 = new NeederTracking();
+        tracking2.setNeedy(needy2);
+        tracking2.setDietaryPreferences("Vegetarian");
+        tracking2.setDate(DATE);
+
+        NeederTracking tracking3 = new NeederTracking();
+        tracking3.setNeedy(needy2);
+        tracking3.setDietaryPreferences("Vegan");
+        tracking3.setDate(DATE);
+
+        Mockito.when(neederTrackingService.getAllNeedersTrackingsByDate(DATE))
+                .thenReturn(Arrays.asList(tracking1, tracking2, tracking3));
+
+        // Act & Assert
+        mockMvc.perform(get("/social/getNeededFoodByDate")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.Vegetarian").value(7))  // 4 + 3
+                .andExpect(jsonPath("$.Vegan").value(3));
+    }
+
+    @Test
+    public void testGetAllNeededFoodByDate_EmptyList() throws Exception {
+        // Arrange
+        Mockito.when(neederTrackingService.getAllNeedersTrackingsByDate(DATE))
+                .thenReturn(Collections.emptyList());
+
+        // Act & Assert
+        mockMvc.perform(get("/social/getNeededFoodByDate")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    public void testGetAllNeededFoodByDate_InvalidDate() throws Exception {
+        // Act & Assert
+        mockMvc.perform(get("/social/getNeededFoodByDate")
+                        .param("date", "")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetAllNeederTrackings_ServerError() throws Exception {
+        Mockito.when(neederTrackingService.getAllNeedersTrackings())
+                .thenThrow(new RuntimeException("Database connection failed"));
+
+        mockMvc.perform(get("/social")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateNeederTracking_NotFound() throws Exception {
+        NeederTracking updatedNeederTracking = new NeederTracking();
+        updatedNeederTracking.setId(NEEDER_TRACKING_ID);
+
+        Mockito.when(neederTrackingService.updateNeederTrack(NEEDER_TRACKING_ID, updatedNeederTracking))
+                .thenThrow(new EntityNotFoundException("NeederTracking not found"));
+
+        mockMvc.perform(put("/social/{id}", NEEDER_TRACKING_ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updatedNeederTracking)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testGetNeedersHere_EmptyResult() throws Exception {
+        Mockito.when(neederTrackingService.getNeedersHereByDate(DATE))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/social/getNeedersHere")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    public void testGetAllNeederTrackingsByDate_EmptyResult() throws Exception {
+        Mockito.when(neederTrackingService.getAllNeedersTrackingsByDate(DATE))
+                .thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/social/getNeedersByDate")
+                        .param("date", DATE.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    public void testGetNeedyFromNeederTrackingId_ServerError() throws Exception {
+        Mockito.when(neederTrackingService.getNeederTrackById(NEEDER_TRACKING_ID))
+                .thenThrow(new RuntimeException("Unexpected server error"));
+
+        mockMvc.perform(get("/social/getNeedy/{id}", NEEDER_TRACKING_ID)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
 }

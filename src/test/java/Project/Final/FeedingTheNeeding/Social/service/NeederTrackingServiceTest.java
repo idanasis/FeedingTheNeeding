@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Social.service;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
+import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
@@ -232,4 +233,71 @@ class NeederTrackingServiceTest {
         Assertions.assertEquals(DATE, result.get(0).getDate());
         Mockito.verify(neederTrackingRepository, Mockito.times(1)).findByDate(DATE);
     }
+
+    @Test
+    void testGetNeedyFromNeederTrackingId_Success() {
+        // Arrange
+        Needy needy = new Needy();
+        needy.setId(NEEDY_ID);
+        needy.setFirstName(FIRST_NAME);
+        needy.setLastName(LAST_NAME);
+        needy.setPhoneNumber(PHONE_NUMBER);
+
+        NeederTracking mockNeederTracking = new NeederTracking();
+        mockNeederTracking.setId(NEEDY_ID);
+        mockNeederTracking.setNeedy(needy);
+        mockNeederTracking.setAdditionalNotes(ADDITIONAL_NOTES);
+
+        when(neederTrackingRepository.findById(NEEDY_ID)).thenReturn(Optional.of(mockNeederTracking));
+
+        // Act
+        NeedySimpleDTO result = neederTrackingService.getNeedyFromNeederTrackingId(NEEDY_ID);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(FIRST_NAME, result.getFirstName());
+        assertEquals(LAST_NAME, result.getLastName());
+        assertEquals(ADDITIONAL_NOTES, result.getAdditionalNotes());
+        verify(neederTrackingRepository, times(1)).findById(NEEDY_ID);
+    }
+
+    @Test
+    void testGetNeedyFromNeederTrackingId_NotFound() {
+        // Arrange
+        when(neederTrackingRepository.findById(NEEDY_ID)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(NeederTrackingNotFoundException.class,
+                () -> neederTrackingService.getNeedyFromNeederTrackingId(NEEDY_ID));
+        verify(neederTrackingRepository, times(1)).findById(NEEDY_ID);
+    }
+
+
+    @Test
+    void testAddNeederTracking_Success() {
+        // Arrange
+        Needy needy = new Needy();
+        needy.setId(NEEDY_ID);
+        needy.setFirstName(FIRST_NAME);
+        needy.setLastName(LAST_NAME);
+
+        LocalDate date = LocalDate.now();
+
+        NeederTracking savedTracking = new NeederTracking();
+        savedTracking.setId(NEEDY_ID);
+        savedTracking.setNeedy(needy);
+        savedTracking.setDate(date);
+        savedTracking.setWeekStatus(WeekStatus.NotHere);
+
+        when(neederTrackingRepository.save(any(NeederTracking.class))).thenReturn(savedTracking);
+
+        // Act
+        neederTrackingService.addNeederTracking(needy, date);
+
+        // Assert
+        verify(neederTrackingRepository, times(1)).save(any(NeederTracking.class));
+    }
+
+
+
 }

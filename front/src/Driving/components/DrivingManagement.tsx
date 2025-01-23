@@ -196,6 +196,55 @@ const DrivingManager = () => {
     }
   };
 
+  const formatRouteForCopy = (route: Route) => {
+    console.log(route);
+    let text = `מסלול הנסיעה שלך:\n\n`;
+
+    let action=``;
+    
+    route.visit.forEach((visit, index) => {
+      if(visit.status==="Start"){
+        action="התחלה";
+      }
+      else if(visit.status==="Pickup"){
+        action="איסוף";
+      }
+      else if(visit.status=="Deliver"){
+        action="חלוקה"
+      }
+
+      text += `תחנה ${index + 1}: ${action}\n`;
+      text += `שם: ${visit.firstName} ${visit.lastName}\n`;
+      text += `כתובת: ${visit.address}\n`;
+      text += `טלפון: ${visit.phoneNumber}\n`;
+      
+     
+      if (visit.note || visit.notes) {
+        text += `הערות: ${visit.note || visit.notes}\n`;
+      }
+      if (visit.dietaryPreferences) {
+        text += `העדפות תזונה: ${visit.dietaryPreferences}\n`;
+      }
+      text += '\n';
+    });
+    
+    text+="שבת שלום! ❤️"
+    return text;
+  };
+
+   const handleCopyRoute = async (route: Route) => {
+    try {
+      const text = formatRouteForCopy(route);
+      await navigator.clipboard.writeText(text);
+      alert('המסלול הועתק בהצלחה');
+    } catch (err) {
+      alert('שגיאה בהעתקת המסלול');
+      console.error(err);
+    }
+  };
+
+
+
   const renderVisit = (visit: Visit) => (
     <Card
     variant="outlined"
@@ -210,9 +259,9 @@ const DrivingManager = () => {
         <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
         {visit.startTime?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startTime}:00</Typography>:null}
-        <Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>
+        {visit.maxHour!==0?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>:null}
         <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
-        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.dietaryPreferences}</Typography>:null}
+        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.familySize} {visit.dietaryPreferences}</Typography>:null}
       </CardContent>
     </Card>
   );
@@ -373,7 +422,7 @@ const removeRoute = async(index:number)=>{
           {/* Pickup Container */}
           <Box flex={2} sx={{marginTop: '5px'}}>
             <Typography variant="h5" align="center">
-              תורמים
+              טבחים
             </Typography>
             <SortableContext items={data.pickup.map((_, idx) => `pickup-${idx}`)} strategy={verticalListSortingStrategy}>
               {data.pickup.map((visit, index) => (
@@ -389,24 +438,36 @@ const removeRoute = async(index:number)=>{
             <Typography variant="h5" align="center">
               מסלולים
             </Typography>
-            {data.routes.map((route, index) => (
-              <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
-              <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px'}}>
-                <Typography variant="h6">סיבוב {index+1}</Typography>
-                <Select
-                  value={route.driverId||'לא נבחר'}
-                  label="Driver"
-                  onChange={async(e:any) => {await handleDriverChange(e, index);        
-                  }}
-                >
-                  {driver.map((driver, index) => (
-                    <MenuItem key={index} value={driver.driverId}>{driver.driverFirstName+' '+driver.driverLastName}</MenuItem>
-                  ))}
-                <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
-                </Select>
-                <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
-                {!route.submitted?<Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>:null}
-                {!route.submitted?<Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>:null}
+           {data.routes.map((route, index) => (
+    <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
+      <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px'}}>
+        <Typography variant="h6">סיבוב {index+1}</Typography>
+        <Select
+          value={route.driverId||'לא נבחר'}
+          label="Driver"
+          onChange={async(e:any) => {await handleDriverChange(e, index)}}
+        >
+          {driver.map((driver, index) => (
+            <MenuItem key={index} value={driver.driverId}>{driver.driverFirstName+' '+driver.driverLastName}</MenuItem>
+          ))}
+          <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
+        </Select>
+        <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
+        {!route.submitted ? (
+          <>
+            <Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>
+            <Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>
+          </>
+        ) : (
+          <Button 
+            variant="contained" 
+            color="secondary" 
+            onClick={() => handleCopyRoute(route)}
+            data-no-drag
+          >
+            העתק מסלול
+          </Button>
+        )}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}
