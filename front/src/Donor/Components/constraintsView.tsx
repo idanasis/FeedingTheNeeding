@@ -203,8 +203,8 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
                                                 {driverConstraints.map((constraint, index) => (
                                                     <tr key={index}>
                                                         <td>{new Date(constraint.date).toLocaleDateString('he-IL')}</td>
-                                                        <td>{constraint.start_hour}:00</td>
-                                                        <td>{constraint.end_hour}:00</td>
+                                                        <td>{constraint.startHour}:00</td>
+                                                        <td>{constraint.endHour}:00</td>
                                                         <td>{constraint.startLocation}</td>
                                                         <td>{constraint.requests || 'אין בקשות'}</td>
                                                         <td>
