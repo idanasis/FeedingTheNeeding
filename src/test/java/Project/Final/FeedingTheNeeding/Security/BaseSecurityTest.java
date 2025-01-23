@@ -9,8 +9,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationProvider;
 
-@WebMvcTest
-@Import(SecurityConfig.class)
 public abstract class BaseSecurityTest {
 
     @MockBean
