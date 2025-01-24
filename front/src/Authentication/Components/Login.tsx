@@ -90,7 +90,7 @@ const Login: React.FC = () => {
 
         try {
             await resetPassword(resetPhoneNumber, newPassword, verificationCode);
-            await verifyDonor(resetPhoneNumber, verificationCode);
+            //await verifyDonor(resetPhoneNumber, verificationCode);
             setResetSuccess('הסיסמה אופסה בהצלחה! אנא התחבר/י עם הסיסמה החדשה.');
             // Optionally, close the popup after a delay
             setTimeout(() => {

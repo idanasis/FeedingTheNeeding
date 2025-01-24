@@ -158,11 +158,13 @@ public class AuthService {
         if(credentials == null)
             throw new UserDoesntExistsException("User not found");
 
+        Donor donor = credentials.getDonor();
+
         String code = generateVerificationCode();
-        credentials.getDonor().setVerificationCode(code);
-        credentials.getDonor().setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donorRepository.save(credentials.getDonor());
-        sendVerificationEmail(credentials.getDonor());
+        donor.setVerificationCode(code);
+        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
+        donorRepository.save(donor);
+        sendVerificationEmail(donor);
         // SEND THE CODE TO THE DONOR PHONE
 
         logger.info("end-initiatePasswordReset, phone number: {}", phoneNumber);
@@ -174,18 +176,24 @@ public class AuthService {
         if(credentials == null)
             throw new UserDoesntExistsException("User not found");
 
-        String code = credentials.getDonor().getVerificationCode();
-        if(code == null || credentials.getDonor().getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
+        Donor donor = credentials.getDonor();
+
+        String donorCode = donor.getVerificationCode();
+        if(donorCode == null || donor.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
             throw new RuntimeException("Invalid verification code");
 
-        credentials.setPasswordHash(passwordEncoder.encode(newPassword));
-        credentials.setLastPasswordChangeAt(LocalDateTime.now());
-        userCredentialsRepository.save(credentials);
+        if(donorCode.equals(verificationCode)){
+            donor.setVerificationCode(null);
+            donor.setVerificationCodeExpiresAt(null);
+            donorRepository.save(donor);
 
-        credentials.getDonor().setVerificationCode(null);
-        credentials.getDonor().setVerificationCodeExpiresAt(null);
-        donorRepository.save(credentials.getDonor());
-        logger.info("end-confirmPasswordReset, phone number: {}", phoneNumber);
+            credentials.setPasswordHash(passwordEncoder.encode(newPassword));
+            credentials.setLastPasswordChangeAt(LocalDateTime.now());
+            userCredentialsRepository.save(credentials);
+            logger.info("end-confirmPasswordReset, phone number: {}", phoneNumber);
+        }
+        else
+            throw new RuntimeException("Invalid verification code");
     }
 
     public void resetPassword(String phoneNumber, String newPassword) {
@@ -247,7 +255,6 @@ public class AuthService {
                 donor.setVerified(true);
                 donor.setVerificationCode(null);
                 donor.setVerificationCodeExpiresAt(null);
-                donor.setStatus(RegistrationStatus.PENDING);
                 donorRepository.save(donor);
                 logger.info("end-verify donor, phoneNumber: {}", input.phoneNumber());
             }
