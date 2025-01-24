@@ -72,7 +72,7 @@ const Login: React.FC = () => {
 
         try {
             await requestPasswordReset(resetPhoneNumber);
-            setResetSuccess('קוד האימות נשלח בהצלחה לטלפון שלך.');
+            setResetSuccess('קוד האימות נשלח בהצלחה לאימייל שלך הקיים במערכת.');
             setResetStep(2);
         } catch (err: any) {
             setResetError('שגיאה בעת שליחת קוד האימות.');

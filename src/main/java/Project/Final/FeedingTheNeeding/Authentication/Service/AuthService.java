@@ -60,12 +60,6 @@ public class AuthService {
             throw new InvalidCredentialException("Invalid credentials");
         }
 
-        // Check if the user account is enabled (if applicable)
-        if (!user.isEnabled()) {
-            logger.warn("Account not verified for phone number: {}", authenticationRequest.getPhoneNumber());
-            throw new AccountNotVerifiedException("Account not verified. Please verify your account.");
-        }
-
         if(user.getDonor().getStatus() == RegistrationStatus.PENDING) {
             logger.warn("Donor not verified for phone number: {}", authenticationRequest.getPhoneNumber());
             throw new AccountNotVerifiedException("ACCOUNT_NOT_VERIFIED");
@@ -110,9 +104,6 @@ public class AuthService {
 
         Donor donor = new Donor();
         donor.setEmail(registrationRequest.getEmail());
-        donor.setVerificationCode(generateVerificationCode());
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setVerified(false);
         donor.setFirstName(registrationRequest.getFirstName());
         donor.setLastName(registrationRequest.getLastName());
         donor.setPhoneNumber(registrationRequest.getPhoneNumber());
@@ -165,8 +156,6 @@ public class AuthService {
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
         donorRepository.save(donor);
         sendVerificationEmail(donor);
-        // SEND THE CODE TO THE DONOR PHONE
-
         logger.info("end-initiatePasswordReset, phone number: {}", phoneNumber);
     }
 
@@ -194,19 +183,6 @@ public class AuthService {
         }
         else
             throw new RuntimeException("Invalid verification code");
-    }
-
-    public void resetPassword(String phoneNumber, String newPassword) {
-        logger.info("start-reset password, for phoneNumber: {}", phoneNumber);
-        UserCredentials credentials = userCredentialsRepository.findCredentialsByPhoneNumber(phoneNumber);
-        if(credentials == null)
-            throw new UserDoesntExistsException("User not found");
-
-        credentials.setPasswordHash(passwordEncoder.encode(newPassword));
-        credentials.setLastPasswordChangeAt(LocalDateTime.now());
-
-        userCredentialsRepository.save(credentials);
-        logger.info("end-reset password, for phoneNumber: {}", phoneNumber);
     }
 
     public void sendVerificationEmail(Donor donor) {
@@ -243,35 +219,11 @@ public class AuthService {
         return String.valueOf(code);
     }
 
-    public void verifyDonor(VerifyDonorDTO input) {
-        logger.info("start-verify donor, phoneNumber: {}", input.phoneNumber());
-        Optional<Donor> optionalDonor = donorRepository.findByPhoneNumber(input.phoneNumber());
-        if(optionalDonor.isPresent()){
-            Donor donor = optionalDonor.get();
-            if(donor.getVerificationCodeExpiresAt().isBefore(LocalDateTime.now()))
-                throw new RuntimeException("Verification code expired");
-
-            if(donor.getVerificationCode().equals(input.verificationCode())){
-                donor.setVerified(true);
-                donor.setVerificationCode(null);
-                donor.setVerificationCodeExpiresAt(null);
-                donorRepository.save(donor);
-                logger.info("end-verify donor, phoneNumber: {}", input.phoneNumber());
-            }
-            else
-                throw new RuntimeException("Invalid verification code");
-        }
-        else
-            throw new UserDoesntExistsException("User not found");
-    }
-
     public void resendVerificationEmail(String email) {
         logger.info("start-resend verification code, email: {}", email);
         Optional<Donor> optionalDonor = donorRepository.findByEmail(email);
         if(optionalDonor.isPresent()){
             Donor donor = optionalDonor.get();
-            if(donor.isVerified())
-                throw new RuntimeException("account is already verified");
 
             donor.setVerificationCode(generateVerificationCode());
             donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));

@@ -148,7 +148,7 @@ const Contact = () => {
             <input
               type="number"
               name="phoneNumber"
-              placeholder="הכנס פלאפון"
+              placeholder="הכנס מספר טלפון"
               value={formData.phoneNumber}
               onChange={handleInputChange}
               className={`px-6 py-3 border-[2px] ${
