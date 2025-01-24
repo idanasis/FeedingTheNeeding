@@ -18,6 +18,7 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -187,18 +188,48 @@ public class AuthService {
 
     public void sendVerificationEmail(Donor donor) {
         logger.info("start-send verification email, for email: {}", donor.getEmail());
-        String subject = "Account Verification";
+        String subject = "איפוס סיסמה";
         String verificationCode = donor.getVerificationCode();
-        String htmlMessage = "<html>"
-                + "<body style=\"font-family: Arial, sans-serif;\">"
-                + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">Password Reset</h2>"
-                + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
-                + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                + "<h3 style=\"color: #333;\">Verification Code: </h3>"
-                + "<p style=\"font-size: 30px; font-weight: bold; color: #007bff;\">" + verificationCode + "</p>"
-                + "</div>"
-                + "</div>"
+        String htmlMessage = "<!DOCTYPE html>"
+                + "<html dir=\"rtl\" lang=\"he\">"
+                + "<head>"
+                + "    <meta charset=\"UTF-8\">"
+                + "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">"
+                + "    <title>איפוס סיסמה</title>"
+                + "</head>"
+                + "<body style=\"margin:0; padding:0; background-color:#f2f4f6; font-family: Arial, sans-serif;\">"
+                + "    <table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">"
+                + "        <tr>"
+                + "            <td align=\"center\">"
+                + "                <table width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" style=\"background-color:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 4px 6px rgba(0,0,0,0.1);\">"
+                + "                    <!-- Header -->"
+                + "                    <tr>"
+                + "                        <td align=\"center\" style=\"background-color:#d32f2f; padding:20px;\">"
+                + "                            <span style=\"color:#ffffff; font-size:24px; font-weight:bold;\">להשביע את הלב</span>"
+                + "                        </td>"
+                + "                    </tr>"
+                + "                    <!-- Content -->"
+                + "                    <tr>"
+                + "                        <td style=\"padding:30px; text-align:right;\">"
+                + "                            <h2 style=\"color:#333333;\">איפוס סיסמה</h2>"
+                + "                            <p style=\"font-size:16px; line-height:1.5;\">שלום <strong>" + donor.getFirstName() + "</strong>,</p>"
+                + "                            <p style=\"font-size:16px; line-height:1.5;\">:אנא הזן את קוד האימות למטה והקלד סיסמה חדשה</p>"
+                + "                            <div style=\"background-color:#f9f9f9; border-left:4px solid #d32f2f; padding:15px; margin:20px 0; text-align:center;\">"
+                + "                                <p style=\"font-size:24px; font-weight:bold; color:#d32f2f; margin:0;\">" + verificationCode + "</p>"
+                + "                            </div>"
+                + "                            <p style=\"font-size:16px; line-height:1.5;\">.אם לא ביקשת איפוס סיסמה, אנא התעלם ממייל זה</p>"
+                + "                        </td>"
+                + "                    </tr>"
+                + "                    <!-- Footer -->"
+                + "                    <tr>"
+                + "                        <td style=\"background-color:#f2f4f6; padding:20px; text-align:center; font-size:12px; color:#888888;\">"
+                + "                            <p>© 2025 Your Company. כל הזכויות שמורות.</p>"
+                + "                        </td>"
+                + "                    </tr>"
+                + "                </table>"
+                + "            </td>"
+                + "        </tr>"
+                + "    </table>"
                 + "</body>"
                 + "</html>";
 
