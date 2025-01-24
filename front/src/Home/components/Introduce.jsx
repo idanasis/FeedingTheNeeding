@@ -48,7 +48,7 @@ const Introduce = () => {
               variants={zoomInVariants}
               className='bg-red-500 hover:bg-white hover:text-black px-10 py-3 rounded-lg text-black font-bold cursor-pointer'
               style={{ fontSize: '20px' }}
-              onClick={() => handleButtonClick('/login')}
+              
             >
               קרא עוד!
             </motion.button>
