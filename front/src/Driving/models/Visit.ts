@@ -17,4 +17,5 @@ export interface Visit {
     startTime?: string;
     endTime?: string;
     familySize?: number;
+    additionalNotes?: string;
   }

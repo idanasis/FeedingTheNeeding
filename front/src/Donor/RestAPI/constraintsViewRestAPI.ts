@@ -31,7 +31,7 @@ export interface Visit{
     phoneNumber: string;
     maxHour: string;
     status: string;
-    priority: int;
+    priority: number;
     note: string
 }
 
@@ -84,11 +84,11 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
                         }
                     });
 
-            console.log("Succesffully got id: ", idResponse.data);
+            console.log("Successfully got id: ", idResponse.data);
 
             const driverId = idResponse.data;
 
-            const response = await axios.get(
+            const constraintsResponse = await axios.get(
                         `${API_BASE_URL}/driving/constraints/driver/futureNotApproved`, {
                             params: { driverId: driverId },
                             headers: {
@@ -97,8 +97,33 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
                             }
                         }
                     );
-            console.log('Retrieved drivers constraints:', response.data);
-            return response.data;
+            console.log('Retrieved drivers constraints:', constraintsResponse.data);
+
+            const routesResponses = await axios.get(
+                        `${API_BASE_URL}/driving/routes`, {
+                            params: {
+                                date: date,
+                                driverId: driverId
+                            },
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            }
+                        }
+                    );
+            console.log('Retrieved drivers routes:', routesResponses.data);
+
+            const routes: DriverRoutes[] = routesResponses.data;
+            const constraints: DriverConstraints[] = constraintsResponse.data;
+
+            if (!routes.length || !routes[0].visit.length) {
+                return constraints;
+            }
+
+            const routeDate = routes[0].visit[0].date;
+            return constraints.filter(constraint => constraint.date !== routeDate);
+
+            return constraintsResponse.data;
         } catch (error) {
             console.error('Error fetching driver constraints:', error);
             throw new Error('Failed to fetch drivers requests. Please try again later.');

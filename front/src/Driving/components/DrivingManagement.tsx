@@ -261,7 +261,7 @@ const DrivingManager = () => {
         {visit.startTime?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startTime}:00</Typography>:null}
         {visit.maxHour!==0?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>:null}
         <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
-        {visit.dietaryPreferences?<Typography variant="body2" fontSize={11}>{visit.familySize} {visit.dietaryPreferences}</Typography>:null}
+        {visit.additionalNotes?<Typography variant="body2" fontSize={11}>{visit.additionalNotes}</Typography>:null}
       </CardContent>
     </Card>
   );
@@ -354,10 +354,18 @@ const DrivingManager = () => {
   const handleDriverChange = async(e: React.ChangeEvent<{ value: unknown }>, index: number) => {
     try{
     const route=data.routes[index] as Route;
-    route.driverId=parseInt(e.target.value as string);
     const updatedRoutes = [...data.routes];
+    if(route.driverId!==0&&!isNaN(route.driverId!)){
+      route.visit.shift();
+    }
     route.driver = driver.find(d => d.driverId === parseInt(e.target.value as string)) as DriverConstraints;
     route.driverId = parseInt(e.target.value as string);
+    console.log(route.driverId);
+    if(isNaN(route.driverId)){
+      updatedRoutes[index]=route;
+    setData({ ...data, routes: updatedRoutes });
+      return;
+    }
     const visit={address:updatedRoutes[index].driver?.startLocation as string,firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,maxHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,};
     route.visit.unshift(visit);
     await updateRoute(route);
@@ -453,10 +461,11 @@ const removeRoute = async(index:number)=>{
           <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
         </Select>
         <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
+                    <Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>
+
         {!route.submitted ? (
           <>
             <Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>
-            <Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>
           </>
         ) : (
           <Button 

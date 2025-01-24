@@ -7,8 +7,11 @@ import {
     getFoodConstraints,
     getAcceptedConstraints,
     updateConstraint,
-    undoAction
+    undoAction,
+    getDonorApproved,
+    addNewConstraint
 } from '../RestAPI/CookManagerRestAPI';
+import { Donor } from "../../Driving/models/Donor";
 import DiveHeader from '../../GoPage/DiveHeader';
 import '../Styles/CookManager.css';
 
@@ -34,6 +37,12 @@ const PendingRequests: React.FC = () => {
     const [expandedConstraintIds, setExpandedConstraintIds] = useState<Set<number>>(new Set());
     const [summaryData, setSummaryData] = useState<SummaryData>({ needed: {}, accepted: {} });
     const [editableConstraints, setEditableConstraints] = useState<Record<number, EditableConstraints>>({});
+    const [isAddingConstraint, setIsAddingConstraint] = useState(false);
+    const [donors, setDonors] = useState<Donor[]>([]);
+    const [selectedDonor, setSelectedDonor] = useState<number | null>(null);
+    const [newStartTime, setNewStartTime] = useState('');
+    const [newEndTime, setNewEndTime] = useState('');
+    const [newConstraints, setNewConstraints] = useState<Record<string, number>>({});
 
     const fetchAllData = async (date: string) => {
         try {
@@ -69,6 +78,21 @@ const PendingRequests: React.FC = () => {
         }
     }, [selectedDate]);
 
+    useEffect(() => {
+        const fetchDonors = async () => {
+            try {
+                const approvedDonors = await getDonorApproved();
+                setDonors(approvedDonors);
+            } catch (err) {
+                console.error('Error fetching donors:', err);
+            }
+        };
+
+        if (isAddingConstraint) {
+            fetchDonors();
+        }
+    }, [isAddingConstraint]);
+
     const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newDate = event.target.value;
         setSelectedDate(newDate);
@@ -103,9 +127,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Declined' }
                     : request
             ));
-             if (selectedDate) {
+            if (selectedDate) {
                 await fetchAllData(selectedDate);
-             }
+            }
             alert('הבקשה נדחתה בהצלחה');
         } catch (err) {
             alert('שגיאה בדחיית הבקשה');
@@ -121,9 +145,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Pending' }
                     : request
             ));
-             if (selectedDate) {
+            if (selectedDate) {
                 await fetchAllData(selectedDate);
-             }
+            }
             alert('הפעולה בוטלה בהצלחה');
         } catch (err) {
             alert('שגיאה בביטול הפעולה');
@@ -145,9 +169,9 @@ const PendingRequests: React.FC = () => {
                     ? { ...request, status: 'Accepted' }
                     : request
             ));
-             if (selectedDate) {
+            if (selectedDate) {
                 await fetchAllData(selectedDate);
-             }
+            }
             alert('הבקשה עודכנה ואושרה בהצלחה');
         } catch (err) {
             alert('שגיאה בעדכון ואישור הבקשה');
@@ -337,90 +361,227 @@ const PendingRequests: React.FC = () => {
         );
     };
 
+    const handleAddNewConstraint = async () => {
+        if (!selectedDonor || !newStartTime || !newEndTime) {
+            alert('נא למלא את כל השדות');
+            return;
+        }
+
+        try {
+            await addNewConstraint(
+                selectedDonor,
+                selectedDate,
+                newStartTime,
+                newEndTime,
+                newConstraints
+            );
+
+            setIsAddingConstraint(false);
+            setSelectedDonor(null);
+            setNewConstraints({});
+            setNewStartTime('');
+            setNewEndTime('');
+            fetchAllData(selectedDate);
+        } catch (err) {
+            alert('שגיאה בהוספת הבקשה');
+            console.error(err);
+        }
+    };
+
     return (
-    <>
-    <DiveHeader />
-        <div className="app-container">
-            {selectedDate && renderSidebar()}
+        <>
+            <DiveHeader />
+            <div className="app-container">
+                {selectedDate && renderSidebar()}
 
-            <div className="pending-requests-container">
-                <div className="content-wrapper">
-                    <div className="date-selection-section">
-                        <h1>בקשות בישול</h1>
-                        <div className="date-input-wrapper">
-                            <input
-                                type="date"
-                                value={selectedDate}
-                                onChange={handleDateChange}
-                                className="date-input"
-                            />
-                        </div>
-                    </div>
+                <div className="pending-requests-container">
+                    <div className="content-wrapper">
+                        <div className="date-selection-section">
+                            <h1>בקשות בישול</h1>
+                            <div className="date-input-wrapper">
+                                <input
+                                    type="date"
+                                    value={selectedDate}
+                                    onChange={handleDateChange}
+                                    className="date-input"
+                                />
+                                <button
+                                    onClick={() => setIsAddingConstraint(true)}
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-4"
+                                >
+                                    הוסף בקשת בישול
+                                </button>
+                            </div>
 
-                    {loading && <div className="loading">טוען...</div>}
-                    {error && <div className="error-message">{error}</div>}
+                            {isAddingConstraint && (
+                                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                                    <div className="bg-white p-6 rounded-lg w-96 max-h-[90vh] overflow-y-auto">
+                                        <h2 className="text-xl font-bold mb-4 text-right">הוספת בקשת בישול חדשה</h2>
 
-                    {!loading && !error && allRequests.length === 0 && (
-                        <div className="no-requests">אין בקשות לתאריך זה</div>
-                    )}
+                                        <div className="space-y-4">
+                                            <div>
+                                                <label className="block text-right mb-2">בחר מבשל:</label>
+                                                <select
+                                                                                                   className="w-full p-2 border rounded text-right"
+                                                                                                   value={selectedDonor || ''}
+                                                                                                   onChange={(e) => setSelectedDonor(Number(e.target.value))}
+                                                                                               >
+                                                                                                   <option value="">בחר מבשל</option>
+                                                                                                   {donors.map(donor => (
+                                                                                                       <option key={donor.id} value={donor.id}>
+                                                                                                           {donor.firstName} {donor.lastName}
+                                                                                                       </option>
+                                                                                                   ))}
+                                                                                               </select>
+                                                                                           </div>
 
-                    {allRequests.length > 0 && (
-                        <div className="table-section">
-                            <table className="requests-table">
-                                <thead>
-                                    <tr>
-                                        <th className="name-column">שם המבשל</th>
-                                        <th className="date-column">תאריך</th>
-                                        <th className="time-column">שעות</th>
-                                        <th className="address-column">כתובת</th>
-                                        <th className="constraints-column">דרישות תזונה</th>
-                                        <th className="actions-column">פעולות</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {allRequests.map((request) => (
-                                        <React.Fragment key={request.constraintId}>
-                                            <tr className={request.status.toLowerCase()}>
-                                                <td className="name-column">{request.name}</td>
-                                                <td className="date-column">
-                                                    {new Date(request.date).toLocaleDateString('he-IL')}
-                                                </td>
-                                                <td className="time-column">
-                                                    {request.startTime} - {request.endTime}
-                                                </td>
-                                                <td className="address-column">{request.address}</td>
-                                                <td className="constraints-column">
-                                                    <button
-                                                        className="view-constraints-button"
-                                                        onClick={(e) => toggleRequestDetails(request.constraintId, e)}
-                                                    >
-                                                        {isExpanded(request.constraintId) ? 'הסתר פרטים' : 'הצג פרטים'}
-                                                    </button>
-                                                </td>
-                                                <td className="actions-column">
-                                                    {renderActionButtons(request)}
-                                                </td>
-                                            </tr>
-                                            {isExpanded(request.constraintId) && (
-                                                <tr className="constraints-details-row">
-                                                    <td colSpan={6}>
-                                                        <div className="constraints-details">
-                                                            {renderConstraints(request.constraintId, request.constraints)}
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
-                                        </React.Fragment>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-        < />
-    );
-};
+                                                                                           <div className="grid grid-cols-2 gap-4">
+                                                                                               <div>
+                                                                                                   <label className="block text-right mb-2">שעת סיום:</label>
+                                                                                                   <input
+                                                                                                       type="time"
+                                                                                                       className="w-full p-2 border rounded text-right"
+                                                                                                       value={newEndTime}
+                                                                                                       onChange={(e) => setNewEndTime(e.target.value)}
+                                                                                                   />
+                                                                                               </div>
+                                                                                               <div>
+                                                                                                   <label className="block text-right mb-2">שעת התחלה:</label>
+                                                                                                   <input
+                                                                                                       type="time"
+                                                                                                       className="w-full p-2 border rounded text-right"
+                                                                                                       value={newStartTime}
+                                                                                                       onChange={(e) => setNewStartTime(e.target.value)}
+                                                                                                   />
+                                                                                               </div>
+                                                                                           </div>
 
-export default PendingRequests;
+                                                                                           <div>
+                                                                                               <label className="block text-right mb-2">הגדר מנות:</label>
+                                                                                               {Object.keys(summaryData.needed).map(constraint => (
+                                                                                                   <div key={constraint} className="flex justify-between items-center mb-2 p-2 bg-gray-50 rounded">
+                                                                                                       <div className="flex items-center gap-2">
+                                                                                                           <button
+                                                                                                               onClick={() => {
+                                                                                                                   const currentValue = newConstraints[constraint] || 0;
+                                                                                                                   setNewConstraints({
+                                                                                                                       ...newConstraints,
+                                                                                                                       [constraint]: Math.max(0, currentValue - 1)
+                                                                                                                   });
+                                                                                                               }}
+                                                                                                               className="w-8 h-8 bg-gray-200 rounded"
+                                                                                                           >
+                                                                                                               -
+                                                                                                           </button>
+                                                                                                           <span>{newConstraints[constraint] || 0}</span>
+                                                                                                           <button
+                                                                                                               onClick={() => {
+                                                                                                                   const currentValue = newConstraints[constraint] || 0;
+                                                                                                                   setNewConstraints({
+                                                                                                                       ...newConstraints,
+                                                                                                                       [constraint]: currentValue + 1
+                                                                                                                   });
+                                                                                                               }}
+                                                                                                               className="w-8 h-8 bg-gray-200 rounded"
+                                                                                                           >
+                                                                                                               +
+                                                                                                           </button>
+                                                                                                       </div>
+                                                                                                       <span>{constraint}</span>
+                                                                                                   </div>
+                                                                                               ))}
+                                                                                           </div>
+
+                                                                                           <div className="flex justify-end gap-2 mt-4">
+                                                                                               <button
+                                                                                                   onClick={handleAddNewConstraint}
+                                                                                                   className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                                                                               >
+                                                                                                   שמור
+                                                                                               </button>
+                                                                                               <button
+                                                                                                   onClick={() => {
+                                                                                                       setIsAddingConstraint(false);
+                                                                                                       setSelectedDonor(null);
+                                                                                                       setNewConstraints({});
+                                                                                                       setNewStartTime('');
+                                                                                                       setNewEndTime('');
+                                                                                                   }}
+                                                                                                   className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+                                                                                               >
+                                                                                                   ביטול
+                                                                                               </button>
+                                                                                           </div>
+                                                                                       </div>
+                                                                                   </div>
+                                                                               </div>
+                                                                           )}
+                                                                       </div>
+
+                                                                       {loading && <div className="loading">טוען...</div>}
+                                                                       {error && <div className="error-message">{error}</div>}
+
+                                                                       {!loading && !error && allRequests.length === 0 && (
+                                                                           <div className="no-requests">אין בקשות לתאריך זה</div>
+                                                                       )}
+
+                                                                       {allRequests.length > 0 && (
+                                                                           <div className="table-section">
+                                                                               <table className="requests-table">
+                                                                                   <thead>
+                                                                                       <tr>
+                                                                                           <th className="name-column">שם המבשל</th>
+                                                                                           <th className="date-column">תאריך</th>
+                                                                                           <th className="time-column">שעות</th>
+                                                                                           <th className="address-column">כתובת</th>
+                                                                                           <th className="constraints-column">דרישות תזונה</th>
+                                                                                           <th className="actions-column">פעולות</th>
+                                                                                       </tr>
+                                                                                   </thead>
+                                                                                   <tbody>
+                                                                                       {allRequests.map((request) => (
+                                                                                           <React.Fragment key={request.constraintId}>
+                                                                                               <tr className={request.status.toLowerCase()}>
+                                                                                                   <td className="name-column">{request.name}</td>
+                                                                                                   <td className="date-column">
+                                                                                                       {new Date(request.date).toLocaleDateString('he-IL')}
+                                                                                                   </td>
+                                                                                                   <td className="time-column">
+                                                                                                       {request.startTime} - {request.endTime}
+                                                                                                   </td>
+                                                                                                   <td className="address-column">{request.address}</td>
+                                                                                                   <td className="constraints-column">
+                                                                                                       <button
+                                                                                                           className="view-constraints-button"
+                                                                                                           onClick={(e) => toggleRequestDetails(request.constraintId, e)}
+                                                                                                       >
+                                                                                                           {isExpanded(request.constraintId) ? 'הסתר פרטים' : 'הצג פרטים'}
+                                                                                                       </button>
+                                                                                                   </td>
+                                                                                                   <td className="actions-column">
+                                                                                                       {renderActionButtons(request)}
+                                                                                                   </td>
+                                                                                               </tr>
+                                                                                               {isExpanded(request.constraintId) && (
+                                                                                                   <tr className="constraints-details-row">
+                                                                                                       <td colSpan={6}>
+                                                                                                           <div className="constraints-details">
+                                                                                                               {renderConstraints(request.constraintId, request.constraints)}
+                                                                                                           </div>
+                                                                                                       </td>
+                                                                                                   </tr>
+                                                                                               )}
+                                                                                           </React.Fragment>
+                                                                                       ))}
+                                                                                   </tbody>
+                                                                               </table>
+                                                                           </div>
+                                                                       )}
+                                                                   </div>
+                                                               </div>
+                                                           </div>
+                                                       </>
+                                                   );
+                                                };
+
+                                                export default PendingRequests;

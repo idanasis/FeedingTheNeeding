@@ -82,5 +82,5 @@ public class Route {
     public void setSubmitted(boolean isSubmitted) {
         this.isSubmitted = isSubmitted;
     }
-    
+
 }
