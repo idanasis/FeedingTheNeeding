@@ -69,7 +69,6 @@ public class AuthServiceTest {
     private AuthenticationRequest authenticationRequest;
     private RegistrationRequest donorRegistrationRequest;
     private NeedyRegistrationRequest needyRegistrationRequest;
-    private VerifyDonorDTO verifyDonorDTO;
 
     @BeforeEach
     void setUp() {
@@ -77,7 +76,6 @@ public class AuthServiceTest {
         authenticationRequest = new AuthenticationRequest(DONOR_PHONE_NUMBER, PASSWORD);
         donorRegistrationRequest = new RegistrationRequest(DONOR_EMAIL, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME, DONOR_PHONE_NUMBER, DONOR_ADDRESS);
         needyRegistrationRequest = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME, NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE);
-        verifyDonorDTO = new VerifyDonorDTO(DONOR_PHONE_NUMBER, VERIFICATION_CODE);
     }
 
 
@@ -89,7 +87,6 @@ public class AuthServiceTest {
 
         Donor donor = new Donor();
         donor.setPhoneNumber(authenticationRequest.getPhoneNumber());
-        donor.setVerified(true);
         donor.setStatus(RegistrationStatus.AVAILABLE);
         user.setDonor(donor);
         donor.setUserCredentials(user);
@@ -309,42 +306,6 @@ public class AuthServiceTest {
     }
 
     @Test
-    void resetPassword_ValidRequest_Success() {
-        UserCredentials user = new UserCredentials();
-        user.setPhoneNumber(DONOR_PHONE_NUMBER);
-        user.setPasswordHash("oldEncodedPassword");
-
-        when(userCredentialsRepository.findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER))
-                .thenReturn(user);
-
-        when(passwordEncoder.encode(PASSWORD))
-                .thenReturn("newEncodedPassword");
-
-        when(userCredentialsRepository.save(user)).thenReturn(user);
-
-        authService.resetPassword(DONOR_PHONE_NUMBER, PASSWORD);
-
-        assertEquals("newEncodedPassword", user.getPasswordHash());
-        verify(userCredentialsRepository, times(1)).findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER);
-        verify(passwordEncoder, times(1)).encode(PASSWORD);
-        verify(userCredentialsRepository, times(1)).save(user);
-    }
-
-    @Test
-    void resetPassword_UserNotFound_ThrowsException() {
-        when(userCredentialsRepository.findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER))
-                .thenReturn(null);
-
-        Exception exception = assertThrows(UserDoesntExistsException.class, () -> {
-            authService.resetPassword(DONOR_PHONE_NUMBER, PASSWORD);
-        });
-
-        assertEquals("User not found", exception.getMessage());
-        verify(userCredentialsRepository, times(1)).findCredentialsByPhoneNumber(DONOR_PHONE_NUMBER);
-        verifyNoMoreInteractions(passwordEncoder, userCredentialsRepository);
-    }
-
-    @Test
     void sendVerificationEmail_Success() throws MessagingException {
         Donor donor = new Donor();
         donor.setEmail(EMAIL);
@@ -377,86 +338,9 @@ public class AuthServiceTest {
     }
 
     @Test
-    void verifyDonor_Success() {
-        Donor donor = new Donor();
-        donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
-        donor.setVerificationCode(verifyDonorDTO.verificationCode());
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setStatus(RegistrationStatus.PENDING);
-
-        when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
-                .thenReturn(Optional.of(donor));
-
-        authService.verifyDonor(verifyDonorDTO);
-
-        assertTrue(donor.isVerified());
-        assertNull(donor.getVerificationCode());
-        assertNull(donor.getVerificationCodeExpiresAt());
-        assertEquals(RegistrationStatus.PENDING, donor.getStatus());
-
-        verify(donorRepository, times(1)).findByPhoneNumber(verifyDonorDTO.phoneNumber());
-        verify(donorRepository, times(1)).save(donor);
-    }
-
-    @Test
-    void verifyDonor_UserNotFound_ThrowsException() {
-        when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
-                .thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(UserDoesntExistsException.class, () -> {
-            authService.verifyDonor(verifyDonorDTO);
-        });
-
-        assertEquals("User not found", exception.getMessage());
-        verify(donorRepository, times(1)).findByPhoneNumber(verifyDonorDTO.phoneNumber());
-        verifyNoMoreInteractions(donorRepository);
-    }
-
-    @Test
-    void verifyDonor_InvalidVerificationCode_ThrowsException() {
-        Donor donor = new Donor();
-        donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
-        donor.setVerificationCode("wrongCode");
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-        donor.setStatus(RegistrationStatus.PENDING);
-
-        when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
-                .thenReturn(Optional.of(donor));
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            authService.verifyDonor(verifyDonorDTO);
-        });
-
-        assertEquals("Invalid verification code", exception.getMessage());
-        verify(donorRepository, times(1)).findByPhoneNumber(verifyDonorDTO.phoneNumber());
-        verifyNoMoreInteractions(donorRepository);
-    }
-
-    @Test
-    void verifyDonor_VerificationCodeExpired_ThrowsException() {
-        Donor donor = new Donor();
-        donor.setPhoneNumber(verifyDonorDTO.phoneNumber());
-        donor.setVerificationCode(verifyDonorDTO.verificationCode());
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().minusMinutes(1));
-        donor.setStatus(RegistrationStatus.PENDING);
-
-        when(donorRepository.findByPhoneNumber(verifyDonorDTO.phoneNumber()))
-                .thenReturn(Optional.of(donor));
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            authService.verifyDonor(verifyDonorDTO);
-        });
-
-        assertEquals("Verification code expired", exception.getMessage());
-        verify(donorRepository, times(1)).findByPhoneNumber(verifyDonorDTO.phoneNumber());
-        verifyNoMoreInteractions(donorRepository);
-    }
-
-    @Test
     void resendVerificationEmail_Success() throws Exception {
         Donor donor = new Donor();
         donor.setEmail(EMAIL);
-        donor.setVerified(false);
         donor.setVerificationCode("oldCode");
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
 
@@ -470,25 +354,6 @@ public class AuthServiceTest {
         assertNotNull(donor.getVerificationCodeExpiresAt());
 
         verify(emailService, times(1)).sendVerificationEmail(eq(EMAIL), anyString(), anyString());
-    }
-
-    @Test
-    void resendVerificationEmail_AlreadyVerified_ThrowsException() {
-        Donor donor = new Donor();
-        donor.setEmail(EMAIL);
-        donor.setVerified(true);
-        donor.setVerificationCode("code");
-        donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
-
-        when(donorRepository.findByEmail(EMAIL)).thenReturn(Optional.of(donor));
-
-        Exception exception = assertThrows(RuntimeException.class, () -> {
-            authService.resendVerificationEmail(EMAIL);
-        });
-
-        assertEquals("account is already verified", exception.getMessage());
-        verify(donorRepository, times(1)).findByEmail(EMAIL);
-        verifyNoMoreInteractions(donorRepository, emailService);
     }
 
     @Test
@@ -508,7 +373,6 @@ public class AuthServiceTest {
     void resendVerificationEmail_EmailSendFailure_ThrowsException() throws Exception {
         Donor donor = new Donor();
         donor.setEmail(EMAIL);
-        donor.setVerified(false);
         donor.setVerificationCode("oldCode");
         donor.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(10));
 

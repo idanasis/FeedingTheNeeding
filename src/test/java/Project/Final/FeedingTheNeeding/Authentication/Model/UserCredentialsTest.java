@@ -49,7 +49,7 @@ class UserCredentialsTest {
     void testGetAuthorities_WithValidDonorAndRole() {
         when(donorMock.getUserCredentials()).thenReturn(userCredentials);
         when(donorMock.getRole()).thenReturn(TEST_USER_ROLE);
-        when(donorMock.isVerified()).thenReturn(VERIFIED_STATUS);
+        //when(donorMock.isVerified()).thenReturn(VERIFIED_STATUS);
 
         Collection<? extends GrantedAuthority> authorities = userCredentials.getAuthorities();
 
@@ -107,29 +107,9 @@ class UserCredentialsTest {
     @Test
     @DisplayName("isEnabled should return true when donor is verified")
     void testIsEnabled_WhenDonorIsVerified() {
-        when(donorMock.isVerified()).thenReturn(VERIFIED_STATUS);
-
         boolean isEnabled = userCredentials.isEnabled();
 
         assertTrue(isEnabled, "isEnabled should return true when donor is verified");
-    }
-
-    @Test
-    @DisplayName("isEnabled should return false when donor is not verified")
-    void testIsEnabled_WhenDonorIsNotVerified() {
-        when(donorMock.isVerified()).thenReturn(NOT_VERIFIED_STATUS);
-
-        boolean isEnabled = userCredentials.isEnabled();
-
-        assertFalse(isEnabled, "isEnabled should return false when donor is not verified");
-    }
-
-    @Test
-    @DisplayName("setEnabled should set donor's verified status correctly")
-    void testSetEnabled_SetsDonorVerifiedStatus() {
-        userCredentials.setEnabled(VERIFIED_STATUS);
-
-        verify(donorMock, times(1)).setVerified(VERIFIED_STATUS);
     }
 
     @Test

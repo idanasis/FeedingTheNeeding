@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @EqualsAndHashCode(callSuper = true)
 @ToString(exclude = "userCredentials")
 public class Donor extends BaseUser{
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String email;
     private double timeOfDonation;
 
@@ -35,6 +35,6 @@ public class Donor extends BaseUser{
 
     private String verificationCode;
     private LocalDateTime verificationCodeExpiresAt;
-    private boolean verified;
+
     private LocalDate lastDonationDate;
 }

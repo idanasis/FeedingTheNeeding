@@ -97,7 +97,6 @@ public class SystemTestsImpl {
                 .content(donor1Json)).andReturn();
         Donor donor1 = objectMapper.readValue(donorGetResult.getResponse().getContentAsString(), Donor.class);
 
-        donor1.setVerified(true);
         donor1.setStatus(RegistrationStatus.AVAILABLE);
         // === Step 4: Admin Accepts Donor1 ===
         mockMvc.perform(put("/user/donor")
@@ -129,7 +128,6 @@ public class SystemTestsImpl {
                 .content(donor1Json)).andReturn();
         Donor donor2 = objectMapper.readValue(donorGetResult.getResponse().getContentAsString(), Donor.class);
 
-        donor2.setVerified(true);
         donor2.setStatus(RegistrationStatus.AVAILABLE);
         // === Step 6: Admin Accepts Donor2 ===
         mockMvc.perform(put("/user/donor")

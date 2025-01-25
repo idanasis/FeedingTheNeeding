@@ -4,7 +4,6 @@ package Project.Final.FeedingTheNeeding.Authentication.Controller;
 import Project.Final.FeedingTheNeeding.Authentication.DTO.AuthenticationRequest;
 import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationRequest;
 import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationRequest;
-import Project.Final.FeedingTheNeeding.Authentication.DTO.VerifyDonorDTO;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserAlreadyExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExistsException;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
@@ -146,57 +145,6 @@ public class AuthControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Needy already exists"));
     }
-
-    @Test
-    void testResetPassword_Success() throws Exception {
-        doNothing().when(authService).resetPassword(PHONE_NUMBER, PASSWORD);
-
-        mockMvc.perform(post("/auth/reset-password")
-                        .param("phoneNumber", PHONE_NUMBER)
-                        .param("newPassword", PASSWORD))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Password reset successfully"));
-    }
-
-    @Test
-    void testResetPassword_Failure() throws Exception {
-        doThrow(new UserDoesntExistsException("User not found")).when(authService).resetPassword(PHONE_NUMBER, PASSWORD);
-
-        mockMvc.perform(post("/auth/reset-password")
-                        .param("phoneNumber", PHONE_NUMBER)
-                        .param("newPassword", PASSWORD))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("User not found"));
-    }
-
-    @Test
-    void testVerifyDonor_Success() throws Exception {
-        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(PHONE_NUMBER, VERIFICATION_CODE);
-
-        doNothing().when(authService).verifyDonor(verifyDonorDTO);
-
-        mockMvc.perform(post("/auth/verify-donor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyDonorDTO)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Donor successfully verified"));
-    }
-
-    @Test
-    void testVerifyDonor_Failure() throws Exception {
-        VerifyDonorDTO verifyDonorDTO = new VerifyDonorDTO(PHONE_NUMBER, "invalidCode");
-
-        doThrow(new RuntimeException("Invalid verification code"))
-                .when(authService).verifyDonor(verifyDonorDTO);
-
-        mockMvc.perform(post("/auth/verify-donor")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(verifyDonorDTO)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("Invalid verification code"));
-    }
-
-    // New Tests for Logout Endpoint
 
     @Test
     void testLogout_Success_WithToken() throws Exception {

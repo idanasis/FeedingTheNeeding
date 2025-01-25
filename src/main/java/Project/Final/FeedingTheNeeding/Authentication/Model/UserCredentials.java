@@ -60,11 +60,7 @@ public class UserCredentials implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return donor.isVerified();
-    }
-
-    public void setEnabled(boolean enabled) {
-        donor.setVerified(enabled);
+        return true;
     }
 
     @Override

@@ -105,26 +105,6 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/reset-password")
-    public ResponseEntity<?> resetPassword(@RequestParam String phoneNumber, @RequestParam String newPassword) {
-        try {
-            authService.resetPassword(phoneNumber, newPassword);
-            return ResponseEntity.ok("Password reset successfully");
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/verify-donor")
-    public ResponseEntity<?> verifyDonor(@RequestBody VerifyDonorDTO verifyDonorDTO) {
-        try{
-            authService.verifyDonor(verifyDonorDTO);
-            return ResponseEntity.ok("Donor successfully verified");
-        }catch (Exception e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PostMapping("/resend-email")
     public ResponseEntity<?> resendVerificationCode(@RequestParam String email) {
         try{
@@ -146,6 +126,7 @@ public class AuthController {
         }
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF')")
     @GetMapping("/user-id")
     public ResponseEntity<?> getUserIDFromJWT(@RequestParam String token) {
         try{
