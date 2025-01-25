@@ -41,7 +41,7 @@ const Pictures = () => {
         </motion.div>
         <motion.button
           variants={slideUpVariants}
-          onClick={() => navigate('/pictures')}
+          onClick={() => window.location.href='/pictures'}
           className='mt-8 px-6 py-3 bg-red-500 text-white text-lg font-semibold rounded-lg hover:bg-red-600 transition duration-300'
         >
           לכל התמונות
