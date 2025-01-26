@@ -5,8 +5,8 @@ import DiveHeader from '../../GoPage/DiveHeader';
 import '../styles/constraints.css'
 
 interface TimeSlot {
-  start: number;  // Changed to number
-  end: number;    // Changed to number
+  start: string;  // Changed to number
+  end: string;    // Changed to number
 }
 
 interface DaySchedule {
@@ -67,8 +67,8 @@ const DriverConstraints: React.FC = () => {
 
   const addTimeSlot = () => {
     if (tempTimeSlot.start && tempTimeSlot.end) {
-      const startDecimal = timeToDecimal(tempTimeSlot.start);
-      const endDecimal = timeToDecimal(tempTimeSlot.end);
+      const startDecimal = tempTimeSlot.start;
+      const endDecimal = tempTimeSlot.end;
 
       if (endDecimal <= startDecimal) {
         alert('שעת הסיום חייבת להיות מאוחרת משעת ההתחלה');
@@ -261,7 +261,7 @@ const DriverConstraints: React.FC = () => {
             {schedule.timeSlots.map((slot, index) => (
               <div key={index} className="driver-time-slot-item">
                 <span>
-                  {decimalToTime(slot.start)} - {decimalToTime(slot.end)}
+                  {slot.start} - {slot.end}
                 </span>
                 <button
                   className="driver-remove-time"
@@ -275,7 +275,7 @@ const DriverConstraints: React.FC = () => {
         </div>
       </div>
     </div>
-    < />
+    </>
   );
 };
 

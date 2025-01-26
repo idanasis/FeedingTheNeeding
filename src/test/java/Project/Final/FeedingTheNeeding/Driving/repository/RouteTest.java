@@ -33,8 +33,8 @@ public class RouteTest {
     final String firstName = "John";
     final String lastName = "Doe";
     final String phoneNumber = "0541234567";
-    final int maxHour = 14,maxHour2=15, priority = 1,priority2=2,startHour=10;
-    final String note = "some Note", note2 = "some another note";
+    final int priority = 1,priority2=2;
+    final String maxHour = "14:00",maxHour2="15:00", note = "some Note", note2 = "some another note",startHour="10:00";
     final long driverId = 1,driverId2 = 2;
     final LocalDate date = LocalDate.now(),date2 = LocalDate.now().plusDays(1);
     final String additionalNotes = "additional notes";
@@ -101,7 +101,7 @@ public class RouteTest {
         assertEquals(firstName,route2.getVisit().get(0).getFirstName());
         assertEquals(lastName,route2.getVisit().get(0).getLastName());
         assertEquals(phoneNumber,route2.getVisit().get(0).getPhoneNumber());
-        assertEquals(maxHour,route2.getVisit().get(0).getMaxHour());
+        assertEquals(maxHour,route2.getVisit().get(0).getEndHour());
         assertEquals(VisitStatus.Deliver,route2.getVisit().get(0).getStatus());
         assertEquals(note,route2.getVisit().get(0).getNote());
         assertEquals(priority, route2.getVisit().get(0).getPriority());
@@ -144,7 +144,7 @@ public class RouteTest {
         visit2.setAddress(address);
         visit2.setFirstName(firstName);
         visit2.setLastName(lastName);
-        visit2.setMaxHour(maxHour2);
+        visit2.setEndHour(maxHour2);
         visit2.setPhoneNumber(phoneNumber);
         visit2.setPriority(priority2);
         visit2.setRoute(route1);
@@ -162,7 +162,7 @@ public class RouteTest {
         assertEquals(firstName,route2.getVisit().get(0).getFirstName());
         assertEquals(lastName,route2.getVisit().get(0).getLastName());
         assertEquals(phoneNumber,route2.getVisit().get(0).getPhoneNumber());
-        assertEquals(maxHour2,route2.getVisit().get(0).getMaxHour());
+        assertEquals(maxHour2,route2.getVisit().get(0).getEndHour());
         assertEquals(VisitStatus.Deliver,route2.getVisit().get(0).getStatus());
         assertEquals(note2,route2.getVisit().get(0).getNote());
         assertEquals(priority2, route2.getVisit().get(0).getPriority());

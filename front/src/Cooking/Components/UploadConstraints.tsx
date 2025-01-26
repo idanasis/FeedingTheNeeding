@@ -139,8 +139,20 @@ const CookConstraints: React.FC = () => {
     }
   };
 
-  const isAddButtonDisabled = !tempTimeSlot.start || !tempTimeSlot.end;
+  const isAddButtonDisabled = !tempTimeSlot.start || !tempTimeSlot.end ||
+  getTimeDifferenceInHours(tempTimeSlot.start, tempTimeSlot.end) < 2 ;
+  function getTimeDifferenceInHours(start: string, end: string): number {
+    // Parse the time strings into hours and minutes
+    const [startHour, startMinute] = start.split(':').map(Number);
+    const [endHour, endMinute] = end.split(':').map(Number);
 
+    // Convert the time to minutes since midnight
+    const startTotalMinutes = startHour * 60 + startMinute;
+    const endTotalMinutes = endHour * 60 + endMinute;
+
+    const differenceInMinutes = endTotalMinutes - startTotalMinutes;
+    return differenceInMinutes / 60;
+}
   return (
   <>
   <DiveHeader />
@@ -304,7 +316,7 @@ const CookConstraints: React.FC = () => {
         </div>
       </div>
     </div>
-    < />
+    </>
   );
 };
 

@@ -5,13 +5,13 @@ const API_BASE_URL = 'http://localhost:8080';
 export interface DriverConstraintsData {
     driverId: number;
     date: string;
-    startHour: number;
-    endHour: number;
+    startHour: string;
+    endHour: string;
     startLocation: string;
     requests: string;
 }
 
-export const submitDriverConstraints = async (data: DriverConstraintsData): Promise<void> => {
+export const submitDriverConstraints = async (data: DriverConstraintsData): Promise<unknown> => {
     try {
         console.log('Submitting driver data: ', data);
 
@@ -32,7 +32,7 @@ export const submitDriverConstraints = async (data: DriverConstraintsData): Prom
         console.log("Succesffully got id: ", idResponse.data);
 
         const driverId = idResponse.data;
-        data.driverId = idResponse.data;
+        data.driverId = idResponse.data as number;
 
 
         const response = await axios.post(`${API_BASE_URL}/driving/constraints`, data,{

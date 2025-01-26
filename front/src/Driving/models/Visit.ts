@@ -6,7 +6,6 @@ export interface Visit {
     firstName: string;
     lastName: string;
     phoneNumber: string;
-    maxHour?: number;
     note?: string;
     status: string;
     priority?: number;
@@ -16,6 +15,8 @@ export interface Visit {
     constraints?: [string, number][];
     startTime?: string;
     endTime?: string;
+    startHour?: string;
+    endHour?: string;
     familySize?: number;
     additionalNotes?: string;
   }
