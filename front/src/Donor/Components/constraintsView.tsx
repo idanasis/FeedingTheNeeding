@@ -203,8 +203,8 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
                                                 {driverConstraints.map((constraint, index) => (
                                                     <tr key={index}>
                                                         <td>{new Date(constraint.date).toLocaleDateString('he-IL')}</td>
-                                                        <td>{constraint.start_hour}:00</td>
-                                                        <td>{constraint.end_hour}:00</td>
+                                                        <td>{constraint.startHour}</td>
+                                                        <td>{constraint.endHour}</td>
                                                         <td>{constraint.startLocation}</td>
                                                         <td>{constraint.requests || 'אין בקשות'}</td>
                                                         <td>
@@ -249,7 +249,7 @@ const UserConstraints: React.FC<UserConstraintsProps> = () => {
                                                                 <td>{visit.address}</td>
                                                                 <td>{`${visit.firstName} ${visit.lastName}`}</td>
                                                                 <td>{visit.phoneNumber}</td>
-                                                                <td>{visit.maxHour}</td>
+                                                                <td>{visit.endHour}</td>
                                                                 <td>
                                                                     <span className={`status-approved status-${visit.status.toLowerCase()}`}>
                                                                         {getStatusInHebrew(visit.status)}

@@ -17,13 +17,15 @@ export interface PendingCookDTO {
 export interface DriverConstraints {
     driverId: number;
     date: string;
-    start_hour: number;
-    end_hour: number;
+    startHour: string;
+    endHour: string;
     startLocation: string;
     requests: string;
 }
 
 export interface Visit{
+    date: any;
+    endHour: string;
     visitId: number;
     address: string;
     firstName: string;
@@ -67,7 +69,7 @@ export const getCookConstraints = async (): Promise<PendingCookDTO[]> => {
                 );
 
         console.log('Retrieved Constraints:', response.data);
-        return response.data;
+        return response.data as PendingCookDTO[];
     } catch (error) {
         console.error('Error fetching constraints:', error);
         throw new Error('Failed to fetch constraints. Please try again later.');
@@ -97,12 +99,13 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
                             }
                         }
                     );
+            const data = constraintsResponse.data as DriverConstraints[];
             console.log('Retrieved drivers constraints:', constraintsResponse.data);
 
             const routesResponses = await axios.get(
                         `${API_BASE_URL}/driving/routes`, {
                             params: {
-                                date: date,
+                                date: data[0].date,
                                 driverId: driverId
                             },
                             headers: {
@@ -113,8 +116,8 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
                     );
             console.log('Retrieved drivers routes:', routesResponses.data);
 
-            const routes: DriverRoutes[] = routesResponses.data;
-            const constraints: DriverConstraints[] = constraintsResponse.data;
+            const routes: DriverRoutes[] = routesResponses.data as DriverRoutes[];
+            const constraints: DriverConstraints[] = constraintsResponse.data as DriverConstraints[];
 
             if (!routes.length || !routes[0].visit.length) {
                 return constraints;
@@ -122,8 +125,6 @@ export const getDriverConstraints = async (): Promise<DriverConstraints[]> => {
 
             const routeDate = routes[0].visit[0].date;
             return constraints.filter(constraint => constraint.date !== routeDate);
-
-            return constraintsResponse.data;
         } catch (error) {
             console.error('Error fetching driver constraints:', error);
             throw new Error('Failed to fetch drivers requests. Please try again later.');
@@ -160,7 +161,7 @@ export const getDriverRoutes = async (date: string): Promise<DriverRoutes> => {
             }
         );
         console.log('Retrieved drivers routes:', response.data);
-        return response.data;
+        return response.data as DriverRoutes;
     } catch (error) {
         console.error('Error fetching driver routes:', error);
         throw new Error('Failed to fetch drivers routes. Please try again later.');
