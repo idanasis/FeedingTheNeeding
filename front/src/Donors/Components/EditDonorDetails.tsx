@@ -18,10 +18,6 @@ const DonorEdit: React.FC = () => {
                 setFormData(donor);
             } catch (err: any) {
                 setError(err.message);
-                // // Optionally redirect to login if unauthorized
-                // if (err.message === 'No authentication token found.' || err.message === 'Failed to fetch donor data.') {
-                //     navigate('/login');
-                // }
             } finally {
                 setLoading(false);
             }
@@ -87,9 +83,22 @@ const DonorEdit: React.FC = () => {
 
                 <form onSubmit={handleSubmit} className="edit-form">
                     <div className="form-logo">
-                        <img src={FeedingLogo} alt="Logo" className="logo-image" />
+                        <img src={FeedingLogo} alt="Logo" className="logo-image"/>
                     </div>
                     <h2>עריכת פרטים אישיים</h2>
+
+                    <div className="form-group">
+                        <label htmlFor="email">
+                            אימייל <span className="required-asterisk">*</span>
+                        </label>
+                        <input
+                            id="email"
+                            type="text"
+                            value={formData?.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
 
                     <div className="form-row">
                         <div className="form-group">
@@ -99,7 +108,7 @@ const DonorEdit: React.FC = () => {
                             <input
                                 id="firstName"
                                 type="text"
-                                value={formData?.firstName || ''}
+                                value={formData?.firstName}
                                 onChange={handleChange}
                                 required
                             />
@@ -112,7 +121,7 @@ const DonorEdit: React.FC = () => {
                             <input
                                 id="lastName"
                                 type="text"
-                                value={formData?.lastName || ''}
+                                value={formData?.lastName}
                                 onChange={handleChange}
                                 required
                             />
@@ -128,7 +137,7 @@ const DonorEdit: React.FC = () => {
                                 id="phoneNumber"
                                 type="tel"
                                 maxLength={10}
-                                value={formData?.phoneNumber || ''}
+                                value={formData?.phoneNumber}
                                 onChange={handleChange}
                                 required
                             />
@@ -141,7 +150,7 @@ const DonorEdit: React.FC = () => {
                             <input
                                 id="address"
                                 type="text"
-                                value={formData?.address || ''}
+                                value={formData?.address}
                                 onChange={handleChange}
                                 required
                             />
@@ -152,13 +161,6 @@ const DonorEdit: React.FC = () => {
                     {successMessage && <p className="success-message">{successMessage}</p>}
 
                     <button type="submit" className="submit-button">שמירת שינויים</button>
-
-                    <div className="extra-options">
-                        <span>מעוניין לשנות סיסמה? </span>
-                        <a onClick={() => navigate('/reset-password')}>
-                            לחץ כאן
-                        </a>
-                    </div>
                 </form>
             </div>
 
