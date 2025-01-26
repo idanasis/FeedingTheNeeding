@@ -75,9 +75,14 @@ public class CookingService {
         long donorId = user.getDonorId();
         String address = getDonorFromId(donorId).getAddress();
 
-        CookConstraints cc = new CookConstraints(user.getDonorId(), donorId,user.getStartTime(),user.getEndTime(),
-                user.getConstraints(), address ,user.getDate(), Status.Accepted);
-
+        CookConstraints cc = new CookConstraints();
+        cc.setStatus(Status.Accepted);
+        cc.setCookId(donorId);
+        cc.setLocation(address);
+        cc.setConstraints(user.getConstraints());
+        cc.setDate(user.getDate());
+        cc.setStartTime(user.getStartTime());
+        cc.setEndTime(user.getEndTime());
         return submitConstraints(cc);
     }
 
