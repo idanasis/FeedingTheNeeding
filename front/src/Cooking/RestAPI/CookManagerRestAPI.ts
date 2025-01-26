@@ -5,7 +5,7 @@ const API_BASE_URL = 'http://localhost:8080';
 const userUrl = "http://localhost:8080/user";
 
 export interface PendingCookDTO {
-    id: number;
+    constraintId: number;
     name: string;
     startTime: string;
     endTime: string;
@@ -36,7 +36,7 @@ export const getAllRequests = async (date: string): Promise<PendingCookDTO[]> =>
             }
         });
         console.log('Retrieved pending requests:', response.data);
-        return response.data;
+        return response.data as PendingCookDTO[];
     } catch (error) {
         console.error('Error fetching pending requests:', error);
         throw new Error('Failed to fetch pending requests. Please try again later.');
@@ -86,11 +86,11 @@ export const getFoodConstraints = async(date: string): Promise<Record<string, nu
             }
         });
         console.log('Successfully fetched food constraints: ', response.data);
-        return response.data;
+        return response.data as Record<string, number>; 
     } catch (error) {
         console.error('Error during fetching food constraints');
         console.log(error)
-        throw new Error(error || 'Submitting constraints failed. Please try again later');
+        throw new Error(error?.toString() || 'Submitting constraints failed. Please try again later');
     }
 }
 
@@ -127,7 +127,7 @@ export const getAcceptedConstraints = async(date: string): Promise<Record<string
     }
 }
 
-export const updateConstraint = async(id: number, constraints: Record<string, number>): Promise<Void> => {
+export const updateConstraint = async(id: number, constraints: Record<string, number>): Promise<void> => {
     try {
         console.log("Updating constraint with id:", id, "New constraints:", constraints);
 
@@ -151,7 +151,7 @@ export const updateConstraint = async(id: number, constraints: Record<string, nu
     }
 }
 
-export const undoAction = async (constraintId: number): Promise<Void> => {
+export const undoAction = async (constraintId: number): Promise<void> => {
     try{
         console.log("Undoing constraint with id:", constraintId);
         await axios.post(`${API_BASE_URL}/cooking/undoConstraint/${constraintId}`, null, {

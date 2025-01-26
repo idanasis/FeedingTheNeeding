@@ -3,6 +3,7 @@ package Project.Final.FeedingTheNeeding.social.controller;
 import Project.Final.FeedingTheNeeding.social.dto.NeedySimpleDTO;
 import Project.Final.FeedingTheNeeding.social.exception.NeederTrackingNotFoundException;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
 import Project.Final.FeedingTheNeeding.social.projection.NeederTrackingProjection;
 import Project.Final.FeedingTheNeeding.social.service.NeederTrackingService;
 import org.slf4j.Logger;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -163,7 +163,7 @@ public class NeederTrackingController {
             logger.info("Fetching all NeederTracking records for date: {}", date);
             List<NeederTracking> neederTrackings = neederTrackingService.getAllNeedersTrackingsByDate(date);
             logger.info("Fetched all NeederTracking records for date: {}", date);
-
+            neederTrackings=neederTrackings.stream().filter((NeederTracking neederTracking)->neederTracking.getWeekStatus()!=WeekStatus.NotHere).collect(Collectors.toList());
             Map<String, Long> dietaryPreferenceCounts = neederTrackings.stream()
                     .collect(Collectors.groupingBy(
                             NeederTracking::getDietaryPreferences,

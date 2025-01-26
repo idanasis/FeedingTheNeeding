@@ -81,8 +81,7 @@ const DrivingManager = () => {
   const [visible,setVisible]=useState(false);
   async function fetchDrivers(currentDate:Date=date) {
     try{
-      const data=await getDriversConstraints(currentDate);
-      console.log(data);  
+      const data=await getDriversConstraints(currentDate); 
       setDrivers(data)
       let donors=await getDonorApproved();
       donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
@@ -94,7 +93,6 @@ const DrivingManager = () => {
   async function getDrops(currentDate:Date=date){
     try{
       const data=await getNeedersHere(currentDate);
-      console.log(data);
         const updatedData={...initialData};
         updatedData.drop=data;
         const routes=await getRoutes(date);
@@ -105,7 +103,6 @@ const DrivingManager = () => {
           )
         ); 
         const pickup=await getPickupVisits(date);
-        console.log(pickup);
         updatedData.pickup=pickup;
         updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
           !routes.some((route: Route) =>
@@ -115,7 +112,6 @@ const DrivingManager = () => {
         setData(updatedData);
       }catch(err){
         alert("תקלה בהצגת הנתונים");
-        console.error(err);
       }
   }
   useEffect(() => {
@@ -200,7 +196,6 @@ const DrivingManager = () => {
   };
 
   const formatRouteForCopy = (route: Route) => {
-    console.log(route);
     let text = `מסלול הנסיעה שלך:\n\n`;
 
     let action=``;
@@ -242,7 +237,6 @@ const DrivingManager = () => {
       alert('המסלול הועתק בהצלחה');
     } catch (err) {
       alert('שגיאה בהעתקת המסלול');
-      console.error(err);
     }
   };
 

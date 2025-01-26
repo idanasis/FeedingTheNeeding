@@ -387,7 +387,18 @@ const PendingRequests: React.FC = () => {
             console.error(err);
         }
     };
-
+    function getTimeDifferenceInHours(start: string, end: string): number {
+        // Parse the time strings into hours and minutes
+        const [startHour, startMinute] = start.split(':').map(Number);
+        const [endHour, endMinute] = end.split(':').map(Number);
+    
+        // Convert the time to minutes since midnight
+        const startTotalMinutes = startHour * 60 + startMinute;
+        const endTotalMinutes = endHour * 60 + endMinute;
+    
+        const differenceInMinutes = endTotalMinutes - startTotalMinutes;
+        return differenceInMinutes / 60;
+    }
     return (
         <>
             <DiveHeader />
@@ -494,6 +505,7 @@ const PendingRequests: React.FC = () => {
 
                                                                                            <div className="flex justify-end gap-2 mt-4">
                                                                                                <button
+                                                                                               disabled={!selectedDonor || !newStartTime || !newEndTime ||!newConstraints||getTimeDifferenceInHours(newStartTime,newEndTime)<0}
                                                                                                    onClick={handleAddNewConstraint}
                                                                                                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                                                                                                >
