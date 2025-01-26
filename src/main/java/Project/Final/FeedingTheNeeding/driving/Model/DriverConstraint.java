@@ -17,12 +17,12 @@ public class DriverConstraint {
     private long driverId;
     @Id
     private LocalDate date;
-    private int startHour;
-    private int endHour;
+    private String startHour;
+    private String endHour;
     private String startLocation;
     private String requests;
     
-    public DriverConstraint(long driverId, LocalDate date, int startHour, int endHour, String startLocation, String requests){
+    public DriverConstraint(long driverId, LocalDate date, String startHour, String endHour, String startLocation, String requests){
         this.driverId = driverId;
         this.date = date;
         this.startHour = startHour;
@@ -36,10 +36,10 @@ public class DriverConstraint {
     public LocalDate getDate(){
         return date;
     }
-    public int getStartHour(){
+    public String getStartHour(){
         return startHour;
     }
-    public int getEndHour(){
+    public String getEndHour(){
         return endHour;
     }
     public String getStartLocation(){
@@ -54,10 +54,10 @@ public class DriverConstraint {
     public void setDate(LocalDate date){
         this.date = date;
     }
-    public void setStartHour(int startHour){
+    public void setStartHour(String startHour){
         this.startHour = startHour;
     }
-    public void setEndHour(int endHour){
+    public void setEndHour(String endHour){
         this.endHour = endHour;
     }
     public void setStartLocation(String startLocation){

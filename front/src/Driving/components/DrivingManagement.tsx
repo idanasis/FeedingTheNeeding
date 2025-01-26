@@ -82,6 +82,7 @@ const DrivingManager = () => {
   async function fetchDrivers(currentDate:Date=date) {
     try{
       const data=await getDriversConstraints(currentDate);
+      console.log(data);  
       setDrivers(data)
       let donors=await getDonorApproved();
       donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
@@ -93,6 +94,7 @@ const DrivingManager = () => {
   async function getDrops(currentDate:Date=date){
     try{
       const data=await getNeedersHere(currentDate);
+      console.log(data);
         const updatedData={...initialData};
         updatedData.drop=data;
         const routes=await getRoutes(date);
@@ -103,6 +105,7 @@ const DrivingManager = () => {
           )
         ); 
         const pickup=await getPickupVisits(date);
+        console.log(pickup);
         updatedData.pickup=pickup;
         updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
           !routes.some((route: Route) =>
@@ -249,7 +252,7 @@ const DrivingManager = () => {
     <Card
     variant="outlined"
     sx={{
-      height: '150px',
+      height: '160px',
     }}
   >
       <CardContent>
@@ -258,8 +261,8 @@ const DrivingManager = () => {
         </Typography>
         <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
-        {visit.startTime?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startTime}:00</Typography>:null}
-        {visit.maxHour!==0?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.maxHour+":00"}</Typography>:null}
+        {visit.startHour&&visit.startHour!="0:00"?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startHour}</Typography>:null}
+        {visit.endHour&&visit.endHour!=="0:00"?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.endHour}</Typography>:null}
         <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
         {visit.additionalNotes?<Typography variant="body2" fontSize={11}>{visit.additionalNotes}</Typography>:null}
       </CardContent>
@@ -360,13 +363,12 @@ const DrivingManager = () => {
     }
     route.driver = driver.find(d => d.driverId === parseInt(e.target.value as string)) as DriverConstraints;
     route.driverId = parseInt(e.target.value as string);
-    console.log(route.driverId);
     if(isNaN(route.driverId)){
       updatedRoutes[index]=route;
     setData({ ...data, routes: updatedRoutes });
       return;
     }
-    const visit={address:updatedRoutes[index].driver?.startLocation as string,firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,maxHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,};
+    const visit={address:updatedRoutes[index].driver?.startLocation as string,firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,endHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,startHour:updatedRoutes[index].driver?.startHour};
     route.visit.unshift(visit);
     await updateRoute(route);
     updatedRoutes[index]=route;
@@ -406,7 +408,7 @@ const DrivingManager = () => {
   }
 }
 const addConstraint = async (donor:Donor) => {
-  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: 20, requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:0});
+  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: "0:00", requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:"0:00"});
   fetchDrivers();
 }
 const removeRoute = async(index:number)=>{

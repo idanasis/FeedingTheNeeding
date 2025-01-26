@@ -30,7 +30,7 @@ public class DriverConstraintTest {
     private DriverConstraint driverConstraint;
     final long driverId = 1;
     final LocalDate date = LocalDate.now();
-    final int startHour = 8,endHour = 12;
+    final String startHour = "8:00",endHour = "12:00";
     final String startLocation = "Rager 5 beer sheva", requests = "Only south country";
     
     @BeforeEach

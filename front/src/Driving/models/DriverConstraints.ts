@@ -2,8 +2,8 @@ export interface DriverConstraints {
     driverId: number;
     driverPhone: string;
     date: Date;
-    startHour:number;
-    endHour:number;
+    startHour:string;
+    endHour:string;
     startLocation: string;
     requests: string;
     driverFirstName : string;

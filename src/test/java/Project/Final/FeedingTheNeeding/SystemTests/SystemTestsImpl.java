@@ -69,7 +69,7 @@ public class SystemTestsImpl {
         needy.setConfirmStatus(NeedyStatus.APPROVED);
 
         // === Step 2: Admin Accepts Needy ===
-        MvcResult needyRegisterResult2 = mockMvc.perform(post("/needer")
+        mockMvc.perform(post("/needer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(needy)))
                 .andExpect(status().isOk())
@@ -87,7 +87,7 @@ public class SystemTestsImpl {
                 "confirmPassword": "12345678"
             }
         """;
-        MvcResult donor1RegisterResult = mockMvc.perform(post("/auth/register/donor")
+        mockMvc.perform(post("/auth/register/donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(donor1Json))
                 .andExpect(status().isOk())
@@ -116,14 +116,14 @@ public class SystemTestsImpl {
                 "confirmPassword": "12345678"
             }
         """;
-        MvcResult donor2RegisterResult = mockMvc.perform(post("/auth/register/donor")
+       mockMvc.perform(post("/auth/register/donor")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(donor2Json))
                 .andExpect(status().isOk())
                 .andReturn();
 
 
-        MvcResult donorGetResult2=mockMvc.perform(get("/user/donor/donorId/2")
+        mockMvc.perform(get("/user/donor/donorId/2")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(donor1Json)).andReturn();
         Donor donor2 = objectMapper.readValue(donorGetResult.getResponse().getContentAsString(), Donor.class);
@@ -166,12 +166,6 @@ public class SystemTestsImpl {
         AuthenticationRequest authenticationRequest2=new AuthenticationRequest();
         authenticationRequest2.setPhoneNumber("0578787877");
         authenticationRequest2.setPassword("12345678");
-        MvcResult donor2LoginResult = mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(authenticationRequest2)))
-                .andExpect(status().isOk())
-                .andReturn();
-        String tokenDonor2=objectMapper.readTree(donor2LoginResult.getResponse().getContentAsString()).get("token").textValue();
         String cookingConstraintJson = """
             {
                 "cookId": %d,
@@ -228,7 +222,7 @@ public class SystemTestsImpl {
         donorVisit.setLastName("Name");
         donorVisit.setPhoneNumber("1234567890");
         donorVisit.setAddress("Donor1 Address");
-        donorVisit.setMaxHour(1);
+        donorVisit.setEndHour("13:00");
         donorVisit.setStatus(VisitStatus.Pickup);
         donorVisit.setPriority(1);
         donorVisit.setNote("Visit for Donor1");
@@ -238,7 +232,7 @@ public class SystemTestsImpl {
         needyVisit.setLastName("Name");
         needyVisit.setPhoneNumber("9876543210");
         needyVisit.setAddress("Needy Address");
-        needyVisit.setMaxHour(2);
+        needyVisit.setEndHour("14:00");
         needyVisit.setStatus(VisitStatus.Deliver);
         needyVisit.setPriority(1);
         needyVisit.setNote("Visit for Needy");

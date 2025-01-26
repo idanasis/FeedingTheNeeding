@@ -59,9 +59,9 @@ class DrivingFascadeTest {
 
     final LocalDate drivingDate = LocalDate.of(2023, 12, 1);
     final long driverId = 2L,routeId = 1L;
-    final int startHour = 9,endHour = 17,maxHour = 14,visitId = 1,priority = 1;
+    final int visitId = 1,priority = 1;
     final String location = "Downtown", request = "some description",note = "some Note",address = "Ringelbloom 24 Beer Sheva",
-    lastName = "Doe",firstName = "John",phoneNumber = "0541234567";
+    lastName = "Doe",firstName = "John",maxHour = "14:00", startHour = "9:00",endHour = "17:00",phoneNumber = "0541234567";
     final Needy needy = new Needy();
     final Donor donor = new Donor();
     final NeedySimpleDTO needySimpleDTO= new NeedySimpleDTO(needy,note);

@@ -9,8 +9,8 @@ import lombok.Data;
 public class DriverConstraintsDTO {
     private long driverId;
     private LocalDate date;
-    private Integer startHour;
-    private Integer endHour;
+    private String startHour;
+    private String endHour;
     private String startLocation;
     private String requests;
     private String driverFirstName;

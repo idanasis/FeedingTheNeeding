@@ -32,8 +32,8 @@ public class Visit {
     private String firstName;
     private String lastName;
     private String phoneNumber;
-    private int startHour;
-    private int maxHour;
+    private String startHour;
+    private String endHour;
     @Enumerated(EnumType.STRING)
     private VisitStatus status;
     private int priority;
@@ -42,12 +42,12 @@ public class Visit {
     @Column(length = 1000)
     private String additionalNotes;
     
-    public Visit(String address, String firstName, String lastName, String phoneNumber, int maxHour, VisitStatus status, String note,Route route,int priority, int startHour, String additionalNotes) {
+    public Visit(String address, String firstName, String lastName, String phoneNumber, String endHour, VisitStatus status, String note,Route route,int priority, String startHour, String additionalNotes) {
         this.address = address;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
-        this.maxHour = maxHour;
+        this.endHour = endHour;
         this.status = status;
         this.note = note;
         this.route = route;
@@ -70,8 +70,8 @@ public class Visit {
     public String getPhoneNumber() {
         return phoneNumber;
     }
-    public int getMaxHour() {
-        return maxHour;
+    public String getEndHour() {
+        return endHour;
     }
     public VisitStatus getStatus() {
         return status;
@@ -91,8 +91,8 @@ public class Visit {
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
-    public void setMaxHour(int maxHour) {
-        this.maxHour = maxHour;
+    public void setEndHour(String maxHour) {
+        this.endHour = maxHour;
     }
     public void setStatus(VisitStatus status) {
         this.status = status;
