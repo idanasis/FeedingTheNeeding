@@ -20,7 +20,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px 30px;
     width: 90%;
-    max-width: 650px;
+    max-width: 700px;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -114,6 +114,7 @@
     cursor: pointer;
     width: 100%;
     margin-top: 15px;
+    margin-bottom: 15px;
     text-align: center;
     transition: background-color 0.3s, transform 0.2s ease;
 }
@@ -134,22 +135,6 @@
     text-align: center;
     font-size: 14px;
     margin-top: 5px;
-}
-
-.edit-container .extra-options {
-    margin-top: 20px;
-    text-align: center;
-}
-
-.edit-container .extra-options a {
-    color: #d32f2f;
-    text-decoration: none;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.edit-container .extra-options a:hover {
-    text-decoration: underline;
 }
 
 .success-popup {
