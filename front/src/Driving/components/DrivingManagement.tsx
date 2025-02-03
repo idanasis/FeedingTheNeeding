@@ -29,7 +29,13 @@ import { DriverConstraints } from '../models/DriverConstraints';
 import AddDriverOption from './AddDriverOption';
 import { getDonorApproved } from '../../Restapi/DrivingRestapi';
 import DiveHeader from '../../GoPage/DiveHeader';
+// Add these imports at the top of the file
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
+import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
+import DriverIcon from '@mui/icons-material/DriveEta';
 
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
 const initialData = {
   routes: [
@@ -63,6 +69,34 @@ const Draggable = ({ id, children }: { id: string; children: React.ReactNode }) 
   );
 };
 
+const getVisitNamesForRoute = (route: Route) => {
+  // Filter out the driver's start location if present
+  
+  // Create names with statuses
+  const namesWithStatuses = route.visit
+    .map(visit => {
+      let statusText = '';
+      switch(visit.status) {
+        case 'Pickup':
+          statusText = 'איסוף';
+          break;
+        case 'Deliver':
+          statusText = 'חלוקה';
+          break;
+        case 'Start':
+          statusText = 'התחלה';
+          break;
+        default:
+          statusText = 'סטטוס לא ידוע';
+      }
+      return `${statusText}: ${visit.firstName} ${visit.lastName}`;
+    })
+    .join(', ');
+  
+ 
+  return namesWithStatuses;
+};
+
 const Droppable = ({ id, children }: { id: string; children: React.ReactNode }) => {
   const { setNodeRef } = useDroppable({ id });
 
@@ -80,6 +114,15 @@ const DrivingManager = () => {
   const [date, setDate] = useState<Date>(getNearestFriday(dayjs(Date.now())).toDate());
   const [donors, setDonors] = useState<Donor[]>([]);
   const [visible,setVisible]=useState(false);
+  const [minimizedRoutes, setMinimizedRoutes] = useState<{[key: number]: boolean}>({});
+
+   const toggleRouteMinimization = (index: number) => {
+    setMinimizedRoutes(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
+
   async function fetchDrivers(currentDate:Date=date) {
     try{
       const data=await getDriversConstraints(currentDate); 
@@ -243,26 +286,62 @@ const DrivingManager = () => {
 
 
 
-  const renderVisit = (visit: Visit) => (
+ const renderVisit = (visit: Visit) => {
+  const isChef = visit.status === "Pickup";
+  const isNeedyPerson = visit.status === "Deliver";
+  const isDriverStart = visit.status === "Start";
+
+  return (
     <Card
-    variant="outlined"
-    sx={{
-      height: '160px',
-    }}
-  >
+      variant="outlined"
+      sx={{
+        height: '160px',
+        backgroundColor: isChef 
+          ? 'rgba(76, 175, 80, 0.1)' // Light green for chefs
+          : isNeedyPerson 
+            ? 'rgba(244, 67, 54, 0.1)' // Light red for needy people
+            : 'rgba(33, 150, 243, 0.1)', // Light blue for driver start
+        border: isChef 
+          ? '1px solid rgba(76, 175, 80, 0.5)' 
+          : isNeedyPerson 
+            ? '1px solid rgba(244, 67, 54, 0.5)' 
+            : '1px solid rgba(33, 150, 243, 0.5)',
+      }}
+    >
       <CardContent>
-        <Typography variant="h6" fontSize={16}>
-          {visit.firstName} {visit.lastName}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: '8px' }}>
+          {isChef && <LocalDiningIcon color="success" sx={{ marginRight: '8px' }} />}
+          {isNeedyPerson && <VolunteerActivismIcon color="error" sx={{ marginRight: '8px' }} />}
+          {isDriverStart && <DriverIcon color="primary" sx={{ marginRight: '8px' }} />}
+          <Typography variant="h6" fontSize={16}>
+            {visit.firstName} {visit.lastName}
+          </Typography>
+        </Box>
         <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
-        {visit.startHour&&visit.startHour!="0:00"?<Typography variant="body2" fontSize={11}>שעת התחלה/מינימלית: {visit.startHour}</Typography>:null}
-        {visit.endHour&&visit.endHour!=="0:00"?<Typography variant="body2" fontSize={11}>שעת הגעה/סיום: {visit.endHour}</Typography>:null}
-        <Typography variant="body2" fontSize={11}>הערות: {visit.note?visit.note:visit.notes}</Typography>
-        {visit.additionalNotes?<Typography variant="body2" fontSize={11}>{visit.additionalNotes}</Typography>:null}
+        {visit.startHour && visit.startHour !== "0:00" && (
+          <Typography variant="body2" fontSize={11}>
+            שעת התחלה/מינימלית: {visit.startHour}
+          </Typography>
+        )}
+        {visit.endHour && visit.endHour !== "0:00" && (
+          <Typography variant="body2" fontSize={11}>
+            שעת הגעה/סיום: {visit.endHour}
+          </Typography>
+        )}
+        <Typography variant="body2" fontSize={11}>
+          הערות: {visit.note || visit.notes || 'אין הערות'}
+        </Typography>
+        {visit.additionalNotes && (
+          <Typography variant="body2" fontSize={11}>
+            {visit.additionalNotes}
+          </Typography>
+        )}
       </CardContent>
     </Card>
   );
+};
+
   const upButton =(index:number,idx:number,route: Route)=>{
     if(idx!==0&&(idx!==1||route.driverId===undefined||route.driverId===0)){
       return <IconButton color="primary" aria-label="up" data-no-drag onClick={(e)=>{
@@ -425,24 +504,88 @@ const handleWhatsAppShare = (route: Route) => {
 };
 
 
-  return (
-    <div style={{overflowY: 'auto',backgroundColor: "snow",height: '100vh'}}>
-      <DiveHeader/>
-     <div style={{marginTop: "20px",backgroundColor: "snow",justifySelf: "center",display: "flex",flexDirection: "row",justifyContent: "space-between",  gap: "10px"}}>
-    <ResponsiveDatePickers onDateChange={handleDateChange}/>
-    {!data.routes.every((route)=>route.submitted)?<Button variant="contained" color="primary" sx={{marginRight:10}} onClick={handlePublishAll} >פרסם הכל</Button>:null}
-    <Button variant="contained" color="primary" onClick={()=>{setVisible(true)}}>הוסף נהג</Button>
-    {visible?<AddDriverOption donors={donors} onClose={()=>{setVisible(false)}} onClick={addConstraint}/>:null}
-    </div>
-    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-      <Container maxWidth="lg" style={{ marginTop: '20px' }}>
-        <Box display="flex" justifyContent="space-between" gap={2}>
+ return (
+  <div style={{backgroundColor: "snow", height: '100vh', display: 'flex', flexDirection: 'column'}}>
+    <DiveHeader/>
+    
+    <Box sx={{
+      display: 'flex', 
+      flexDirection: 'column', 
+      alignItems: 'center', 
+      gap: 2,
+      marginBottom: '20px'
+    }}>
+      <ResponsiveDatePickers onDateChange={handleDateChange}/>
+      
+      <Box sx={{
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        gap: 2
+      }}>
+        <Button 
+          variant="contained" 
+          color="primary" 
+          onClick={()=>setVisible(true)}
+        >
+          הוסף נהג
+        </Button>
+        
+        {!data.routes.every((route)=>route.submitted) && (
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={handlePublishAll}
+          >
+            פרסם הכל
+          </Button>
+        )}
+      </Box>
+      
+      {visible && (
+        <AddDriverOption 
+          donors={donors} 
+          onClose={()=>setVisible(false)} 
+          onClick={addConstraint}
+        />
+      )}
+    </Box>
+    <DndContext 
+      sensors={sensors} 
+      collisionDetection={closestCenter} 
+      onDragEnd={handleDragEnd}
+    >
+      <Container 
+        maxWidth="lg" 
+        sx={{
+          flex: 1, 
+          display: 'flex', 
+          overflow: 'hidden', 
+          marginTop: '10px'
+        }}
+      >
+        <Box 
+          display="flex" 
+          justifyContent="space-between" 
+          gap={2} 
+          sx={{width: '100%', overflow: 'hidden'}}
+        >
           {/* Pickup Container */}
-          <Box flex={2} sx={{marginTop: '5px'}}>
+          <Box 
+            flex={2} 
+            sx={{
+              marginTop: '5px', 
+              overflowY: 'auto', 
+              paddingRight: '10px'
+            }}
+          >
             <Typography variant="h5" align="center">
               טבחים
             </Typography>
-            <SortableContext items={data.pickup.map((_, idx) => `pickup-${idx}`)} strategy={verticalListSortingStrategy}>
+            <SortableContext 
+              items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
+              strategy={verticalListSortingStrategy}
+            >
               {data.pickup.map((visit, index) => (
                 <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
                   {renderVisit(visit)}
@@ -452,77 +595,150 @@ const handleWhatsAppShare = (route: Route) => {
           </Box>
 
           {/* Routes Container */}
-          <Box flex={8} sx={{marginTop: '5px',width: '60%'}}>
+          <Box 
+            flex={8} 
+            sx={{
+              marginTop: '5px', 
+              width: '60%', 
+              overflowY: 'auto', 
+              paddingRight: '10px'
+            }}
+          >
             <Typography variant="h5" align="center">
               מסלולים
             </Typography>
-           {data.routes.map((route, index) => (
-    <Droppable key={`route-${index}`} id={`routes-${index}-visit-${route.visit.length+1}`}>
-      <Card key={`route-${index}`} style={{ marginBottom: '16px', padding: '8px'}}>
-        <Typography variant="h6">סיבוב {index+1}</Typography>
-        <Select
-          value={route.driverId||'לא נבחר'}
-          label="Driver"
-          onChange={async(e:any) => {await handleDriverChange(e, index)}}
-        >
-          {driver.map((driver, index) => (
-            <MenuItem key={index} value={driver.driverId}>{driver.driverFirstName+' '+driver.driverLastName}</MenuItem>
-          ))}
-          <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
-        </Select>
-        <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
-                    <Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>
-
-     {route.submitted ? (
-  <Box sx={{ display: 'flex', gap: 1 }}>
-    <Button 
-      variant="contained" 
-      color="secondary" 
-      onClick={() => handleCopyRoute(route)}
-      data-no-drag
-    >
-      העתק מסלול
-    </Button>
-    <IconButton 
-      color="success" 
-      onClick={() => handleWhatsAppShare(route)}
-      data-no-drag
-    >
-      <WhatsAppIcon />
-    </IconButton>
-  </Box>
-) : (
-  <Button variant="contained" color="primary" onClick={() => handlePublish(index)}>
-    פרסם
-  </Button>
-)}
-                <SortableContext
-                  items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
-                  strategy={verticalListSortingStrategy}
+            {data.routes.map((route, index) => (
+              <Droppable 
+                key={`route-${index}`} 
+                id={`routes-${index}-visit-${route.visit.length+1}`}
+              >
+                <Card 
+                  style={{ 
+                    marginBottom: '16px', 
+                    padding: '8px',
+                    maxHeight: minimizedRoutes[index] ? '60px' : 'none',
+                    overflow: 'hidden'
+                  }}
                 >
-                  {route.visit.map((visit, idx) => (
-                    <Draggable key={`route-${index}-visit-${idx}`} id={`route-${index}-visit-${idx}`}>
-                      {renderVisit(visit)}
-                  {upButton(index,idx,route)}
-                  {downButton(index,idx,route)}
-                    </Draggable> 
-                  ))}       
-                </SortableContext>
-              </Card>
-              
+                 <Box 
+  sx={{ 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center' 
+  }}
+>
+  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+    <Typography variant="h6">סיבוב {index+1}</Typography>
+    {minimizedRoutes[index] && (
+      <Typography variant="body2" color="text.secondary">
+        {getVisitNamesForRoute(route)}
+      </Typography>
+    )}
+  </Box>
+  <IconButton onClick={() => toggleRouteMinimization(index)}>
+    {minimizedRoutes[index] ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+  </IconButton>
+</Box>
+                  {!minimizedRoutes[index] && (
+                    <>
+                      <Select
+                        value={route.driverId||'לא נבחר'}
+                        label="Driver"
+                        onChange={async(e:any) => {await handleDriverChange(e, index)}}
+                      >
+                        {driver.map((driver) => (
+                          <MenuItem 
+                            key={driver.driverId} 
+                            value={driver.driverId}
+                          >
+                            {driver.driverFirstName+' '+driver.driverLastName}
+                          </MenuItem>
+                        ))}
+                        <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
+                      </Select>
+                      
+                      <Typography variant="body2">
+                        {route.submitted===true?"פורסם":"טרם פורסם"}
+                      </Typography>
+                      
+                      <Button 
+                        variant="contained" 
+                        color="error" 
+                        onClick={()=>removeRoute(index)}
+                      >
+                        מחק
+                      </Button>
+
+                      {route.submitted ? (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Button 
+                            variant="contained" 
+                            color="secondary" 
+                            onClick={() => handleCopyRoute(route)}
+                            data-no-drag
+                          >
+                            העתק מסלול
+                          </Button>
+                          <IconButton 
+                            color="success" 
+                            onClick={() => handleWhatsAppShare(route)}
+                            data-no-drag
+                          >
+                            <WhatsAppIcon />
+                          </IconButton>
+                        </Box>
+                      ) : (
+                        <Button 
+                          variant="contained" 
+                          color="primary" 
+                          onClick={() => handlePublish(index)}
+                        >
+                          פרסם
+                        </Button>
+                      )}
+
+                      <SortableContext
+                        items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
+                        strategy={verticalListSortingStrategy}
+                      >
+                        {route.visit.map((visit, idx) => (
+                          <Draggable 
+                            key={`route-${index}-visit-${idx}`} 
+                            id={`route-${index}-visit-${idx}`}
+                          >
+                            {renderVisit(visit)}
+                            {upButton(index,idx,route)}
+                            {downButton(index,idx,route)}
+                          </Draggable> 
+                        ))}       
+                      </SortableContext>
+                    </>
+                  )}
+                </Card>
               </Droppable>
             ))}
+            
             <Fab color="primary" aria-label="add" onClick={handleAddRoute}>
-            <AddIcon />
-          </Fab>
+              <AddIcon />
+            </Fab>
           </Box>
 
           {/* Drop Container */}
-          <Box flex={2} sx={{marginTop: '5px'}}>
+          <Box 
+            flex={2} 
+            sx={{
+              marginTop: '5px', 
+              overflowY: 'auto', 
+              paddingRight: '10px'
+            }}
+          >
             <Typography variant="h5" align="center">
               נזקקים
             </Typography>
-            <SortableContext items={data.drop.map((_, idx) => `drop-${idx}`)} strategy={verticalListSortingStrategy}>
+            <SortableContext 
+              items={data.drop.map((_, idx) => `drop-${idx}`)} 
+              strategy={verticalListSortingStrategy}
+            >
               {data.drop.map((visit, index) => (
                 <Draggable key={`drop-${index}`} id={`drop-${index}`}>
                   {renderVisit(visit)}
@@ -533,8 +749,8 @@ const handleWhatsAppShare = (route: Route) => {
         </Box>
       </Container>
     </DndContext>
-    </div>
-  );
+  </div>
+);
 };
 
 export default DrivingManager;
