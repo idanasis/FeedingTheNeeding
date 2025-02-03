@@ -19,6 +19,7 @@ import { Route } from '../models/Route';
 import "../styles/Driving.css";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import AddIcon from '@mui/icons-material/Add';
 import { addDriverConstraints, addRoute, deleteRoute, getDriversConstraints, getNeedersHere, getPickupVisits, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
@@ -226,7 +227,7 @@ const DrivingManager = () => {
       text += '\n';
     });
     
-    text+="שבת שלום! ❤️"
+    text+="שבת שלום! 3>"
     return text;
   };
 
@@ -411,6 +412,19 @@ const removeRoute = async(index:number)=>{
   await deleteRoute(route.routeId);
   await getDrops()
 }
+
+const handleWhatsAppShare = (route: Route) => {
+  const text = formatRouteForCopy(route);
+  const driverVisit = route.visit.find(v => v.status === "Start");
+  if (driverVisit) {
+    // Remove leading 0 and add +972
+    const phoneNumber = '+972' + driverVisit.phoneNumber.replace(/^0/, '');
+    const encodedText = encodeURIComponent(text);
+    window.open(`https://wa.me/${phoneNumber}?text=${encodedText}`, '_blank');
+  }
+};
+
+
   return (
     <div style={{overflowY: 'auto',backgroundColor: "snow",height: '100vh'}}>
       <DiveHeader/>
@@ -459,20 +473,29 @@ const removeRoute = async(index:number)=>{
         <Typography variant="body2">{route.submitted===true?"פורסם":"טרם פורסם"}</Typography>
                     <Button variant="contained" color="error" onClick={()=>{removeRoute(index)}}>מחק</Button>
 
-        {!route.submitted ? (
-          <>
-            <Button variant="contained" color="primary" onClick={()=>{handlePublish(index)}}>פרסם</Button>
-          </>
-        ) : (
-          <Button 
-            variant="contained" 
-            color="secondary" 
-            onClick={() => handleCopyRoute(route)}
-            data-no-drag
-          >
-            העתק מסלול
-          </Button>
-        )}
+     {route.submitted ? (
+  <Box sx={{ display: 'flex', gap: 1 }}>
+    <Button 
+      variant="contained" 
+      color="secondary" 
+      onClick={() => handleCopyRoute(route)}
+      data-no-drag
+    >
+      העתק מסלול
+    </Button>
+    <IconButton 
+      color="success" 
+      onClick={() => handleWhatsAppShare(route)}
+      data-no-drag
+    >
+      <WhatsAppIcon />
+    </IconButton>
+  </Box>
+) : (
+  <Button variant="contained" color="primary" onClick={() => handlePublish(index)}>
+    פרסם
+  </Button>
+)}
                 <SortableContext
                   items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                   strategy={verticalListSortingStrategy}
