@@ -11,9 +11,9 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { useDraggable,useDroppable  } from '@dnd-kit/core';
+import { useDraggable, useDroppable } from '@dnd-kit/core';
 import ResponsiveDatePickers from '../../Social/components/ResponsiveDatePickers';
-import { Box, Card, CardContent, Typography, Select, MenuItem, Container, Button, IconButton, Fab } from '@mui/material';
+import { Box, Card, CardContent, Typography, Select, MenuItem, Container, Button, IconButton, Fab, TextField, InputAdornment } from '@mui/material';
 import { Visit } from '../models/Visit';
 import { Route } from '../models/Route';
 import "../styles/Driving.css";
@@ -21,6 +21,7 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import AddIcon from '@mui/icons-material/Add';
+import SearchIcon from '@mui/icons-material/Search';
 import { addDriverConstraints, addRoute, deleteRoute, getDriversConstraints, getNeedersHere, getPickupVisits, getRoutes, submitAllRoutes, submitRoute, updateRoute } from '../../Restapi/DrivingRestapi';
 import { Donor } from '../models/Donor';
 import dayjs from 'dayjs';
@@ -36,6 +37,7 @@ import DriverIcon from '@mui/icons-material/DriveEta';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ClearIcon from '@mui/icons-material/Clear';
 
 const initialData = {
   routes: [
@@ -115,8 +117,11 @@ const DrivingManager = () => {
   const [donors, setDonors] = useState<Donor[]>([]);
   const [visible,setVisible]=useState(false);
   const [minimizedRoutes, setMinimizedRoutes] = useState<{[key: number]: boolean}>({});
+  // Add search state variables
+  const [chefSearchQuery, setChefSearchQuery] = useState<string>('');
+  const [recipientSearchQuery, setRecipientSearchQuery] = useState<string>('');
 
-   const toggleRouteMinimization = (index: number) => {
+  const toggleRouteMinimization = (index: number) => {
     setMinimizedRoutes(prev => ({
       ...prev,
       [index]: !prev[index]
@@ -558,6 +563,20 @@ const handleWhatsAppShare = (route: Route) => {
   }
 };
 
+// Add new search filter functions
+const filterVisits = (visits: Visit[], searchQuery: string) => {
+  if (!searchQuery.trim()) return visits;
+  
+  const query = searchQuery.toLowerCase();
+  return visits.filter(visit => 
+    visit.firstName.toLowerCase().includes(query) ||
+    visit.lastName.toLowerCase().includes(query) ||
+    visit.address.toLowerCase().includes(query) ||
+    visit.phoneNumber.includes(query) ||
+    (visit.note && visit.note.toLowerCase().includes(query)) ||
+    (visit.notes && visit.notes.toLowerCase().includes(query))
+  );
+};
 
  return (
   <div style={{backgroundColor: "snow", height: '100vh', display: 'flex', flexDirection: 'column'}}>
@@ -637,15 +656,45 @@ const handleWhatsAppShare = (route: Route) => {
             <Typography variant="h5" align="center">
               טבחים
             </Typography>
+            
+            {/* Add search field for chefs */}
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="חיפוש טבחים..."
+              size="small"
+              margin="normal"
+              value={chefSearchQuery}
+              onChange={(e) => setChefSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: chefSearchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      aria-label="clear search"
+                      onClick={() => setChefSearchQuery('')}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null
+              }}
+            />
+
             <SortableContext 
-              items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
+              items={filterVisits(data.pickup, chefSearchQuery).map((_, idx) => `pickup-${idx}`)} 
               strategy={verticalListSortingStrategy}
             >
-             {data.pickup.map((visit, index) => (
-            <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
-              {renderVisit(visit)}
-            </Draggable>
-          ))}
+             {filterVisits(data.pickup, chefSearchQuery).map((visit, index) => (
+                <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
+                  {renderVisit(visit)}
+                </Draggable>
+              ))}
             </SortableContext>
           </Box>
 
@@ -676,104 +725,101 @@ const handleWhatsAppShare = (route: Route) => {
                   }}
                 >
                  <Box 
-  sx={{ 
-    display: 'flex', 
-    justifyContent: 'space-between', 
-    alignItems: 'center' 
-  }}
->
-  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Typography variant="h6">סיבוב {index+1}</Typography>
-    {minimizedRoutes[index] && (
-      <Typography variant="body2" color="text.secondary">
-        {getVisitNamesForRoute(route)}
-      </Typography>
-    )}
-  </Box>
-  <IconButton onClick={() => toggleRouteMinimization(index)}>
-    {minimizedRoutes[index] ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-  </IconButton>
-</Box>
+                    sx={{ 
+                      display: 'flex', 
+                      justifyContent: 'space-between', 
+                      alignItems: 'center' 
+                    }}
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="h6">סיבוב {index+1}</Typography>
+                      {minimizedRoutes[index] && (
+                        <Typography variant="body2" color="text.secondary">
+                          {getVisitNamesForRoute(route)}
+                        </Typography>
+                      )}
+                    </Box>
+                    <IconButton onClick={() => toggleRouteMinimization(index)}>
+                      {minimizedRoutes[index] ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+                    </IconButton>
+                  </Box>
                   {!minimizedRoutes[index] && (
                     <>
                       <Select
                         value={route.driverId||'לא נבחר'}
                         label="Driver"
                         onChange={async(e:any) => {await handleDriverChange(e, index)}}
+                        fullWidth
+                        margin="dense"
+                        disabled={route.submitted}
                       >
-                        {driver.map((driver) => (
-                          <MenuItem 
-                            key={driver.driverId} 
-                            value={driver.driverId}
-                          >
-                            {driver.driverFirstName+' '+driver.driverLastName}
+                        <MenuItem value={0}>בחר נהג</MenuItem>
+                        {driver.map((d) => (
+                          <MenuItem key={d.driverId} value={d.driverId}>
+                            {d.driverFirstName} {d.driverLastName} - {d.startLocation}
                           </MenuItem>
                         ))}
-                        <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
                       </Select>
-                      
-                      <Typography variant="body2">
-                        {route.submitted===true?"פורסם":"טרם פורסם"}
-                      </Typography>
-                      
-                      <Button 
-                        variant="contained" 
-                        color="error" 
-                        onClick={()=>removeRoute(index)}
-                      >
-                        מחק
-                      </Button>
-
-                      {route.submitted ? (
-                        <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Box mt={2} display="flex" flexWrap="wrap" gap={1}>
+                        {route.visit.map((visit, idx) => (
+                          <Draggable key={`r-${index}-v-${idx}`} id={`r-${index}-v-${idx}`}>
+                            <Box display="flex" flexDirection="column" alignItems="center">
+                              <Box mb={1} display="flex" justifyContent="center">
+                                {upButton(index, idx, route)}
+                                {downButton(index, idx, route)}
+                              </Box>
+                              {renderVisit(visit, index, idx)}
+                            </Box>
+                          </Draggable>
+                        ))}
+                        <Box sx={{ mb: 2, display: 'flex', gap: 1 }}>
+                          {!route.submitted && (
+                            <Button 
+                              variant="contained" 
+                              color="primary" 
+                              onClick={() => handlePublish(index)}
+                              disabled={route.driverId === 0}
+                            >
+                              פרסם מסלול
+                            </Button>
+                          )}
                           <Button 
                             variant="contained" 
                             color="secondary" 
                             onClick={() => handleCopyRoute(route)}
-                            data-no-drag
                           >
                             העתק מסלול
                           </Button>
-                          <IconButton 
-                            color="success" 
-                            onClick={() => handleWhatsAppShare(route)}
-                            data-no-drag
+                          {route.driverId !== 0 && (
+                            <Button 
+                              variant="contained" 
+                              color="success" 
+                              startIcon={<WhatsAppIcon />}
+                              onClick={() => handleWhatsAppShare(route)}
+                            >
+                              שלח בוואטסאפ
+                            </Button>
+                          )}
+                          <Button 
+                            variant="contained" 
+                            color="error" 
+                            onClick={() => removeRoute(index)}
                           >
-                            <WhatsAppIcon />
-                          </IconButton>
+                            מחק מסלול
+                          </Button>
                         </Box>
-                      ) : (
-                        <Button 
-                          variant="contained" 
-                          color="primary" 
-                          onClick={() => handlePublish(index)}
-                        >
-                          פרסם
-                        </Button>
-                      )}
-
-                      <SortableContext
-                        items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
-                        strategy={verticalListSortingStrategy}
-                      >
-                       {route.visit.map((visit, idx) => (
-                      <Draggable 
-                        key={`route-${index}-visit-${idx}`} 
-                        id={`route-${index}-visit-${idx}`}
-                      >
-                        {renderVisit(visit, index, idx)}
-                        {upButton(index,idx,route)}
-                        {downButton(index,idx,route)}
-                      </Draggable> 
-                    ))}      
-                      </SortableContext>
+                      </Box>
                     </>
                   )}
                 </Card>
               </Droppable>
             ))}
-            
-            <Fab color="primary" aria-label="add" onClick={handleAddRoute}>
+            <Fab 
+              color="primary" 
+              aria-label="add" 
+              style={{ position: 'sticky', bottom: '20px', marginLeft: '20px' }}
+              onClick={handleAddRoute}
+            >
               <AddIcon />
             </Fab>
           </Box>
@@ -790,15 +836,45 @@ const handleWhatsAppShare = (route: Route) => {
             <Typography variant="h5" align="center">
               נזקקים
             </Typography>
+
+            {/* Add search field for recipients */}
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="חיפוש נזקקים..."
+              size="small"
+              margin="normal"
+              value={recipientSearchQuery}
+              onChange={(e) => setRecipientSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: recipientSearchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      aria-label="clear search"
+                      onClick={() => setRecipientSearchQuery('')}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null
+              }}
+            />
+
             <SortableContext 
-              items={data.drop.map((_, idx) => `drop-${idx}`)} 
+              items={filterVisits(data.drop, recipientSearchQuery).map((_, idx) => `drop-${idx}`)} 
               strategy={verticalListSortingStrategy}
-            >     
-            {data.drop.map((visit, index) => (
-              <Draggable key={`drop-${index}`} id={`drop-${index}`}>
-                {renderVisit(visit)}
-              </Draggable>
-            ))}
+            >
+              {filterVisits(data.drop, recipientSearchQuery).map((visit, index) => (
+                <Draggable key={`drop-${index}`} id={`drop-${index}`}>
+                  {renderVisit(visit)}
+                </Draggable>
+              ))}
             </SortableContext>
           </Box>
         </Box>
