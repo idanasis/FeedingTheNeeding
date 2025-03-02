@@ -33,7 +33,7 @@ import DiveHeader from '../../GoPage/DiveHeader';
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import DriverIcon from '@mui/icons-material/DriveEta';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 
@@ -284,28 +284,68 @@ const DrivingManager = () => {
     }
   };
 
+// Add this handler function in the DrivingManager component
+const handleRemoveVisit = async (routeIndex: number, visitIndex: number) => {
+  try {
+    const updatedRoutes = [...data.routes];
+    const route = updatedRoutes[routeIndex];
+    
+    // Remove the visit from the route
+    const removedVisit = route.visit.splice(visitIndex, 1)[0];
+    
+    // Update priorities for remaining visits in the route
+    for (let i = visitIndex; i < route.visit.length; i++) {
+      if (route.visit[i].priority !== undefined) {
+        route.visit[i].priority = (route.visit[i].priority as number) - 1;
+      }
+    }
+    
+    // Save the updated route
+    await updateRoute(route);
+    
+    // Update data state with the updated routes
+    const updatedData = { ...data, routes: updatedRoutes };
+    
+    // Add the visit back to the appropriate container based on its status
+    if (removedVisit.status === "Pickup") {
+      updatedData.pickup = [...data.pickup, removedVisit];
+    } else if (removedVisit.status === "Deliver") {
+      updatedData.drop = [...data.drop, removedVisit];
+    }
+    // Don't add back if it's a driver start point (status === "Start")
+    
+    setData(updatedData);
+  } catch (err) {
+    alert('תקלה בהסרת הביקור מהמסלול');
+  }
+};
 
 
- const renderVisit = (visit: Visit) => {
+// Then, modify the renderVisit function to include the delete button
+const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number) => {
   const isChef = visit.status === "Pickup";
   const isNeedyPerson = visit.status === "Deliver";
   const isDriverStart = visit.status === "Start";
+  
+  // Don't show remove button for driver start points
+  const showRemoveButton = routeIndex !== undefined && visitIndex !== undefined && !isDriverStart;
 
   return (
     <Card
       variant="outlined"
       sx={{
-        height: '160px',
+        height: showRemoveButton ? '180px' : '160px', // Slightly taller to accommodate button
         backgroundColor: isChef 
-          ? 'rgba(76, 175, 80, 0.1)' // Light green for chefs
+          ? 'rgba(76, 175, 80, 0.1)' 
           : isNeedyPerson 
-            ? 'rgba(244, 67, 54, 0.1)' // Light red for needy people
-            : 'rgba(33, 150, 243, 0.1)', // Light blue for driver start
+            ? 'rgba(244, 67, 54, 0.1)' 
+            : 'rgba(33, 150, 243, 0.1)',
         border: isChef 
           ? '1px solid rgba(76, 175, 80, 0.5)' 
           : isNeedyPerson 
             ? '1px solid rgba(244, 67, 54, 0.5)' 
             : '1px solid rgba(33, 150, 243, 0.5)',
+        position: 'relative', // For positioning the remove button
       }}
     >
       <CardContent>
@@ -337,11 +377,26 @@ const DrivingManager = () => {
             {visit.additionalNotes}
           </Typography>
         )}
+        
+        {showRemoveButton && (
+          <Box sx={{ position: 'absolute', bottom: '8px', right: '8px' }}>
+            <IconButton 
+              color="error" 
+              size="small" 
+              data-no-drag 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveVisit(routeIndex, visitIndex);
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
 };
-
   const upButton =(index:number,idx:number,route: Route)=>{
     if(idx!==0&&(idx!==1||route.driverId===undefined||route.driverId===0)){
       return <IconButton color="primary" aria-label="up" data-no-drag onClick={(e)=>{
@@ -586,11 +641,11 @@ const handleWhatsAppShare = (route: Route) => {
               items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
               strategy={verticalListSortingStrategy}
             >
-              {data.pickup.map((visit, index) => (
-                <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
-                  {renderVisit(visit)}
-                </Draggable>
-              ))}
+             {data.pickup.map((visit, index) => (
+            <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
+              {renderVisit(visit)}
+            </Draggable>
+          ))}
             </SortableContext>
           </Box>
 
@@ -701,16 +756,16 @@ const handleWhatsAppShare = (route: Route) => {
                         items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                         strategy={verticalListSortingStrategy}
                       >
-                        {route.visit.map((visit, idx) => (
-                          <Draggable 
-                            key={`route-${index}-visit-${idx}`} 
-                            id={`route-${index}-visit-${idx}`}
-                          >
-                            {renderVisit(visit)}
-                            {upButton(index,idx,route)}
-                            {downButton(index,idx,route)}
-                          </Draggable> 
-                        ))}       
+                       {route.visit.map((visit, idx) => (
+                      <Draggable 
+                        key={`route-${index}-visit-${idx}`} 
+                        id={`route-${index}-visit-${idx}`}
+                      >
+                        {renderVisit(visit, index, idx)}
+                        {upButton(index,idx,route)}
+                        {downButton(index,idx,route)}
+                      </Draggable> 
+                    ))}      
                       </SortableContext>
                     </>
                   )}
@@ -738,12 +793,12 @@ const handleWhatsAppShare = (route: Route) => {
             <SortableContext 
               items={data.drop.map((_, idx) => `drop-${idx}`)} 
               strategy={verticalListSortingStrategy}
-            >
-              {data.drop.map((visit, index) => (
-                <Draggable key={`drop-${index}`} id={`drop-${index}`}>
-                  {renderVisit(visit)}
-                </Draggable>
-              ))}
+            >     
+            {data.drop.map((visit, index) => (
+              <Draggable key={`drop-${index}`} id={`drop-${index}`}>
+                {renderVisit(visit)}
+              </Draggable>
+            ))}
             </SortableContext>
           </Box>
         </Box>
