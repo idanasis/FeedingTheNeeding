@@ -29,6 +29,7 @@ import { getNearestFriday } from '../../commons/Commons';
 import { DriverConstraints } from '../models/DriverConstraints';
 import AddDriverOption from './AddDriverOption';
 import { getDonorApproved } from '../../Restapi/DrivingRestapi';
+import { rejectCookRequest } from '../../Cooking/RestAPI/CookManagerRestAPI';
 import DiveHeader from '../../GoPage/DiveHeader';
 // Add these imports at the top of the file
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
@@ -127,6 +128,20 @@ const DrivingManager = () => {
       [index]: !prev[index]
     }));
   };
+
+const handleRemoveChef = (index: number,constraintId:number) => {
+
+  rejectCookRequest(constraintId);
+
+  const updatedPickup = [...data.pickup];
+  updatedPickup.splice(index, 1);
+
+  setData({
+    ...data,
+    pickup: updatedPickup
+  });
+
+};
 
   async function fetchDrivers(currentDate:Date=date) {
     try{
@@ -326,20 +341,20 @@ const handleRemoveVisit = async (routeIndex: number, visitIndex: number) => {
 };
 
 
-// Then, modify the renderVisit function to include the delete button
-const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number) => {
+const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number, container?: string) => {
   const isChef = visit.status === "Pickup";
   const isNeedyPerson = visit.status === "Deliver";
   const isDriverStart = visit.status === "Start";
   
-  // Don't show remove button for driver start points
-  const showRemoveButton = routeIndex !== undefined && visitIndex !== undefined && !isDriverStart;
+  // Show remove button for chefs in pickup section and visits in routes (except driver start)
+  const showRemoveButton = (container === "pickup" || routeIndex !== undefined) && 
+                          !(routeIndex !== undefined && visitIndex !== undefined && isDriverStart);
 
   return (
     <Card
       variant="outlined"
       sx={{
-        height: showRemoveButton ? '180px' : '160px', // Slightly taller to accommodate button
+        height: showRemoveButton ? '180px' : '160px',
         backgroundColor: isChef 
           ? 'rgba(76, 175, 80, 0.1)' 
           : isNeedyPerson 
@@ -350,7 +365,7 @@ const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number) => 
           : isNeedyPerson 
             ? '1px solid rgba(244, 67, 54, 0.5)' 
             : '1px solid rgba(33, 150, 243, 0.5)',
-        position: 'relative', // For positioning the remove button
+        position: 'relative',
       }}
     >
       <CardContent>
@@ -383,15 +398,20 @@ const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number) => 
           </Typography>
         )}
         
-        {showRemoveButton && (
-          <Box sx={{ position: 'absolute', bottom: '8px', right: '8px' }}>
+        
+       {showRemoveButton && (
+          <Box sx={{ position: 'absolute', bottom: '8px', left: '8px' }}>
             <IconButton 
               color="error" 
               size="small" 
               data-no-drag 
               onClick={(e) => {
                 e.stopPropagation();
-                handleRemoveVisit(routeIndex, visitIndex);
+                if (container === "pickup") {
+                  handleRemoveChef(visitIndex as number,visit.constraintId as number);
+                } else if (routeIndex !== undefined && visitIndex !== undefined) {
+                  handleRemoveVisit(routeIndex, visitIndex);
+                }
               }}
             >
               <DeleteIcon fontSize="small" />
@@ -687,16 +707,16 @@ const filterVisits = (visits: Visit[], searchQuery: string) => {
               }}
             />
 
-            <SortableContext 
-              items={filterVisits(data.pickup, chefSearchQuery).map((_, idx) => `pickup-${idx}`)} 
-              strategy={verticalListSortingStrategy}
-            >
-             {filterVisits(data.pickup, chefSearchQuery).map((visit, index) => (
-                <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
-                  {renderVisit(visit)}
-                </Draggable>
-              ))}
-            </SortableContext>
+          <SortableContext 
+  items={filterVisits(data.pickup, chefSearchQuery).map((_, idx) => `pickup-${idx}`)} 
+  strategy={verticalListSortingStrategy}
+>
+  {filterVisits(data.pickup, chefSearchQuery).map((visit, index) => (
+    <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
+      {renderVisit(visit, undefined, index, "pickup")}
+    </Draggable>
+  ))}
+</SortableContext>
           </Box>
 
           {/* Routes Container */}

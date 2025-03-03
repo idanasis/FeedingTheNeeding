@@ -31,7 +31,17 @@ type RequestStatus = 'Pending' | 'Accepted' | 'Declined';
 
 const PendingRequests: React.FC = () => {
     const [allRequests, setAllRequests] = useState<PendingCookDTO[]>([]);
-    const [selectedDate, setSelectedDate] = useState<string>('');
+    
+    const getUpcomingFriday = () => {
+        const today = new Date();
+        const dayOfWeek = today.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
+        const daysUntilFriday = (5 - dayOfWeek + 7) % 7; // Calculate days until next Friday
+        const nextFriday = new Date(today);
+        nextFriday.setDate(today.getDate() + daysUntilFriday);
+        return nextFriday.toISOString().split('T')[0]; // Format as YYYY-MM-DD
+    };
+
+    const [selectedDate, setSelectedDate] = useState<string>(getUpcomingFriday());
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
     const [expandedConstraintIds, setExpandedConstraintIds] = useState<Set<number>>(new Set());
@@ -44,8 +54,9 @@ const PendingRequests: React.FC = () => {
     const [newEndTime, setNewEndTime] = useState('');
     const [newConstraints, setNewConstraints] = useState<Record<string, number>>({});
     const [whatsappNumber, setWhatsappNumber] = useState<string>('');
+    
 
-    const fetchAllData = async (date: string) => {
+      const fetchAllData = async (date: string) => {
         try {
             setLoading(true);
             setError('');
@@ -71,6 +82,7 @@ const PendingRequests: React.FC = () => {
 
     useEffect(() => {
         if (selectedDate) {
+            fetchAllData(selectedDate);
             const intervalId = setInterval(() => {
                 fetchAllData(selectedDate);
             }, 60000);
