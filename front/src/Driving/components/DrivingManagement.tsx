@@ -168,13 +168,11 @@ const handleRemoveChef = (index: number,constraintId:number) => {
         ); 
         const pickup=await getPickupVisits(date);
         updatedData.pickup=pickup;
-        console.log(pickup);
         updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
           !routes.some((route: Route) =>
             route.visit.some((v: Visit) => v.constraintId === visit.constraintId)
           )
         );       
-        console.log(updatedData);
         setData(updatedData);
       }catch(err){
         alert("תקלה בהצגת הנתונים");
