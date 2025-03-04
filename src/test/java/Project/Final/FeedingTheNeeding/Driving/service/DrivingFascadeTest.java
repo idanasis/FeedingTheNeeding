@@ -79,7 +79,7 @@ class DrivingFascadeTest {
                 request
         );
         route = new Route(driverId, drivingDate);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour,"");
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour,"",0);
         routes.add(route);
         when(userService.getDonorById(driverId)).thenReturn(donor);
 

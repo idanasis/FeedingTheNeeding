@@ -35,6 +35,7 @@ public class DriverConstraintTest {
     
     @BeforeEach
     void setUp() {
+        driverRepository.deleteAll(); // Clear all driver constraints before each test
         driverConstraint = new DriverConstraint(driverId, date, startHour, endHour, startLocation, requests);
     }
 
@@ -93,6 +94,7 @@ public class DriverConstraintTest {
     @Test
     public void testFindConstraintsByDateNotFound() {
         List<DriverConstraint> driverConstraintsForDate = driverRepository.findConstraintsByDate(date);
+        System.out.println(driverConstraintsForDate);
         assertTrue(driverConstraintsForDate.isEmpty());
     }
 
