@@ -168,11 +168,13 @@ const handleRemoveChef = (index: number,constraintId:number) => {
         ); 
         const pickup=await getPickupVisits(date);
         updatedData.pickup=pickup;
+        console.log(pickup);
         updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
           !routes.some((route: Route) =>
-            route.visit.some((v: Visit) => v.phoneNumber === visit.phoneNumber)
+            route.visit.some((v: Visit) => v.constraintId === visit.constraintId)
           )
         );       
+        console.log(updatedData);
         setData(updatedData);
       }catch(err){
         alert("תקלה בהצגת הנתונים");
@@ -342,6 +344,7 @@ const handleRemoveVisit = async (routeIndex: number, visitIndex: number) => {
 
 
 const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number, container?: string) => {
+  console.log(visit.status +" " +visit.firstName);
   const isChef = visit.status === "Pickup";
   const isNeedyPerson = visit.status === "Deliver";
   const isDriverStart = visit.status === "Start";

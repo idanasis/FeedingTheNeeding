@@ -125,7 +125,6 @@ const PendingRequests: React.FC = () => {
             if (selectedDate) {
                 await fetchAllData(selectedDate);
             }
-            alert('הבקשה אושרה בהצלחה');
         } catch (err) {
             alert('שגיאה באישור הבקשה');
             console.error(err);
@@ -161,7 +160,7 @@ const PendingRequests: React.FC = () => {
             if (selectedDate) {
                 await fetchAllData(selectedDate);
             }
-            alert('הפעולה בוטלה בהצלחה');
+         
         } catch (err) {
             alert('שגיאה בביטול הפעולה');
             console.error(err);
@@ -185,7 +184,6 @@ const PendingRequests: React.FC = () => {
             if (selectedDate) {
                 await fetchAllData(selectedDate);
             }
-            alert('הבקשה עודכנה ואושרה בהצלחה');
         } catch (err) {
             alert('שגיאה בעדכון ואישור הבקשה');
             console.error(err);

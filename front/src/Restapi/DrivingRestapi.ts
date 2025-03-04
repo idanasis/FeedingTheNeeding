@@ -89,11 +89,14 @@ export const deleteRoute = async (routeId: number) => {
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
 }
 
-export const getPickupVisits = async (date: Date) => {
+export const    getPickupVisits = async (date: Date) => {
     const response = await axios.get(cookingUrl+"/getAccepted/"+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    console.log(response.data);
     let res=response.data as Visit[];
+    
     res=res.map((visit:Visit)=>transformCookingConstraintProjectionToVisit(visit));
+    console.log(res);
     return res;
 }
 
@@ -116,5 +119,6 @@ const transformCookingConstraintProjectionToVisit=(visit:Visit)=>{
         startHour:visit.startTime,
         endHour:visit.endTime,
         status:"Pickup",
+        constraintId: visit.constraintId
     }
 }

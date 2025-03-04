@@ -113,48 +113,6 @@ const DonorTable = () => {
       alert("המתנדב נוסף בהצלחה");
     } catch (e) {
       if ((e as any).response && (e as any).response.status === 409) {
-        alert("מתנדב עם אימייל זה כבר קיים במערכת");
-      } else {
-        alert("שגיאה בהוספת המתנדב");
-      }
-      console.log(e);
-    }
-  };
-
-  // Alternative function to directly add and approve a donor
-  const handleDirectAddDonor = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (newDonor.password !== newDonor.confirmPassword) {
-      alert("הסיסמאות אינן תואמות");
-      return;
-    }
-
-    try {
-      // Register the donor with status already set to AVAILABLE
-      const donorData = {
-        ...newDonor,
-        status: "AVAILABLE"  // Setting status directly if your API supports it
-      };
-      
-      const response = await axios.post("/register/donor", donorData);
-      console.log("Donor added and approved:", response.data);
-      
-      // Reset form
-      setNewDonor({
-        email: "",
-        password: "",
-        confirmPassword: "",
-        firstName: "",
-        lastName: "",
-        phoneNumber: "",
-        address: ""
-      });
-      setShowAddForm(false);
-      // Refresh donor list
-      fetchDonors();
-      alert("המתנדב נוסף ואושר בהצלחה");
-    } catch (e) {
-      if ((e as any).response && (e as any).response.status === 409) {
         alert("מתנדב עם מספר זה כבר קיים במערכת");
       } else {
         alert("שגיאה בהוספת המתנדב");
@@ -162,6 +120,8 @@ const DonorTable = () => {
       console.log(e);
     }
   };
+
+  
 
   return (
     <>
