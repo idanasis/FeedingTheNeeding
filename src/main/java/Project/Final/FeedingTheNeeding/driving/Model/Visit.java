@@ -41,8 +41,9 @@ public class Visit {
     private String note;
     @Column(length = 1000)
     private String additionalNotes;
+    private long constraintId;
     
-    public Visit(String address, String firstName, String lastName, String phoneNumber, String endHour, VisitStatus status, String note,Route route,int priority, String startHour, String additionalNotes) {
+    public Visit(String address, String firstName, String lastName, String phoneNumber, String endHour, VisitStatus status, String note,Route route,int priority, String startHour, String additionalNotes, long constraintId) {
         this.address = address;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -54,6 +55,7 @@ public class Visit {
         this.priority = priority;
         this.startHour = startHour;
         this.additionalNotes = additionalNotes;
+        this.constraintId=constraintId;
     }
     public long getVisitId() {
         return visitId;
@@ -105,6 +107,12 @@ public class Visit {
     }
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+    public long getConstraintId() {
+        return constraintId;
+    }
+    public void setConstraintId(long constraintId) {
+        this.constraintId = constraintId;
     }
 
 }

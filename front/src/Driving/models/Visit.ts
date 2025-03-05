@@ -19,4 +19,5 @@ export interface Visit {
     endHour?: string;
     familySize?: number;
     additionalNotes?: string;
+    constraintId?: number;
   }
