@@ -18,13 +18,13 @@ import { NeederTrackingModel } from '@/src/models/NeederTrackingModel';
 import { useState } from 'react';
 import { updateNeederTracking } from '../../Restapi/socialRestapi';
 
-
 function createData(neederTrackingModel: NeederTrackingModel) {
   return {
     id: neederTrackingModel.id,
     firstName: neederTrackingModel.needy.firstName,
     lastName: neederTrackingModel.needy.lastName,
     phoneNumber: neederTrackingModel.needy.phoneNumber,
+    street: neederTrackingModel.needy.street || '', // Street/neighborhood field
     address: neederTrackingModel.needy.address,
     weekStatus: neederTrackingModel.weekStatus==="Here"?"זמין":"לא זמין",
     needyId: neederTrackingModel.needy.id,
@@ -39,8 +39,8 @@ function createData(neederTrackingModel: NeederTrackingModel) {
   };
 }
 
-const Row= (props: { row: ReturnType<typeof createData> }) =>  {
-  const [row,setRow]= useState(props.row);
+const Row = (props: { row: ReturnType<typeof createData> }) =>  {
+  const [row, setRow] = useState(props.row);
   const [open, setOpen] = React.useState(false);
   const [foodPreference, setFoodPreference] = useState(row.details[0].foodPreference || "רגיל");
   const [notes, setNotes] = useState(row.details[0].notes || "ללא הערות נוספות");
@@ -64,8 +64,8 @@ const Row= (props: { row: ReturnType<typeof createData> }) =>  {
 
   const handleAvailableChange = async (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
     try{
-      const value=event.target.value;
-      const neederTrackingModel:NeederTrackingModel={
+      const value = event.target.value;
+      const neederTrackingModel: NeederTrackingModel = {
         id: row.id,
         date: row.date,
         needy: {
@@ -73,6 +73,7 @@ const Row= (props: { row: ReturnType<typeof createData> }) =>  {
           firstName: row.firstName,
           lastName: row.lastName,
           phoneNumber: row.phoneNumber,
+          street: row.street,
           address: row.address,
           familySize: row.details[0].familySize
         },
@@ -80,7 +81,7 @@ const Row= (props: { row: ReturnType<typeof createData> }) =>  {
         dietaryPreferences: foodPreference,
         additionalNotes: notes
       };
-      const res=await updateNeederTracking(index, neederTrackingModel);
+      const res = await updateNeederTracking(index, neederTrackingModel);
       const updatedRow = { 
         ...row, 
         weekStatus: value,
@@ -112,6 +113,7 @@ const Row= (props: { row: ReturnType<typeof createData> }) =>  {
           firstName: row.firstName,
           lastName: row.lastName,
           phoneNumber: row.phoneNumber,
+          street: row.street,
           address: row.address,
           familySize: row.details[0].familySize
         },
@@ -156,14 +158,17 @@ const Row= (props: { row: ReturnType<typeof createData> }) =>  {
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        <TableCell align="justify" component="th" scope="row"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>
+        <TableCell align="justify" component="th" scope="row" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>
           {row.firstName} {row.lastName}
         </TableCell>
-        <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' }, whiteSpace: 'nowrap',
-    overflow: 'hidden',textOverflow: 'ellipsis'}}>{row.phoneNumber}</TableCell>
-        <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
+        <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' }, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+          {row.phoneNumber}
+        </TableCell>
         <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>
-         <select
+          {row.street}, {row.address} 
+        </TableCell>
+        <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>
+          <select
             id={`${row.id}`}
             value={row.weekStatus}
             onChange={async (event) => await handleAvailableChange(row.id, event)}
@@ -230,8 +235,8 @@ Row.propTypes = {
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
     phoneNumber: PropTypes.string.isRequired,
+    street: PropTypes.string,
     address: PropTypes.string.isRequired,
-    city: PropTypes.string.isRequired,
     weekStatus: PropTypes.string.isRequired,
     date: PropTypes.string.isRequired,
     details: PropTypes.arrayOf(
@@ -248,15 +253,14 @@ const NeederTrackingTable = ({ data }: { data: NeederTrackingModel[] }) => {
   const rows = data.map((item) => createData(item));
   
   return (
-    <TableContainer style={{ height: '100vh', width: '100%', background: 'rgba(255, 255, 255, 0.8)',}}>
+    <TableContainer style={{ height: '100vh', width: '100%', background: 'rgba(255, 255, 255, 0.8)' }}>
       <Table aria-label="collapsible table">
         <TableHead>
           <TableRow>
             <TableCell />
-            <TableCell align="right"sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>שם</TableCell>
+            <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>שם</TableCell>
             <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>טלפון</TableCell>
             <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>כתובת</TableCell>
-            <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>סטטוס</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

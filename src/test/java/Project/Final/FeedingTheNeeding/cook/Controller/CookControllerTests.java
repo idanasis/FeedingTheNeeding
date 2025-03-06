@@ -51,6 +51,8 @@ class CookControllerTests {
     private UserDTO testUserDTO;
     private static final Long COOK_ID = 1L;
     private static final LocalDate TEST_DATE = LocalDate.now();
+    private static final String STREET = "ד'";
+
 
     @BeforeEach
     void setUp() {
@@ -59,7 +61,7 @@ class CookControllerTests {
 
         cookConstraints = new CookConstraints(
                 1L, COOK_ID, "09:00", "17:00",
-                constraints, "Test Location", TEST_DATE, Status.Pending
+                constraints, "Test Location", TEST_DATE, Status.Pending,STREET
         );
 
         testDonor = new Donor();

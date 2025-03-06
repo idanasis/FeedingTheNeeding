@@ -10,4 +10,5 @@ export interface NeederTrackingProjectionModel{
     needyPhoneNumber: string;
     needyAddress: string;
     needyFamilySize?: number;
+    needyStreet: string;
 }

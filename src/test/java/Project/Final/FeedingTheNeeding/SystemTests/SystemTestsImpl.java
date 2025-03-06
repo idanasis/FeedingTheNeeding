@@ -52,14 +52,15 @@ public class SystemTestsImpl {
     void endToEndWorkflow() throws Exception {
         // === Step 1: Needy Registration ===
         String needyJson = """
-            {
-                "firstName": "NeedyUser",
-                "lastName": "Test",
-                "phoneNumber": "123456789",
-                "address": "rager",
-                "familySize": 3
-            }
-        """;
+    {
+    "firstName": "NeedyUser",
+     "lastName": "Test",
+     "phoneNumber": "123456789",
+     "address": "rager",
+     "familySize": 3,
+     "street": "ה'"
+     }
+""";
         MvcResult needyRegisterResult = mockMvc.perform(post("/needer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(needyJson))
@@ -67,11 +68,11 @@ public class SystemTestsImpl {
                 .andReturn();
         Needy needy = objectMapper.readValue(needyRegisterResult.getResponse().getContentAsString(), Needy.class);
         needy.setConfirmStatus(NeedyStatus.APPROVED);
+        System.out.println(needyRegisterResult.getResponse().getContentAsString());
 
         // === Step 2: Admin Accepts Needy ===
-        mockMvc.perform(post("/needer")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(needy)))
+        mockMvc.perform(post("/needer/" + needy.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -83,6 +84,7 @@ public class SystemTestsImpl {
                 "lastName": "Test",
                 "phoneNumber": "0531223421",
                 "address": "rager",
+                "street": "ד'",
                 "password": "12345678",
                 "confirmPassword": "12345678"
             }
@@ -96,7 +98,7 @@ public class SystemTestsImpl {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(donor1Json)).andReturn();
         Donor donor1 = objectMapper.readValue(donorGetResult.getResponse().getContentAsString(), Donor.class);
-
+        System.out.println(donorGetResult.getResponse().getContentAsString());
         donor1.setStatus(RegistrationStatus.AVAILABLE);
         // === Step 4: Admin Accepts Donor1 ===
         mockMvc.perform(put("/user/donor")
@@ -112,6 +114,7 @@ public class SystemTestsImpl {
                 "firstName": "DonorUser2",
                 "lastName": "Test",
                 "address": "rager",
+                "street": "ד'",
                  "password": "12345678",
                 "confirmPassword": "12345678"
             }

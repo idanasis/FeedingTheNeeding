@@ -16,6 +16,7 @@ public class DriverConstraintsDTO {
     private String driverFirstName;
     private String driverLastName;
     private String driverPhone;
+    private String driverStreet;
 
     public DriverConstraintsDTO(DriverConstraint driverConstraint, Donor donor) {
         this.driverId = driverConstraint.getDriverId();
@@ -27,6 +28,7 @@ public class DriverConstraintsDTO {
         this.driverFirstName = donor.getFirstName();
         this.driverLastName = donor.getLastName();
         this.driverPhone = donor.getPhoneNumber();
+        this.driverStreet=donor.getStreet();
     }
     
 }

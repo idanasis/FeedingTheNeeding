@@ -3,11 +3,37 @@ import { motion } from 'framer-motion';
 import { slideUpVariants, zoomInVariants } from './animation';
 import { createOrUpdateNeedy } from '../homeApi'; // Import the API function
 
+const BEER_SHEVA_STREETS = [
+  'העיר העתיקה',
+  'נווה עופר',
+  'המרכז האזרחי',
+  'א\'',
+  'ב\'',
+  'ג\'',
+  'ד\'',
+  'ה\'',
+  'ו\'',
+  'ט\'',
+  'י"א',
+  'נאות לון',
+  'נווה זאב',
+  'נווה נוי',
+  'נחל בקע',
+  'נחל עשן (נווה מנחם)',
+  'רמות',
+  'נאות אברהם (פלח 6)',
+  'נווה אילן (פלח 7)',
+  'הכלניות',
+  'סיגליות',
+  'פארק הנחל'
+];
+
 const Contact = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     address: '',
+    street: '', // New field for street/neighborhood
     phoneNumber: '',
     familySize: 0,
     notes: '',
@@ -17,6 +43,7 @@ const Contact = () => {
     firstName: '',
     lastName: '',
     address: '',
+    street: '', // New error state for street
     phoneNumber: '',
     familySize: '',
   });
@@ -25,6 +52,7 @@ const Contact = () => {
     firstName: false,
     lastName: false,
     address: false,
+    street: false, // New touched state for street
     phoneNumber: false,
     familySize: false,
   });
@@ -46,6 +74,9 @@ const Contact = () => {
         break;
       case 'address':
         error = !value.trim() ? 'כתובת היא שדה חובה' : '';
+        break;
+      case 'street':
+        error = !value.trim() ? 'שכונה/רחוב הוא שדה חובה' : '';
         break;
       case 'phoneNumber':
         if (!value.trim()) {
@@ -76,6 +107,7 @@ const Contact = () => {
       firstName: validateField('firstName', formData.firstName),
       lastName: validateField('lastName', formData.lastName),
       address: validateField('address', formData.address),
+      street: validateField('street', formData.street), // Validate street
       phoneNumber: validateField('phoneNumber', formData.phoneNumber),
       familySize: validateField('familySize', formData.familySize),
     };
@@ -138,7 +170,7 @@ const Contact = () => {
     try {
       await createOrUpdateNeedy({
         ...formData,
-        city: 'Beer-Sheva', // Add default value if city is not included in the form
+        city: 'Beer-Sheva', // Add default value
         role: 'NEEDY', // Default role
         confirmStatus: 'PENDING', // Default status
       });
@@ -147,6 +179,7 @@ const Contact = () => {
         firstName: '',
         lastName: '',
         address: '',
+        street: '', // Reset street
         phoneNumber: '',
         familySize: 0,
         notes: '',
@@ -156,6 +189,7 @@ const Contact = () => {
         firstName: false,
         lastName: false,
         address: false,
+        street: false, // Reset street touch
         phoneNumber: false,
         familySize: false,
       });
@@ -237,6 +271,25 @@ const Contact = () => {
               />
               {touched.lastName && errors.lastName && (
                 <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+              )}
+            </div>
+              <div className="w-full">
+              <select
+                name="street"
+                value={formData.street}
+                onChange={handleInputChange}
+                onBlur={handleBlur}
+                className={getInputClass('street')}
+              >
+                <option value="">בחר שכונה/רחוב</option>
+                {BEER_SHEVA_STREETS.map((street) => (
+                  <option key={street} value={street}>
+                    {street}
+                  </option>
+                ))}
+              </select>
+              {touched.street && errors.street && (
+                <p className="text-red-500 text-sm mt-1">{errors.street}</p>
               )}
             </div>
             

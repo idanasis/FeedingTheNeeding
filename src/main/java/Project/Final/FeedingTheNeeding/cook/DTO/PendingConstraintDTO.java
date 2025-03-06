@@ -21,11 +21,13 @@ public class PendingConstraintDTO {
 
     public String phoneNumber;
 
+    public String street;
+
     //Spring needs a default constractor
     public PendingConstraintDTO() {}
 
     public PendingConstraintDTO(long constraintId, String name, String startTime, String endTime, Map<String, Integer> constraints,
-                                String address, LocalDate date, Status status, String phoneNumber){
+                                String address, LocalDate date, Status status, String phoneNumber, String street){
         this.constraintId = constraintId;
         this.name = name;
         this.startTime = startTime;
@@ -35,5 +37,6 @@ public class PendingConstraintDTO {
         this.date = date;
         this.status = status;
         this.phoneNumber = phoneNumber;
+        this.street = street;
     }
 }

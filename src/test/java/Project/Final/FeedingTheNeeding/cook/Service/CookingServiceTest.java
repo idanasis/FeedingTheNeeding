@@ -45,6 +45,7 @@ class CookingServiceTests {
     private static final String INVALID_TOKEN = "invalid.token";
     private static final String START_TIME = "09:00";
     private static final String END_TIME = "17:00";
+    private static final String STREET = "ד'";
     private static final String LOCATION = "123 Main St";
     private static final Map<String, Integer> CONSTRAINTS = new HashMap<>();
 
@@ -67,7 +68,8 @@ class CookingServiceTests {
                 CONSTRAINTS,
                 LOCATION,
                 VALID_DATE,
-                Status.Pending
+                Status.Pending,
+                STREET
         );
 
         validUserDTO = new UserDTO();
@@ -230,7 +232,7 @@ class CookingServiceTests {
     void testGetLatestCookConstraints_Success() {
         LocalDate futureDate = VALID_DATE.plusDays(1);
         CookConstraints futureConstraint = new CookConstraints(
-                2L, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, futureDate, Status.Pending
+                2L, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, futureDate, Status.Pending,STREET
         );
 
         List<CookConstraints> allConstraints = Arrays.asList(validConstraint, futureConstraint);
@@ -321,7 +323,7 @@ class CookingServiceTests {
     @Test
     void testChangeStatusForConstraint_Success() {
         CookConstraints updatedConstraint = new CookConstraints(
-                CONSTRAINT_ID, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, VALID_DATE, Status.Accepted
+                CONSTRAINT_ID, COOK_ID, START_TIME, END_TIME, CONSTRAINTS, LOCATION, VALID_DATE, Status.Accepted,STREET
         );
 
         when(ccr.findById(CONSTRAINT_ID)).thenReturn(Optional.of(validConstraint));

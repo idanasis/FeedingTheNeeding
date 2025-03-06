@@ -31,6 +31,11 @@ public class RegistrationRequest {
     @NotEmpty(message = "Phone Number is required")
     private String phoneNumber;
 
+    @NotEmpty(message = "Street is required")
+    private String street;
+
     @NotEmpty(message = "Address is required")
     private String address;
+
+
 }

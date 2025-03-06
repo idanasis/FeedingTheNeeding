@@ -15,4 +15,6 @@ public class NeedyRegistrationRequest {
     private String phoneNumber;
     private String address;
     private int familySize;
+    private String street;
 }
+

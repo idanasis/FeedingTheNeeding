@@ -14,4 +14,5 @@ public interface NeederTrackingProjection {
     String getAdditionalNotes();
     LocalDate getDate();
     int getNeedyFamilySize();
+    String getNeedyStreet();
 }

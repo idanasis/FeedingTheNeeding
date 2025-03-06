@@ -1,8 +1,10 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
+import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationRequest;
 import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -69,6 +71,7 @@ public class NeedyControllerTest {
     private static final NeedyStatus NEEDY_STATUS_APPROVED = NeedyStatus.APPROVED;
     private static final LocalDate TRACKING_DATE = LocalDate.of(2025, 1, 1);
     private static final String TRACKING_DATE_STRING = "2025-01-01";
+    private static final String STREET = "ד'";
 
     // Sample Needy Objects
     private Needy existingNeedy;
@@ -83,6 +86,7 @@ public class NeedyControllerTest {
         existingNeedy.setLastName(NEEDY_LAST_NAME);
         existingNeedy.setPhoneNumber(NEEDY_PHONE_NUMBER_EXISTING);
         existingNeedy.setConfirmStatus(NEEDY_STATUS_APPROVED);
+        existingNeedy.setStreet(STREET);
 
         nonExistingNeedy = new Needy();
         nonExistingNeedy.setId(NEEDY_ID_NON_EXISTING);
@@ -90,6 +94,8 @@ public class NeedyControllerTest {
         nonExistingNeedy.setLastName("Smith");
         nonExistingNeedy.setPhoneNumber(NEEDY_PHONE_NUMBER_NON_EXISTING);
         nonExistingNeedy.setConfirmStatus(NEEDY_STATUS_PENDING);
+        nonExistingNeedy.setStreet(STREET);
+
 
         existingTracking = new NeederTracking();
         existingTracking.setNeedy(existingNeedy);
@@ -103,11 +109,14 @@ public class NeedyControllerTest {
         @Test
         @DisplayName("POST /needer - Success")
         void testCreateOrUpdateNeedy_Success() throws Exception {
-            Needy inputNeedy = new Needy();
+            NeedyRegistrationRequest inputNeedy = new NeedyRegistrationRequest();
             inputNeedy.setFirstName("Alice");
             inputNeedy.setLastName("Wonderland");
             inputNeedy.setPhoneNumber("0530000000");
-            inputNeedy.setConfirmStatus(NeedyStatus.APPROVED);
+            inputNeedy.setStreet(Street.fromHebrewName(STREET).getHebrewName());
+            inputNeedy.setFamilySize(2);
+
+
 
             Needy savedNeedy = new Needy();
             savedNeedy.setId(3L);
@@ -115,6 +124,8 @@ public class NeedyControllerTest {
             savedNeedy.setLastName("Wonderland");
             savedNeedy.setPhoneNumber("0530000000");
             savedNeedy.setConfirmStatus(NeedyStatus.APPROVED);
+            savedNeedy.setStreet(STREET);
+
 
             when(needyService.saveOrUpdateNeedy(any(Needy.class))).thenReturn(savedNeedy);
 
@@ -134,11 +145,13 @@ public class NeedyControllerTest {
         @Test
         @DisplayName("POST /needer - Failure")
         void testCreateOrUpdateNeedy_Failure() throws Exception {
-            Needy inputNeedy = new Needy();
+            NeedyRegistrationRequest inputNeedy = new NeedyRegistrationRequest();
             inputNeedy.setFirstName("Bob");
             inputNeedy.setLastName("Builder");
             inputNeedy.setPhoneNumber("0540000000");
-            inputNeedy.setConfirmStatus(NeedyStatus.PENDING);
+            inputNeedy.setStreet(Street.fromHebrewName(STREET).getHebrewName());
+            inputNeedy.setFamilySize(2);
+
 
             when(needyService.saveOrUpdateNeedy(any(Needy.class))).thenThrow(new RuntimeException("Database error"));
 
@@ -299,6 +312,8 @@ public class NeedyControllerTest {
             pendingNeedy.setLastName("Adams");
             pendingNeedy.setPhoneNumber("0540000000");
             pendingNeedy.setConfirmStatus(NeedyStatus.PENDING);
+            pendingNeedy.setStreet(STREET);
+
 
             List<Needy> pendingList = Collections.singletonList(pendingNeedy);
 

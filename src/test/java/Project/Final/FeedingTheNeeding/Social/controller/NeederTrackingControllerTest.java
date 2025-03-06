@@ -268,6 +268,11 @@ public class NeederTrackingControllerTest {
             public int getNeedyFamilySize() {
                 return mockNeederTracking.getNeedy().getFamilySize();
             }
+
+            @Override
+            public String getNeedyStreet() {
+                return mockNeederTracking.getNeedy().getStreet();
+            }
         };
 
         // Mock the service method to return a list with this projection

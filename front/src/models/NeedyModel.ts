@@ -6,4 +6,5 @@ export interface Needy{
     address: string,
     familySize: number,
     confirmStatus?: string,
+    street: string,
 }

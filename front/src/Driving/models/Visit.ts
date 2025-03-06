@@ -20,4 +20,5 @@ export interface Visit {
     familySize?: number;
     additionalNotes?: string;
     constraintId?: number;
+    street: string;
   }

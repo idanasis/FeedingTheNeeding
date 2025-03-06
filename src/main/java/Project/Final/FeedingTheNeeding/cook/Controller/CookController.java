@@ -110,7 +110,6 @@ public class CookController {
     public ResponseEntity<?> getAllAcceptedConstraintsByDate(@PathVariable LocalDate date){
         try{
             List<CookConstraints> constraints = cs.getAcceptedCookByDate(date);
-
             List<PendingConstraintDTO> dtos = constraints.stream()
 
                     .map(constraint -> mapper.toDTO(constraint,

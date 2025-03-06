@@ -10,7 +10,7 @@ import { TableVirtuoso, TableComponents } from 'react-virtuoso';
 import { Needy } from '@/src/models/NeedyModel';
 import { Box, Button, IconButton } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { deleteNeedy, getNeedyPending, updateNeedy } from '../../Restapi/socialRestapi';
+import { deleteNeedy, getNeedyPending, updateNeedy,acceptNeedy } from '../../Restapi/socialRestapi';
 import DiveHeader from '../../GoPage/DiveHeader';
 
 
@@ -33,8 +33,8 @@ const NeedyPendingTable = () => {
 
     const handleAccept = async(needy:Needy) => {
       try{
-        needy.confirmStatus="APPROVED";
-        await updateNeedy(needy);
+        console.log(needy);
+        await acceptNeedy(needy.id);
         await fetchNeeders();
     
       }catch(err){
@@ -108,7 +108,7 @@ const NeedyPendingTable = () => {
         <>
           <TableCell align="right"  sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.firstName} {row.lastName}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.phoneNumber}</TableCell>
-          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.address}</TableCell>
+          <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.street}, {row.address}</TableCell>
           <TableCell align="right" sx={{ fontSize: { xs: '9px', sm: '12px', md: '12px' } }}>{row.familySize}</TableCell>
           <TableCell align="center">
           <Box gap={1} justifyContent="center" marginRight={1}>
