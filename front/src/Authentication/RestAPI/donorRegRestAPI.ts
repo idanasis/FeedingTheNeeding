@@ -10,6 +10,7 @@ export interface DonorRegistrationData {
     lastName: string;
     phoneNumber: string;
     address: string;
+    street: string;
 }
 
 export const validateEmail = (email: string): boolean => {

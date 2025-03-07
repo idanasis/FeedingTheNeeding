@@ -26,13 +26,14 @@ public class CookConstraints {
     private Map<String, Integer> constraints;
 
     private String location;
+    private String street;
     private LocalDate date;
 
     private Status status = Status.Pending;
 
     public CookConstraints(){}
 
-    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date){
+    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date, String street){
         this.constraintId = constraintId;
         this.cookId = cookId;
         this.startTime = startTime;
@@ -40,9 +41,10 @@ public class CookConstraints {
         this.constraints = constraints;
         this.location = loc;
         this.date = date;
+        this.street=street;
     }
 
-    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date, Status status){
+    public CookConstraints(long constraintId, long cookId, String startTime, String endTime, Map<String, Integer> constraints, String loc, LocalDate date, Status status,String street){
         this.constraintId = constraintId;
         this.cookId = cookId;
         this.startTime = startTime;
@@ -51,6 +53,7 @@ public class CookConstraints {
         this.location = loc;
         this.date = date;
         this.status = status;
+        this.street=street;
     }
 
     public void setCookId(long cookId)
@@ -60,5 +63,9 @@ public class CookConstraints {
 
     public void setLocation(String location){
         this.location = location;
+    }
+
+    public void setStreet(String street){
+        this.street = street;
     }
 }

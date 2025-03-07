@@ -61,6 +61,7 @@ public class AuthController {
     @PostMapping("/register/donor")
     public ResponseEntity<?> registerDonor(@RequestBody RegistrationRequest registrationRequest) {
         try{
+            System.out.println(registrationRequest.getStreet());
             authService.registerDonor(registrationRequest);
             return ResponseEntity.ok("Donor successfully registered");
         }catch (UserAlreadyExistsException e){

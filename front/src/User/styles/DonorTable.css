@@ -40,6 +40,10 @@
 .phone-number-column {
   width: 21%; /* Adjust as needed */
 }
+.street-column {
+  width: 18%; /* Adjust as needed */
+}
+
 
 .address-column {
   width: 20%; /* Adjust as needed */
@@ -297,3 +301,30 @@
 .cancel-button:hover {
   background-color: #d32f2f;
 }
+
+  .street-select {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+          height: 36px;
+        }
+        
+    
+        
+        .donor-table select.street-select {
+          width: 100%;
+          height: 36px;
+          padding: 0 8px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+        }
+        
+        .form-group select {
+          width: 100%;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+        }

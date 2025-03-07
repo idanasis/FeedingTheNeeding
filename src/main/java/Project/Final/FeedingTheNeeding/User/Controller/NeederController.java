@@ -1,6 +1,9 @@
 package Project.Final.FeedingTheNeeding.User.Controller;
 
+import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationRequest;
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
+import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*",allowedHeaders = "*") // Allow cross-origin requests from any source
@@ -23,10 +27,34 @@ public class NeederController {
     }
     // Create or Update a Needy user
     @PostMapping
-    public ResponseEntity<Needy> createOrUpdateNeedy(@RequestBody Needy needy) {
+    public ResponseEntity<Needy> createOrUpdateNeedy(@RequestBody NeedyRegistrationRequest needyRegistrationRequest) {
         try {
+            Needy needy =new Needy();
+            needy.setFirstName(needyRegistrationRequest.getFirstName());
+            needy.setLastName(needyRegistrationRequest.getLastName());
+            needy.setPhoneNumber(needyRegistrationRequest.getPhoneNumber());
+            needy.setAddress(needyRegistrationRequest.getAddress());
+            needy.setStreet(needyRegistrationRequest.getStreet());
+            needy.setConfirmStatus(NeedyStatus.PENDING);
+            needy.setFamilySize(needyRegistrationRequest.getFamilySize());
+
             Needy savedNeedy = needyService.saveOrUpdateNeedy(needy);
             return ResponseEntity.ok(savedNeedy);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<Needy> acceptNeedy(@PathVariable Long id) {
+        try {
+            Optional<Needy> needy = needyService.getNeedyById(id);
+            if (needy.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            needy.get().setConfirmStatus(NeedyStatus.APPROVED);
+            needyService.saveOrUpdateNeedy(needy.get());
+            return ResponseEntity.ok(needy.get());
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }

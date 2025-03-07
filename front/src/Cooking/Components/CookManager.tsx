@@ -50,6 +50,7 @@ const PendingRequests: React.FC = () => {
     const [isAddingConstraint, setIsAddingConstraint] = useState(false);
     const [donors, setDonors] = useState<Donor[]>([]);
     const [selectedDonor, setSelectedDonor] = useState<number | null>(null);
+    const [newStreet, setNewStreet] = useState<string>('');
     const [newStartTime, setNewStartTime] = useState('');
     const [newEndTime, setNewEndTime] = useState('');
     const [newConstraints, setNewConstraints] = useState<Record<string, number>>({});
@@ -113,6 +114,23 @@ const PendingRequests: React.FC = () => {
             fetchAllData(newDate);
         }
     };
+
+    const handleDonorChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const donorId = Number(e.target.value);
+    setSelectedDonor(donorId);
+    
+    if (donorId) {
+        const selectedDonorData = donors.find(donor => donor.id === donorId);
+        if (selectedDonorData && selectedDonorData.street) {
+            setNewStreet(selectedDonorData.street);
+        } else {
+            setNewStreet('');
+        }
+    } else {
+        setNewStreet('');
+    }
+};
+
 
     const handleApprove = async (constraintId: number) => {
         try {
@@ -448,7 +466,10 @@ const PendingRequests: React.FC = () => {
                 selectedDate,
                 newStartTime,
                 newEndTime,
-                newConstraints
+                newConstraints,
+                newStreet
+
+                
             );
 
             setIsAddingConstraint(false);
@@ -509,18 +530,18 @@ const PendingRequests: React.FC = () => {
                                         <div className="space-y-4">
                                             <div>
                                                 <label className="block text-right mb-2">בחר מבשל:</label>
-                                                <select
-                                                    className="w-full p-2 border rounded text-right"
-                                                    value={selectedDonor || ''}
-                                                    onChange={(e) => setSelectedDonor(Number(e.target.value))}
-                                                >
-                                                    <option value="">בחר מבשל</option>
-                                                    {donors.map(donor => (
-                                                        <option key={donor.id} value={donor.id}>
-                                                            {donor.firstName} {donor.lastName}
-                                                        </option>
-                                                    ))}
-                                                </select>
+                                               <select
+                                                className="w-full p-2 border rounded text-right"
+                                                value={selectedDonor || ''}
+                                                onChange={handleDonorChange}
+                                            >
+                                                <option value="">בחר מבשל</option>
+                                                {donors.map(donor => (
+                                                    <option key={donor.id} value={donor.id}>
+                                                        {donor.firstName} {donor.lastName}
+                                                    </option>
+                                                ))}
+                                            </select>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">

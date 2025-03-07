@@ -8,4 +8,5 @@ export interface DriverConstraints {
     requests: string;
     driverFirstName : string;
     driverLastName: string;
+    driverStreet?: string;
 }

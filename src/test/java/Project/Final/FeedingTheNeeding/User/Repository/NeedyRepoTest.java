@@ -3,6 +3,7 @@ package Project.Final.FeedingTheNeeding.User.Repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -28,6 +29,7 @@ public class NeedyRepoTest {
     private static final String LAST_NAME = "lastName";
     private static final String PHONE_NUMBER1 = "0510000000";
     private static final String PHONE_NUMBER2 = "0520000000";
+    private static final String STREET = "ד'";
 
     private static final String ADDRESS = "address";
     private static final int FAMILY_SIZE = 4;
@@ -43,6 +45,7 @@ public class NeedyRepoTest {
         needy.setAddress(ADDRESS);
         needy.setConfirmStatus(NEEDY_STATUS);
         needy.setFamilySize(FAMILY_SIZE);
+        needy.setStreet((STREET));
         needyRepository.save(needy);
 
         Optional<Needy> foundNeedy = needyRepository.findByPhoneNumber(PHONE_NUMBER1);
@@ -65,6 +68,8 @@ public class NeedyRepoTest {
         needy1.setAddress(ADDRESS);
         needy1.setConfirmStatus(NEEDY_STATUS);
         needy1.setFamilySize(FAMILY_SIZE);
+        needy1.setStreet((STREET));
+
 
         Needy needy2 = new Needy();
         needy2.setFirstName(FIRST_NAME);
@@ -73,6 +78,8 @@ public class NeedyRepoTest {
         needy2.setAddress(ADDRESS);
         needy2.setConfirmStatus(NeedyStatus.PENDING);
         needy2.setFamilySize(FAMILY_SIZE);
+        needy2.setStreet((STREET));
+
 
         needyRepository.save(needy1);
         needyRepository.save(needy2);

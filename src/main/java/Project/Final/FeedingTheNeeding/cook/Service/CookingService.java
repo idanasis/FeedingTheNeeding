@@ -83,6 +83,8 @@ public class CookingService {
         cc.setDate(user.getDate());
         cc.setStartTime(user.getStartTime());
         cc.setEndTime(user.getEndTime());
+        System.out.println(user.getStreet());
+        cc.setStreet(user.getStreet());
         return submitConstraints(cc);
     }
 

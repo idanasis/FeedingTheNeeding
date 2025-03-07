@@ -7,10 +7,7 @@ import Project.Final.FeedingTheNeeding.Authentication.Exception.UserDoesntExists
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.Authentication.Repository.UserCredentialsRepository;
 import Project.Final.FeedingTheNeeding.Authentication.Exception.InvalidCredentialException;
-import Project.Final.FeedingTheNeeding.User.Model.Donor;
-import Project.Final.FeedingTheNeeding.User.Model.Needy;
-import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
-import Project.Final.FeedingTheNeeding.User.Model.UserRole;
+import Project.Final.FeedingTheNeeding.User.Model.*;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import jakarta.transaction.Transactional;
@@ -112,6 +109,8 @@ public class AuthService {
         donor.setRole(UserRole.DONOR);
         donor.setStatus(RegistrationStatus.PENDING);
         donor.setTimeOfDonation(0);
+        donor.setStreet(registrationRequest.getStreet());
+        System.out.println(Street.fromHebrewName(registrationRequest.getStreet()));
 
         Donor savedDonor = donorRepository.save(donor);
 
@@ -139,6 +138,7 @@ public class AuthService {
         needy.setRole(UserRole.NEEDY);
         needy.setConfirmStatus(NeedyStatus.PENDING);
         needy.setFamilySize(needyRegistrationRequest.getFamilySize());
+        needy.setStreet(needyRegistrationRequest.getStreet());
 
         needyRepository.save(needy);
         logger.info("end-register needy, phone number: {}", needyRegistrationRequest.getPhoneNumber());

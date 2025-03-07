@@ -4,6 +4,7 @@ package Project.Final.FeedingTheNeeding.Authentication.Repository;
 import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
 import Project.Final.FeedingTheNeeding.Authentication.Model.UserCredentials;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import Project.Final.FeedingTheNeeding.User.Repository.DonorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ public class UserCredentialsRepoTest {
     private static final String ADDRESS = "address";
     private static final RegistrationStatus REGISTRATION_STATUS = RegistrationStatus.AVAILABLE;
     private static final String VERIFICATION_CODE = "123456";
+    private static final String STREET = "ד'";
     @Autowired
     private DonorRepository donorRepository;
 
@@ -49,6 +51,9 @@ public class UserCredentialsRepoTest {
         donor.setAddress(ADDRESS);
         donor.setStatus(REGISTRATION_STATUS);
         donor.setVerificationCode(VERIFICATION_CODE);
+        donor.setStreet((STREET));
+
+
         donorRepository.save(donor);
 
         user = new UserCredentials();

@@ -9,6 +9,8 @@ export const getPendingDonors = async (): Promise<Donor[]> => {
 }
 
 export const updateDonor = async (donor:Donor): Promise<void> => {
+    console.log("updateDonor restapi ")
+    console.log(donor)
     await axios.put(`${apiUrl}/donor`,donor,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
 }
 

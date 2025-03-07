@@ -8,6 +8,32 @@ import DiveHeader from "../../GoPage/DiveHeader";
 import {registerDonor} from '../../Authentication/RestAPI/donorRegRestAPI';
 import {getPendingDonors} from '../../Restapi/DonorRestapi';
 
+// Beer Sheva streets array
+const BEER_SHEVA_STREETS = [
+    'העיר העתיקה',
+    'נווה עופר',
+    'המרכז האזרחי',
+    'א\'',
+    'ב\'',
+    'ג\'',
+    'ד\'',
+    'ה\'',
+    'ו\'',
+    'ט\'',
+    'י"א',
+    'נאות לון',
+    'נווה זאב',
+    'נווה נוי',
+    'נחל בקע',
+    'נחל עשן (נווה מנחם)',
+    'רמות',
+    'נאות אברהם (פלח 6)',
+    'נווה אילן (פלח 7)',
+    'הכלניות',
+    'סיגליות',
+    'פארק הנחל'
+];
+
 const DonorTable = () => {
   const [editableDonors, setEditableDonors] = useState<Donor[]>([]);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -18,6 +44,7 @@ const DonorTable = () => {
     firstName: "",
     lastName: "",
     phoneNumber: "",
+    street: "",
     address: ""
   });
 
@@ -69,7 +96,7 @@ const DonorTable = () => {
   };
 
   const handleAddDonorChange = (
-    e: React.ChangeEvent<HTMLInputElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setNewDonor((prev) => ({ ...prev, [name]: value }));
@@ -105,7 +132,9 @@ const DonorTable = () => {
         firstName: "",
         lastName: "",
         phoneNumber: "",
+        street: "",
         address: ""
+        
       });
       setShowAddForm(false);
       // Refresh donor list
@@ -120,8 +149,6 @@ const DonorTable = () => {
       console.log(e);
     }
   };
-
-  
 
   return (
     <>
@@ -174,7 +201,7 @@ const DonorTable = () => {
                     required
                   />
                 </div>
-                 <div className="form-group">
+                <div className="form-group">
                   <label htmlFor="phoneNumber">מספר טלפון</label>
                   <input
                     type="text"
@@ -185,19 +212,39 @@ const DonorTable = () => {
                     required
                   />
                 </div>
-                 <div className="form-group full-width">
-                <label htmlFor="address">כתובת</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={newDonor.address}
-                  onChange={handleAddDonorChange}
-                  required
-                />
+                
+                {/* Street selection dropdown */}
+                <div className="form-group">
+                  <label htmlFor="street">שכונה</label>
+                  <select
+                    id="street"
+                    name="street"
+                    value={newDonor.street}
+                    onChange={handleAddDonorChange}
+                    required
+                    className="street-select"
+                  >
+                    <option value="">בחר שכונה</option>
+                    {BEER_SHEVA_STREETS.map((street) => (
+                      <option key={street} value={street}>
+                        {street}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                
+                <div className="form-group full-width">
+                  <label htmlFor="address">כתובת מלאה</label>
+                  <input
+                    type="text"
+                    id="address"
+                    name="address"
+                    value={newDonor.address}
+                    onChange={handleAddDonorChange}
+                    required
+                  />
+                </div>
               </div>
-              </div>
-              
               
               <div className="form-actions">
                 <button type="submit" className="submit-button">הוסף מתנדב</button>
@@ -219,6 +266,7 @@ const DonorTable = () => {
               <th className="first-name-column">שם פרטי</th>
               <th className="last-name-column">שם משפחה</th>
               <th className="phone-number-column">מספר טלפון</th>
+              <th className="street-column">שכונה</th>
               <th className="address-column">כתובת</th>
               <th className="email-column">אימייל</th>
               <th className="last-donation-date-column">תאריך תרומה אחרון</th>
@@ -249,6 +297,20 @@ const DonorTable = () => {
                     value={donor.phoneNumber}
                     onChange={(e) => handleInputChange(e, donor.id, "phoneNumber")}
                   />
+                </td>
+                <td className="street-column">
+                  <select
+                    value={donor.street || ""}
+                    onChange={(e) => handleInputChange(e, donor.id, "street")}
+                    className="street-select"
+                  >
+                    <option value="">בחר שכונה</option>
+                    {BEER_SHEVA_STREETS.map((street) => (
+                      <option key={street} value={street}>
+                        {street}
+                      </option>
+                    ))}
+                  </select>
                 </td>
                 <td className="address-column">
                   <input
@@ -293,6 +355,8 @@ const DonorTable = () => {
           </tbody>
         </table>
       </div>
+      
+      
     </>
   );
 };

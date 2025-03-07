@@ -3,6 +3,7 @@ package Project.Final.FeedingTheNeeding.User.Repository;
 
 import Project.Final.FeedingTheNeeding.Authentication.DTO.RegistrationStatus;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -29,6 +30,7 @@ public class DonorRepoTest {
     private static final String LAST_NAME = "lastName";
     private static final String PHONE_NUMBER = "0500000000";
     private static final String ADDRESS = "address";
+    private static final String STREET = "ד'";
     private static final RegistrationStatus REGISTRATION_STATUS = RegistrationStatus.AVAILABLE;
     private static final String VERIFICATION_CODE = "123456";
 
@@ -42,6 +44,7 @@ public class DonorRepoTest {
         donor.setPhoneNumber(PHONE_NUMBER);
         donor.setAddress(ADDRESS);
         donor.setStatus(REGISTRATION_STATUS);
+        donor.setStreet(STREET);
         donorRepository.save(donor);
 
         Optional<Donor> foundDonor = donorRepository.findByEmail(EMAIL1);
@@ -66,6 +69,8 @@ public class DonorRepoTest {
         donor.setAddress(ADDRESS);
         donor.setStatus(REGISTRATION_STATUS);
         donor.setVerificationCode(VERIFICATION_CODE);
+        donor.setStreet((STREET));
+
         donorRepository.save(donor);
 
         Optional<Donor> foundDonor = donorRepository.findByVerificationCode(VERIFICATION_CODE);

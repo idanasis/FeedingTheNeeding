@@ -52,6 +52,7 @@ public class AuthControllerTest {
     final String NEEDY_FIRST_NAME = "Needy", NEEDY_LAST_NAME = "Needy";
     final String DONOR_PHONE_NUMBER = "0500000000", NEEDY_PHONE_NUMBER = "0500000001";
     final String DONOR_ADDRESS = "address", NEEDY_ADDRESS = "address";
+    final String DONOR_STREET = "ד'", NEEDY_STREET = "ד'";
     final int NEEDY_FAMILY_SIZE = 5;
     final String VERIFICATION_CODE = "123456";
     final String EMAIL = "test@test.com";
@@ -93,7 +94,7 @@ public class AuthControllerTest {
     @Test
     void testRegisterDonor_Success() throws Exception {
         RegistrationRequest request = new RegistrationRequest(null, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
-                PHONE_NUMBER, DONOR_ADDRESS);
+                PHONE_NUMBER,DONOR_STREET ,DONOR_ADDRESS);
 
         doNothing().when(authService).registerDonor(request);
 
@@ -107,7 +108,7 @@ public class AuthControllerTest {
     @Test
     void testRegisterDonor_Failure() throws Exception {
         RegistrationRequest request = new RegistrationRequest(null, PASSWORD, PASSWORD, DONOR_FIRST_NAME, DONOR_LAST_NAME,
-                PHONE_NUMBER, DONOR_ADDRESS);
+                PHONE_NUMBER, DONOR_STREET,DONOR_ADDRESS);
 
         doThrow(new UserAlreadyExistsException("Donor already exists")).when(authService).registerDonor(request);
 
@@ -121,7 +122,7 @@ public class AuthControllerTest {
     @Test
     void testRegisterNeedy_Success() throws Exception {
         NeedyRegistrationRequest request = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME,
-                NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE);
+                NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE,NEEDY_STREET);
 
         doNothing().when(authService).registerNeedy(request);
 
@@ -135,7 +136,7 @@ public class AuthControllerTest {
     @Test
     void testRegisterNeedy_Failure() throws Exception {
         NeedyRegistrationRequest request = new NeedyRegistrationRequest(NEEDY_FIRST_NAME, NEEDY_LAST_NAME,
-                NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE);
+                NEEDY_PHONE_NUMBER, NEEDY_ADDRESS, NEEDY_FAMILY_SIZE,NEEDY_STREET);
 
         doThrow(new UserAlreadyExistsException("Needy already exists")).when(authService).registerNeedy(request);
 

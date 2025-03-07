@@ -10,4 +10,5 @@ export interface Donor {
     status?: string;
     lastDonationDate?: Date;
     role?: string;
+    street: string;
 }

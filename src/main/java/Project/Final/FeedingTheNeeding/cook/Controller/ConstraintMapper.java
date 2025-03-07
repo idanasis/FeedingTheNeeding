@@ -16,6 +16,7 @@ public class ConstraintMapper {
         dto.constraints = constraint.getConstraints();
         dto.address = constraint.getLocation();
         dto.date = constraint.getDate();
+        dto.street=constraint.getStreet();
         dto.status = constraint.getStatus();
         return dto;
     }

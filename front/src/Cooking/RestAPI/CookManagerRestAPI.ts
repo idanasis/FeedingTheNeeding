@@ -174,14 +174,15 @@ export const getDonorApproved = async (): Promise<Donor[]> => {
     return await response.data as Donor[];
 }
 
-export const addNewConstraint = async (donorId: number, date: string, startTime: string, endTime: string, constraints: Record<string, number>): Promise<void> => {
+export const addNewConstraint = async (donorId: number, date: string, startTime: string, endTime: string, constraints: Record<string, number>,street: string): Promise<void> => {
     try {
         await axios.post(`${API_BASE_URL}/cooking/add/constraint`, {
             donorId,
             date,
             startTime,
             endTime,
-            constraints
+            constraints,
+            street
         }, {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
