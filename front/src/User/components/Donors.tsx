@@ -234,7 +234,7 @@ const DonorTable = () => {
                 </div>
                 
                 <div className="form-group full-width">
-                  <label htmlFor="address">כתובת מלאה</label>
+                  <label htmlFor="address">רחוב</label>
                   <input
                     type="text"
                     id="address"
