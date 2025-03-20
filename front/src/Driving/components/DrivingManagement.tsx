@@ -621,6 +621,28 @@ const handleWhatsAppShare = (route: Route) => {
   }
 };
 
+// Add this helper function
+const filterVisit = (visit: Visit, searchQuery: string, streetFilter: string = '') => {
+  // First check street filter
+  if (streetFilter && (!visit.street || !visit.street.includes(streetFilter))) {
+    return false;
+  }
+  
+  // Then check search query
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    return visit.firstName.toLowerCase().includes(query) ||
+      visit.lastName.toLowerCase().includes(query) ||
+      visit.address.toLowerCase().includes(query) ||
+      visit.phoneNumber.includes(query) ||
+      (visit.note && visit.note.toLowerCase().includes(query)) ||
+      (visit.notes && visit.notes.toLowerCase().includes(query));
+  }
+  
+  return true;
+};
+
+
 // Add new search filter functions
 const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string = '') => {
   let filtered = visits;
@@ -774,16 +796,19 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
               }}
             />
 
-       <SortableContext 
-        items={filterVisits(data.pickup, chefSearchQuery, selectedStreet).map((_, idx) => `pickup-${idx}`)} 
-        strategy={verticalListSortingStrategy}
-      >
-        {filterVisits(data.pickup, chefSearchQuery, selectedStreet).map((visit, index) => (
-          <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
-            {renderVisit(visit, undefined, index, "pickup")}
-          </Draggable>
-        ))}
-      </SortableContext>
+         <SortableContext 
+          items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
+          strategy={verticalListSortingStrategy}
+        >
+          {data.pickup
+            .map((visit, idx) => ({ visit, idx }))
+            .filter(({ visit }) => filterVisit(visit, chefSearchQuery, selectedStreet))
+            .map(({ visit, idx }) => (
+              <Draggable key={`pickup-${idx}`} id={`pickup-${idx}`}>
+                {renderVisit(visit, undefined, idx, "pickup")}
+              </Draggable>
+            ))}
+        </SortableContext>
           </Box>
 
           {/* Routes Container */}
@@ -820,7 +845,13 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
   }}
 >
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Typography variant="h6">סיבוב {index+1}</Typography>
+    <Typography variant="h6"   
+                sx={{ 
+                  color: route.submitted ? 'green' : 'red',
+                  fontWeight: 'bold'
+                }}>
+                סיבוב {index+1}
+    </Typography>
     {minimizedRoutes[index] && (
       <Typography variant="body2" color="text.secondary">
         {getVisitNamesForRoute(route)}
@@ -848,46 +879,47 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
                         ))}
                         <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
                       </Select>
+                          <Typography variant="body2">
+                          {route.submitted === true ? "פורסם" : "טרם פורסם"}
+                        </Typography>
 
-                      <Typography variant="body2">
-                        {route.submitted===true?"פורסם":"טרם פורסם"}
-                      </Typography>
-                      
-                      <Button 
-                        variant="contained" 
-                        color="error" 
-                        onClick={()=>removeRoute(index)}
-                      >
-                        מחק
-                      </Button>
-
-                      {route.submitted ? (
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Button 
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={() => handleCopyRoute(route)}
-                            data-no-drag
-                          >
-                            העתק מסלול
-                          </Button>
-                          <IconButton 
-                            color="success" 
-                            onClick={() => handleWhatsAppShare(route)}
-                            data-no-drag
-                          >
-                            <WhatsAppIcon />
-                          </IconButton>
-                        </Box>
-                      ) : (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <Button 
                           variant="contained" 
-                          color="primary" 
-                          onClick={() => handlePublish(index)}
+                          color="error" 
+                          onClick={() => removeRoute(index)}
                         >
-                          פרסם
+                          מחק
                         </Button>
-                      )}
+
+                        {route.submitted ? (
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button 
+                              variant="contained" 
+                              color="secondary" 
+                              onClick={() => handleCopyRoute(route)}
+                              data-no-drag
+                            >
+                              העתק מסלול
+                            </Button>
+                            <IconButton 
+                              color="success" 
+                              onClick={() => handleWhatsAppShare(route)}
+                              data-no-drag
+                            >
+                              <WhatsAppIcon />
+                            </IconButton>
+                          </Box>
+                        ) : (
+                          <Button 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={() => handlePublish(index)}
+                          >
+                            פרסם
+                          </Button>
+                        )}
+                      </Box>
 
                       <SortableContext
                         items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
@@ -976,16 +1008,19 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
               }}
             />
 
-          <SortableContext 
-            items={filterVisits(data.drop, recipientSearchQuery, selectedRecipientStreet).map((_, idx) => `drop-${idx}`)} 
-            strategy={verticalListSortingStrategy}
-          >
-            {filterVisits(data.drop, recipientSearchQuery, selectedRecipientStreet).map((visit, index) => (
-              <Draggable key={`drop-${index}`} id={`drop-${index}`}>
-                {renderVisit(visit)}
+        <SortableContext 
+          items={data.drop.map((_, idx) => `drop-${idx}`)} 
+          strategy={verticalListSortingStrategy}
+        >
+          {data.drop
+            .map((visit, idx) => ({ visit, idx }))
+            .filter(({ visit }) => filterVisit(visit, recipientSearchQuery, selectedRecipientStreet))
+            .map(({ visit, idx }) => (
+              <Draggable key={`drop-${idx}`} id={`drop-${idx}`}>
+                {renderVisit(visit, undefined, idx, "drop")}
               </Draggable>
             ))}
-          </SortableContext>
+        </SortableContext>
           </Box>
         </Box>
       </Container>
