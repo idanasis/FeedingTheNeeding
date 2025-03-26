@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 @RestController
 @CrossOrigin(origins = "*",allowedHeaders = "*") // Allow cross-origin requests from any source
@@ -40,6 +43,20 @@ public class NeederController {
 
             Needy savedNeedy = needyService.saveOrUpdateNeedy(needy);
             return ResponseEntity.ok(savedNeedy);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }
+    @PatchMapping("/{id}")
+    public ResponseEntity<Needy> updateNeedy(@PathVariable Long id, @RequestBody Needy needy) {
+        try {
+            Optional<Needy> needyOptional = needyService.getNeedyById(id);
+            if (needyOptional.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            }
+            needy.setId(id);
+            Needy updatedNeedy = needyService.saveOrUpdateNeedy(needy);
+            return ResponseEntity.ok(updatedNeedy);
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }
@@ -105,7 +122,16 @@ public class NeederController {
             return ResponseEntity.status(500).build();
         }
     }
-
+    @GetMapping("/accepted")
+    public ResponseEntity<List<Needy>> getAcceptedNeedies() {
+        try {
+            List<Needy> acceptedNeedies = needyService.getApprovedNeedy();
+            return ResponseEntity.ok(acceptedNeedies);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).build();
+        }
+    }    
+    
     @GetMapping("/phone/{phoneNumber}")
     public ResponseEntity<?> getNeedyByPhoneNumber(@PathVariable String phoneNumber) {
         try {
