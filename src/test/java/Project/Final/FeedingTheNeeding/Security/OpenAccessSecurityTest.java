@@ -58,6 +58,8 @@ public class OpenAccessSecurityTest extends BaseSecurityTest{
     private final String TOKEN = "token", VERIFICATION_CODE = "123456";
     private final String PHONE_NUMNER2 = "0500000001";
     private final int FAMILY_SIZE = 2;
+    final String DONOR_STREET = "ד'" , NEEDY_STREET = "ד'";
+
 
     UserCredentials mockCredentials;
     Donor mockDonor;
@@ -82,8 +84,8 @@ public class OpenAccessSecurityTest extends BaseSecurityTest{
         mockDonor.setUserCredentials(mockCredentials);
 
         authRequest = new AuthenticationRequest(PHONE_NUMBER, PASSWORD);
-        registrationRequest = new RegistrationRequest(EMAIL, PASSWORD, PASSWORD, FIRSTNAME, LASTNAME, PHONE_NUMBER, ADDRESS);
-        needyRegistrationRequest = new NeedyRegistrationRequest(FIRSTNAME, LASTNAME, PHONE_NUMNER2, ADDRESS, FAMILY_SIZE);
+        registrationRequest = new RegistrationRequest(EMAIL, PASSWORD, PASSWORD, FIRSTNAME, LASTNAME, PHONE_NUMBER,DONOR_STREET, ADDRESS);
+        needyRegistrationRequest = new NeedyRegistrationRequest(FIRSTNAME, LASTNAME, PHONE_NUMNER2, ADDRESS, FAMILY_SIZE,NEEDY_STREET);
 
         when(authService.authenticate(any(AuthenticationRequest.class))).thenReturn(mockCredentials);
         when(jwtTokenService.generateToken(mockCredentials)).thenReturn(TOKEN);

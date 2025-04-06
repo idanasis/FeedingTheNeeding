@@ -41,7 +41,7 @@ public class RouteTest {
     @BeforeEach
     void setUp() {
         route = new Route(driverId, date);
-        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour,"");
+        visit = new Visit(address, firstName, lastName, phoneNumber, maxHour, VisitStatus.Deliver, note,route,priority,startHour,"",4,"ד'");
     }
     @Test
     void testCreateFindRoute() {

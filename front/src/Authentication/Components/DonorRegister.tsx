@@ -2,7 +2,44 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Styles/DonorRegister.css';
 import FeedingLogo from '../Images/logo.png';
-import { registerDonor, validateEmail, validatePhone, DonorRegistrationData, verifyDonor, resendVerificationSMSCode } from '../RestAPI/donorRegRestAPI';
+import { registerDonor, validateEmail, validatePhone, verifyDonor, resendVerificationSMSCode } from '../RestAPI/donorRegRestAPI';
+
+// Extend the existing DonorRegistrationData interface
+export interface DonorRegistrationData {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
+    address: string;
+    street: string; // Added street property
+}
+
+const BEER_SHEVA_STREETS = [
+    'העיר העתיקה',
+    'נווה עופר',
+    'המרכז האזרחי',
+    'א\'',
+    'ב\'',
+    'ג\'',
+    'ד\'',
+    'ה\'',
+    'ו\'',
+    'ט\'',
+    'י"א',
+    'נאות לון',
+    'נווה זאב',
+    'נווה נוי',
+    'נחל בקע',
+    'נחל עשן (נווה מנחם)',
+    'רמות',
+    'נאות אברהם (פלח 6)',
+    'נווה אילן (פלח 7)',
+    'הכלניות',
+    'סיגליות',
+    'פארק הנחל'
+];
 
 const DonorRegister: React.FC = () => {
     const [formData, setFormData] = useState<DonorRegistrationData>({
@@ -13,6 +50,7 @@ const DonorRegister: React.FC = () => {
         lastName: '',
         phoneNumber: '',
         address: '',
+        street: '',
     });
 
     const [hasNoCriminalRecord, setHasNoCriminalRecord] = useState(false);
@@ -25,7 +63,7 @@ const DonorRegister: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { id, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [id]: value }));
     };
@@ -44,11 +82,11 @@ const DonorRegister: React.FC = () => {
 
     const handleVerification = async () => {
         setError(null);
-        try{
+        try {
             await verifyDonor(formData.phoneNumber, verificationCode);
             setShowVerificationPopup(false);
-             setSuccessMessage(true)
-        }catch (err: any) {
+            setSuccessMessage(true)
+        } catch (err: any) {
             setError("קוד האימות שהוזן שגוי. אנא נסה/י שוב.")
         }
     }
@@ -86,6 +124,11 @@ const DonorRegister: React.FC = () => {
             return;
         }
 
+        if (!formData.street) {
+            setError('אנא בחר/י שכונה/רחוב');
+            return;
+        }
+
         if (!hasNoCriminalRecord) {
             setError('עליך לאשר כי אינך בעל עבר פלילי כדי להצטרף אלינו');
             return;
@@ -94,8 +137,8 @@ const DonorRegister: React.FC = () => {
         try {
             await registerDonor(formData);
             setSuccessMessage(true)
-        } catch (error: any){
-            if(error.message === "User already exists")
+        } catch (error: any) {
+            if (error.message === "User already exists")
                 setError("מספר הטלפון כבר קיים במערכת")
             else
                 setError('ההרשמה נכשלה. נסה שוב מאוחר יותר.');
@@ -111,21 +154,44 @@ const DonorRegister: React.FC = () => {
 
                 <form onSubmit={handleRegister} className="register-form">
                     <div className="form-logo">
-                        <img src={FeedingLogo} alt="Logo" className="logo-image"/>
+                        <img src={FeedingLogo} alt="Logo" className="logo-image" />
                     </div>
                     <h2>הצטרפות לעמותה</h2>
 
-                    <div className="form-group">
-                        <label htmlFor="email">
-                            אימייל <span className="required-asterisk">*</span>
-                        </label>
-                        <input
-                            id="email"
-                            type="text"
-                            value={formData.email}
-                            onChange={handleChange}
-                            required
-                        />
+                    {/* Email and Street Row */}
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label htmlFor="email">
+                                אימייל <span className="required-asterisk">*</span>
+                            </label>
+                            <input
+                                id="email"
+                                type="text"
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label htmlFor="street">
+                                שכונה/רחוב <span className="required-asterisk">*</span>
+                            </label>
+                            <select
+                                id="street"
+                                value={formData.street}
+                                onChange={handleChange}
+                                required
+                                className="form-control"
+                            >
+                                <option value="">בחר שכונה/רחוב</option>
+                                {BEER_SHEVA_STREETS.map((street) => (
+                                    <option key={street} value={street}>
+                                        {street}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
 
                     <div className="form-row">
@@ -244,7 +310,6 @@ const DonorRegister: React.FC = () => {
                         </label>
                     </div>
 
-
                     {error && <p className="error-message">{error}</p>}
 
                     <button type="submit" className="submit-button">הירשם</button>
@@ -258,42 +323,6 @@ const DonorRegister: React.FC = () => {
                 </form>
             </div>
 
-            {/*{showVerificationPopup && (*/}
-            {/*    <>*/}
-            {/*        <div className="overlay"></div>*/}
-            {/*        <div className="success-popup">*/}
-            {/*            <p>אנא הזן את קוד האימות שנשלח אליך:</p>*/}
-            {/*            {error && <p className="error-message">{error}</p>}*/}
-            {/*            <input*/}
-            {/*                type="text"*/}
-            {/*                maxLength={6}*/}
-            {/*                placeholder="הזן קוד אימות"*/}
-            {/*                value={verificationCode}*/}
-            {/*                onChange={(e) => {*/}
-            {/*                    const val = e.target.value.replace(/\D/g, ''); // digits only*/}
-            {/*                    setVerificationCode(val);*/}
-            {/*                }}*/}
-            {/*                style={{*/}
-            {/*                    width: "100%",*/}
-            {/*                    padding: "10px",*/}
-            {/*                    border: "1px solid #ddd",*/}
-            {/*                    borderRadius: "6px",*/}
-            {/*                    marginBottom: "15px",*/}
-            {/*                    fontSize: "14px",*/}
-            {/*                    textAlign: "center"*/}
-            {/*                }}*/}
-            {/*            />*/}
-            {/*            <button onClick={handleVerification}>אמת קוד</button>*/}
-            {/*            <p className="resend-container">*/}
-            {/*                לא קיבלת קוד אימות?*/}
-            {/*                <button className="resend-link" onClick={handleResendCode}>*/}
-            {/*                    שלח שוב*/}
-            {/*                </button>*/}
-            {/*            </p>*/}
-            {/*        </div>*/}
-            {/*    </>*/}
-            {/*)}*/}
-
             {successMessage && (
                 <>
                     <div className="overlay"></div>
@@ -304,11 +333,8 @@ const DonorRegister: React.FC = () => {
                     </div>
                 </>
             )}
-
-
         </div>
     );
-
 };
 
 export default DonorRegister;

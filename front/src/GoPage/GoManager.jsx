@@ -23,9 +23,9 @@ const GoManager = () => {
       post: "",
       image: GoSocial,
       pages: [
+        { name: "חוסים ממתינים", path: "/neederPending" },
         { name: "מעקב חוסים", path: "/social" },
         { name: "מעקב מתנדבים ", path: "/donors" },
-        { name: "חוסים ממתינים", path: "/neederPending" },
         { name: "מתנדבים ממתינים", path: "/donorPending" }
       ]
     },

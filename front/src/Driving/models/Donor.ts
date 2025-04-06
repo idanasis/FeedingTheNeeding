@@ -6,4 +6,5 @@ export interface Donor {
     phoneNumber: string;
     address: string;
     requests?: string;
+    street: string;
 }

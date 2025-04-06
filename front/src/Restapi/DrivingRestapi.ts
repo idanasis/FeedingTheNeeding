@@ -41,6 +41,7 @@ export const getDonor=async(id:number)=>{
 export const getNeedersHere=async (date: Date)=>{
     const response =  await axios.get(socialUrl+"getNeedersHere?date="+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
+    console.log(response.data);
     const neederTracking= response.data as NeederTrackingProjectionModel[];
     return neederTracking.map((neederTracking:NeederTrackingProjectionModel)=>transformNeederTrackingProjectionToVisit(neederTracking));
 }
@@ -55,7 +56,8 @@ const transformNeederTrackingProjectionToVisit=(neederTracking:NeederTrackingPro
         startHour:"0:00",
         endHour:"0:00",
         status:"Deliver",
-        additionalNotes :neederTracking.needyFamilySize +" "+neederTracking.dietaryPreferences
+        additionalNotes :neederTracking.needyFamilySize +" "+neederTracking.dietaryPreferences,
+        street:neederTracking.needyStreet
     }
 }
 export const updateRoute=async(route:Route)=>{
@@ -93,6 +95,7 @@ export const getPickupVisits = async (date: Date) => {
     const response = await axios.get(cookingUrl+"/getAccepted/"+date.toISOString().split('T')[0],
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
     let res=response.data as Visit[];
+    console.log(res);
     res=res.map((visit:Visit)=>transformCookingConstraintProjectionToVisit(visit));
     return res;
 }
@@ -116,5 +119,7 @@ const transformCookingConstraintProjectionToVisit=(visit:Visit)=>{
         startHour:visit.startTime,
         endHour:visit.endTime,
         status:"Pickup",
+        constraintId: visit.constraintId,
+        street:visit.street
     }
 }

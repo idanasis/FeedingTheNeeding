@@ -26,7 +26,7 @@ export const getNeedyPending= async () => {
 }
 
 export const updateNeedy= async (needy:Needy) => {
-    console.log(needy);
+   // console.log(needy);
     await axios.post(neederUrl,needy,
     {headers: { 'Content-Type': 'application/json',Authorization:'Bearer ' + localStorage.getItem('token')}});
 }
@@ -35,3 +35,18 @@ export const deleteNeedy= async (needy:Needy) => {
     await axios.delete(neederUrl+"/"+needy.id,
     {headers: { 'Content-Type': 'application/json',Authorization:'Bearer ' + localStorage.getItem('token')}});
 }
+
+export const acceptNeedy = async (id: number) => {
+    try {
+        const response = await axios.post(`${neederUrl}/${id}`, {}, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: 'Bearer ' + localStorage.getItem('token')
+            }
+        });
+        return response.data as Needy;
+    } catch (err) {
+        console.error('Error accepting needy:', err);
+        return null;
+    }
+};

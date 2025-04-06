@@ -22,6 +22,7 @@ class ConstraintMapperTest {
     private static final String START_TIME = "09:00";
     private static final String END_TIME = "17:00";
     private static final String ADDRESS = "123 Main St";
+    private static final String STREET = "ד'";
     private static final LocalDate DATE = LocalDate.now();
     private static final Map<String, Integer> CONSTRAINTS = new HashMap<>();
 
@@ -38,7 +39,8 @@ class ConstraintMapperTest {
                 CONSTRAINTS,
                 ADDRESS,
                 DATE,
-                Status.Pending
+                Status.Pending,
+                STREET
         );
     }
 
@@ -62,6 +64,7 @@ class ConstraintMapperTest {
         constraint = new CookConstraints(
                 CONSTRAINT_ID,
                 1L,
+                null,
                 null,
                 null,
                 null,

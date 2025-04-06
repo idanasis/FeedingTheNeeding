@@ -126,6 +126,7 @@ public class UserController {
     @PutMapping("/donor")
     public ResponseEntity<?> updateDonor(@RequestBody Donor entity) {
         try{
+            System.out.println(entity);
             userService.updateDonor(entity);
             return ResponseEntity.noContent().build();
         }catch (Exception e){

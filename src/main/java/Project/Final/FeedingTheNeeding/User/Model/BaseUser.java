@@ -27,4 +27,7 @@ public abstract class BaseUser {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @Column(nullable = false)
+    private String street;
 }

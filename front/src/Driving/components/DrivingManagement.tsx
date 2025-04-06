@@ -13,7 +13,8 @@ import {
 } from '@dnd-kit/sortable';
 import { useDraggable,useDroppable  } from '@dnd-kit/core';
 import ResponsiveDatePickers from '../../Social/components/ResponsiveDatePickers';
-import { Box, Card, CardContent, Typography, Select, MenuItem, Container, Button, IconButton, Fab } from '@mui/material';
+import { Box, Card, CardContent, Typography, Select, MenuItem, Container, Button, IconButton, Fab,TextField, InputAdornment  } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { Visit } from '../models/Visit';
 import { Route } from '../models/Route';
 import "../styles/Driving.css";
@@ -28,14 +29,17 @@ import { getNearestFriday } from '../../commons/Commons';
 import { DriverConstraints } from '../models/DriverConstraints';
 import AddDriverOption from './AddDriverOption';
 import { getDonorApproved } from '../../Restapi/DrivingRestapi';
+import { rejectCookRequest } from '../../Cooking/RestAPI/CookManagerRestAPI';
 import DiveHeader from '../../GoPage/DiveHeader';
 // Add these imports at the top of the file
 import LocalDiningIcon from '@mui/icons-material/LocalDining';
 import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import DriverIcon from '@mui/icons-material/DriveEta';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ClearIcon from '@mui/icons-material/Clear';
+
 
 const initialData = {
   routes: [
@@ -115,6 +119,19 @@ const DrivingManager = () => {
   const [donors, setDonors] = useState<Donor[]>([]);
   const [visible,setVisible]=useState(false);
   const [minimizedRoutes, setMinimizedRoutes] = useState<{[key: number]: boolean}>({});
+  const [chefSearchQuery, setChefSearchQuery] = useState<string>('');
+  const [recipientSearchQuery, setRecipientSearchQuery] = useState<string>('');
+  const [areAllRoutesMinimized, setAreAllRoutesMinimized] = useState<boolean>(true);
+  const [selectedRecipientStreet, setSelectedRecipientStreet] = useState<string>('');
+
+  const BEER_SHEVA_STREETS = [
+  'העיר העתיקה', 'נווה עופר', 'המרכז האזרחי', 'א\'', 'ב\'', 'ג\'', 'ד\'', 
+  'ה\'', 'ו\'', 'ט\'', 'י"א', 'נאות לון', 'נווה זאב', 'נווה נוי', 'נחל בקע', 
+  'נחל עשן (נווה מנחם)', 'רמות', 'נאות אברהם (פלח 6)', 'נווה אילן (פלח 7)', 
+  'הכלניות', 'סיגליות', 'פארק הנחל'
+];
+const [selectedStreet, setSelectedStreet] = useState<string>('');
+
 
    const toggleRouteMinimization = (index: number) => {
     setMinimizedRoutes(prev => ({
@@ -123,9 +140,34 @@ const DrivingManager = () => {
     }));
   };
 
+  const toggleAllRoutes = () => {
+  setAreAllRoutesMinimized(prev => !prev);
+  const newMinimizedState = !areAllRoutesMinimized;
+  const newMinimizedRoutes = data.routes.reduce((acc, _, index) => {
+    acc[index] = newMinimizedState;
+    return acc;
+  }, {} as {[key: number]: boolean});
+  setMinimizedRoutes(newMinimizedRoutes);
+};
+
+const handleRemoveChef = (index: number,constraintId:number) => {
+
+  rejectCookRequest(constraintId);
+
+  const updatedPickup = [...data.pickup];
+  updatedPickup.splice(index, 1);
+
+  setData({
+    ...data,
+    pickup: updatedPickup
+  });
+
+};
+
   async function fetchDrivers(currentDate:Date=date) {
     try{
       const data=await getDriversConstraints(currentDate); 
+      console.log(data);
       setDrivers(data)
       let donors=await getDonorApproved();
       donors=donors.filter(donor=>data.every(driver=>driver.driverId!==donor.id));
@@ -140,6 +182,7 @@ const DrivingManager = () => {
         const updatedData={...initialData};
         updatedData.drop=data;
         const routes=await getRoutes(date);
+        console.log(routes);
         updatedData.routes=routes;
         updatedData.drop = updatedData.drop.filter((visit: Visit) =>
           !routes.some((route: Route) =>
@@ -147,10 +190,11 @@ const DrivingManager = () => {
           )
         ); 
         const pickup=await getPickupVisits(date);
+
         updatedData.pickup=pickup;
         updatedData.pickup = updatedData.pickup.filter((visit: Visit) =>
           !routes.some((route: Route) =>
-            route.visit.some((v: Visit) => v.phoneNumber === visit.phoneNumber)
+            route.visit.some((v: Visit) => v.constraintId === visit.constraintId)
           )
         );       
         setData(updatedData);
@@ -162,6 +206,18 @@ const DrivingManager = () => {
           fetchDrivers();
           getDrops();
       }, [date]);
+
+  useEffect(() => {
+  // Initialize routes as minimized only when routes are first loaded
+  if (data.routes.length > 0) {
+    const initialMinimizedRoutes = data.routes.reduce((acc, _, index) => {
+      acc[index] = true;
+      return acc;
+    }, {} as {[key: number]: boolean});
+    setMinimizedRoutes(initialMinimizedRoutes);
+  }
+}, [data.routes.length]);
+
   const handleDateChange = (newDate:dayjs.Dayjs|null ) => {
           const d =newDate===null?dayjs(Date.now()).toDate():newDate.toDate();
           setDate(d);
@@ -257,7 +313,7 @@ const DrivingManager = () => {
 
       text += `תחנה ${index + 1}: ${action}\n`;
       text += `שם: ${visit.firstName} ${visit.lastName}\n`;
-      text += `כתובת: ${visit.address}\n`;
+      text += `כתובת: ${visit.street}, ${visit.address}\n`;
       text += `טלפון: ${visit.phoneNumber}\n`;
       
      
@@ -284,28 +340,68 @@ const DrivingManager = () => {
     }
   };
 
+// Add this handler function in the DrivingManager component
+const handleRemoveVisit = async (routeIndex: number, visitIndex: number) => {
+  try {
+    const updatedRoutes = [...data.routes];
+    const route = updatedRoutes[routeIndex];
+    
+    // Remove the visit from the route
+    const removedVisit = route.visit.splice(visitIndex, 1)[0];
+    
+    // Update priorities for remaining visits in the route
+    for (let i = visitIndex; i < route.visit.length; i++) {
+      if (route.visit[i].priority !== undefined) {
+        route.visit[i].priority = (route.visit[i].priority as number) - 1;
+      }
+    }
+    
+    // Save the updated route
+    await updateRoute(route);
+    
+    // Update data state with the updated routes
+    const updatedData = { ...data, routes: updatedRoutes };
+    
+    // Add the visit back to the appropriate container based on its status
+    if (removedVisit.status === "Pickup") {
+      updatedData.pickup = [...data.pickup, removedVisit];
+    } else if (removedVisit.status === "Deliver") {
+      updatedData.drop = [...data.drop, removedVisit];
+    }
+    // Don't add back if it's a driver start point (status === "Start")
+    
+    setData(updatedData);
+  } catch (err) {
+    alert('תקלה בהסרת הביקור מהמסלול');
+  }
+};
 
 
- const renderVisit = (visit: Visit) => {
+const renderVisit = (visit: Visit, routeIndex?: number, visitIndex?: number, container?: string) => {
   const isChef = visit.status === "Pickup";
   const isNeedyPerson = visit.status === "Deliver";
   const isDriverStart = visit.status === "Start";
+  
+  // Show remove button for chefs in pickup section and visits in routes (except driver start)
+  const showRemoveButton = (container === "pickup" || routeIndex !== undefined) && 
+                          !(routeIndex !== undefined && visitIndex !== undefined && isDriverStart);
 
   return (
     <Card
       variant="outlined"
       sx={{
-        height: '160px',
+        height: showRemoveButton ? '180px' : '160px',
         backgroundColor: isChef 
-          ? 'rgba(76, 175, 80, 0.1)' // Light green for chefs
+          ? 'rgba(76, 175, 80, 0.1)' 
           : isNeedyPerson 
-            ? 'rgba(244, 67, 54, 0.1)' // Light red for needy people
-            : 'rgba(33, 150, 243, 0.1)', // Light blue for driver start
+            ? 'rgba(244, 67, 54, 0.1)' 
+            : 'rgba(33, 150, 243, 0.1)',
         border: isChef 
           ? '1px solid rgba(76, 175, 80, 0.5)' 
           : isNeedyPerson 
             ? '1px solid rgba(244, 67, 54, 0.5)' 
             : '1px solid rgba(33, 150, 243, 0.5)',
+        position: 'relative',
       }}
     >
       <CardContent>
@@ -317,6 +413,7 @@ const DrivingManager = () => {
             {visit.firstName} {visit.lastName}
           </Typography>
         </Box>
+        <Typography variant="body2" fontSize={11}>{visit.street}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
         <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
         {visit.startHour && visit.startHour !== "0:00" && (
@@ -337,11 +434,31 @@ const DrivingManager = () => {
             {visit.additionalNotes}
           </Typography>
         )}
+        
+        
+       {showRemoveButton && (
+          <Box sx={{ position: 'absolute', bottom: '8px', left: '8px' }}>
+            <IconButton 
+              color="error" 
+              size="small" 
+              data-no-drag 
+              onClick={(e) => {
+                e.stopPropagation();
+                if (container === "pickup") {
+                  handleRemoveChef(visitIndex as number,visit.constraintId as number);
+                } else if (routeIndex !== undefined && visitIndex !== undefined) {
+                  handleRemoveVisit(routeIndex, visitIndex);
+                }
+              }}
+            >
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          </Box>
+        )}
       </CardContent>
     </Card>
   );
 };
-
   const upButton =(index:number,idx:number,route: Route)=>{
     if(idx!==0&&(idx!==1||route.driverId===undefined||route.driverId===0)){
       return <IconButton color="primary" aria-label="up" data-no-drag onClick={(e)=>{
@@ -442,7 +559,8 @@ const DrivingManager = () => {
     setData({ ...data, routes: updatedRoutes });
       return;
     }
-    const visit={address:updatedRoutes[index].driver?.startLocation as string,firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,endHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,startHour:updatedRoutes[index].driver?.startHour};
+    const visit={address:updatedRoutes[index].driver?.startLocation as string,street:updatedRoutes[index].driver?.driverStreet || '', firstName:updatedRoutes[index].driver?.driverFirstName as string,lastName:updatedRoutes[index].driver?.driverLastName as string,phoneNumber:updatedRoutes[index].driver?.driverPhone as string,endHour:updatedRoutes[index].driver?.endHour,note:updatedRoutes[index].driver?.requests,status:"Start",priority:0,startHour:updatedRoutes[index].driver?.startHour};
+    console.log(visit);
     route.visit.unshift(visit);
     await updateRoute(route);
     updatedRoutes[index]=route;
@@ -482,7 +600,7 @@ const DrivingManager = () => {
   }
 }
 const addConstraint = async (donor:Donor) => {
-  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: "0:00", requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:"0:00"});
+  await addDriverConstraints({date: date, driverId: donor.id, startLocation: donor.address, endHour: "0:00", requests: "",driverPhone:donor.phoneNumber,driverFirstName:donor.firstName,driverLastName:donor.lastName,startHour:"0:00",driverStreet: donor.street});
   fetchDrivers();
 }
 const removeRoute = async(index:number)=>{
@@ -503,6 +621,54 @@ const handleWhatsAppShare = (route: Route) => {
   }
 };
 
+// Add this helper function
+const filterVisit = (visit: Visit, searchQuery: string, streetFilter: string = '') => {
+  // First check street filter
+  if (streetFilter && (!visit.street || !visit.street.includes(streetFilter))) {
+    return false;
+  }
+  
+  // Then check search query
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    return visit.firstName.toLowerCase().includes(query) ||
+      visit.lastName.toLowerCase().includes(query) ||
+      visit.address.toLowerCase().includes(query) ||
+      visit.phoneNumber.includes(query) ||
+      (visit.note && visit.note.toLowerCase().includes(query)) ||
+      (visit.notes && visit.notes.toLowerCase().includes(query));
+  }
+  
+  return true;
+};
+
+
+// Add new search filter functions
+const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string = '') => {
+  let filtered = visits;
+  
+  // First apply text search if present
+  if (searchQuery.trim()) {
+    const query = searchQuery.toLowerCase();
+    filtered = filtered.filter(visit => 
+      visit.firstName.toLowerCase().includes(query) ||
+      visit.lastName.toLowerCase().includes(query) ||
+      visit.address.toLowerCase().includes(query) ||
+      visit.phoneNumber.includes(query) ||
+      (visit.note && visit.note.toLowerCase().includes(query)) ||
+      (visit.notes && visit.notes.toLowerCase().includes(query))
+    );
+  }
+  
+  // Then apply street filter if selected
+  if (streetFilter) {
+    filtered = filtered.filter(visit => 
+      visit.street && visit.street.includes(streetFilter)
+    );
+  }
+  
+  return filtered;
+};
 
  return (
   <div style={{backgroundColor: "snow", height: '100vh', display: 'flex', flexDirection: 'column'}}>
@@ -571,6 +737,7 @@ const handleWhatsAppShare = (route: Route) => {
           sx={{width: '100%', overflow: 'hidden'}}
         >
           {/* Pickup Container */}
+         {/* Pickup Container */}
           <Box 
             flex={2} 
             sx={{
@@ -579,19 +746,69 @@ const handleWhatsAppShare = (route: Route) => {
               paddingRight: '10px'
             }}
           >
-            <Typography variant="h5" align="center">
+            <Typography variant="h5" align="center" color="green">
               טבחים
             </Typography>
-            <SortableContext 
-              items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
-              strategy={verticalListSortingStrategy}
-            >
-              {data.pickup.map((visit, index) => (
-                <Draggable key={`pickup-${index}`} id={`pickup-${index}`}>
-                  {renderVisit(visit)}
-                </Draggable>
-              ))}
-            </SortableContext>
+            {/* Add street filter dropdown for chefs */}
+<Select
+  fullWidth
+  value={selectedStreet}
+  onChange={(e) => setSelectedStreet(e.target.value as string)}
+  displayEmpty
+  variant="outlined"
+  size="small"
+  margin="dense"
+  sx={{ marginBottom: 1 }}
+>
+  <MenuItem value="">כל השכונות</MenuItem>
+  {BEER_SHEVA_STREETS.map((street) => (
+    <MenuItem key={street} value={street}>
+      {street}
+    </MenuItem>
+  ))}
+</Select>
+            {/* Add search field for chefs */}
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="חיפוש טבחים..."
+              size="small"
+              margin="normal"
+              value={chefSearchQuery}
+              onChange={(e) => setChefSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: chefSearchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      aria-label="clear search"
+                      onClick={() => setChefSearchQuery('')}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null
+              }}
+            />
+
+         <SortableContext 
+          items={data.pickup.map((_, idx) => `pickup-${idx}`)} 
+          strategy={verticalListSortingStrategy}
+        >
+          {data.pickup
+            .map((visit, idx) => ({ visit, idx }))
+            .filter(({ visit }) => filterVisit(visit, chefSearchQuery, selectedStreet))
+            .map(({ visit, idx }) => (
+              <Draggable key={`pickup-${idx}`} id={`pickup-${idx}`}>
+                {renderVisit(visit, undefined, idx, "pickup")}
+              </Draggable>
+            ))}
+        </SortableContext>
           </Box>
 
           {/* Routes Container */}
@@ -628,7 +845,13 @@ const handleWhatsAppShare = (route: Route) => {
   }}
 >
   <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-    <Typography variant="h6">סיבוב {index+1}</Typography>
+    <Typography variant="h6"   
+                sx={{ 
+                  color: route.submitted ? 'green' : 'red',
+                  fontWeight: 'bold'
+                }}>
+                סיבוב {index+1}
+    </Typography>
     {minimizedRoutes[index] && (
       <Typography variant="body2" color="text.secondary">
         {getVisitNamesForRoute(route)}
@@ -656,61 +879,62 @@ const handleWhatsAppShare = (route: Route) => {
                         ))}
                         <MenuItem key="0" value="לא נבחר">לא נבחר</MenuItem>
                       </Select>
-                      
-                      <Typography variant="body2">
-                        {route.submitted===true?"פורסם":"טרם פורסם"}
-                      </Typography>
-                      
-                      <Button 
-                        variant="contained" 
-                        color="error" 
-                        onClick={()=>removeRoute(index)}
-                      >
-                        מחק
-                      </Button>
+                          <Typography variant="body2">
+                          {route.submitted === true ? "פורסם" : "טרם פורסם"}
+                        </Typography>
 
-                      {route.submitted ? (
-                        <Box sx={{ display: 'flex', gap: 1 }}>
-                          <Button 
-                            variant="contained" 
-                            color="secondary" 
-                            onClick={() => handleCopyRoute(route)}
-                            data-no-drag
-                          >
-                            העתק מסלול
-                          </Button>
-                          <IconButton 
-                            color="success" 
-                            onClick={() => handleWhatsAppShare(route)}
-                            data-no-drag
-                          >
-                            <WhatsAppIcon />
-                          </IconButton>
-                        </Box>
-                      ) : (
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <Button 
                           variant="contained" 
-                          color="primary" 
-                          onClick={() => handlePublish(index)}
+                          color="error" 
+                          onClick={() => removeRoute(index)}
                         >
-                          פרסם
+                          מחק
                         </Button>
-                      )}
+
+                        {route.submitted ? (
+                          <Box sx={{ display: 'flex', gap: 1 }}>
+                            <Button 
+                              variant="contained" 
+                              color="secondary" 
+                              onClick={() => handleCopyRoute(route)}
+                              data-no-drag
+                            >
+                              העתק מסלול
+                            </Button>
+                            <IconButton 
+                              color="success" 
+                              onClick={() => handleWhatsAppShare(route)}
+                              data-no-drag
+                            >
+                              <WhatsAppIcon />
+                            </IconButton>
+                          </Box>
+                        ) : (
+                          <Button 
+                            variant="contained" 
+                            color="primary" 
+                            onClick={() => handlePublish(index)}
+                          >
+                            פרסם
+                          </Button>
+                        )}
+                      </Box>
 
                       <SortableContext
                         items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
                         strategy={verticalListSortingStrategy}
                       >
-                        {route.visit.map((visit, idx) => (
-                          <Draggable 
-                            key={`route-${index}-visit-${idx}`} 
-                            id={`route-${index}-visit-${idx}`}
-                          >
-                            {renderVisit(visit)}
-                            {upButton(index,idx,route)}
-                            {downButton(index,idx,route)}
-                          </Draggable> 
-                        ))}       
+                       {route.visit.map((visit, idx) => (
+                      <Draggable 
+                        key={`route-${index}-visit-${idx}`} 
+                        id={`route-${index}-visit-${idx}`}
+                      >
+                        {renderVisit(visit, index, idx)}
+                        {upButton(index,idx,route)}
+                        {downButton(index,idx,route)}
+                      </Draggable> 
+                    ))}      
                       </SortableContext>
                     </>
                   )}
@@ -724,7 +948,7 @@ const handleWhatsAppShare = (route: Route) => {
           </Box>
 
           {/* Drop Container */}
-          <Box 
+     <Box 
             flex={2} 
             sx={{
               marginTop: '5px', 
@@ -732,19 +956,71 @@ const handleWhatsAppShare = (route: Route) => {
               paddingRight: '10px'
             }}
           >
-            <Typography variant="h5" align="center">
+            <Typography variant="h5" align="center" color="red">
               נזקקים
             </Typography>
-            <SortableContext 
-              items={data.drop.map((_, idx) => `drop-${idx}`)} 
-              strategy={verticalListSortingStrategy}
-            >
-              {data.drop.map((visit, index) => (
-                <Draggable key={`drop-${index}`} id={`drop-${index}`}>
-                  {renderVisit(visit)}
-                </Draggable>
-              ))}
-            </SortableContext>
+
+          {/* Add street filter dropdown for recipients */}
+          <Select
+            fullWidth
+            value={selectedRecipientStreet}
+            onChange={(e) => setSelectedRecipientStreet(e.target.value as string)}
+            displayEmpty
+            variant="outlined"
+            size="small"
+            margin="dense"
+            sx={{ marginBottom: 1 }}
+          >
+            <MenuItem value="">כל השכונות</MenuItem>
+            {BEER_SHEVA_STREETS.map((street) => (
+              <MenuItem key={street} value={street}>
+                {street}
+              </MenuItem>
+            ))}
+          </Select>
+
+            {/* Add search field for recipients */}
+            <TextField
+              fullWidth
+              variant="outlined"
+              placeholder="חיפוש נזקקים..."
+              size="small"
+              margin="normal"
+              value={recipientSearchQuery}
+              onChange={(e) => setRecipientSearchQuery(e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+                endAdornment: recipientSearchQuery ? (
+                  <InputAdornment position="end">
+                    <IconButton
+                      size="small"
+                      aria-label="clear search"
+                      onClick={() => setRecipientSearchQuery('')}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  </InputAdornment>
+                ) : null
+              }}
+            />
+
+        <SortableContext 
+          items={data.drop.map((_, idx) => `drop-${idx}`)} 
+          strategy={verticalListSortingStrategy}
+        >
+          {data.drop
+            .map((visit, idx) => ({ visit, idx }))
+            .filter(({ visit }) => filterVisit(visit, recipientSearchQuery, selectedRecipientStreet))
+            .map(({ visit, idx }) => (
+              <Draggable key={`drop-${idx}`} id={`drop-${idx}`}>
+                {renderVisit(visit, undefined, idx, "drop")}
+              </Draggable>
+            ))}
+        </SortableContext>
           </Box>
         </Box>
       </Container>

@@ -1,6 +1,7 @@
 package Project.Final.FeedingTheNeeding.Social.repository;
 
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
+import Project.Final.FeedingTheNeeding.User.Model.Street;
 import Project.Final.FeedingTheNeeding.User.Repository.NeedyRepository;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
@@ -33,6 +34,7 @@ public class NeederTrackingRepositoryTest {
     private static final int FAMILY_SIZE = 4;
     private static final String DIETARY_PREFERENCES = "Vegetarian, No Sugar";
     private static final String ADDITIONAL_NOTES = "Requires delivery before noon";
+    private static final String STREET = "ד'";
     private static final LocalDate DATE = LocalDate.of(2021, 10, 10);
 
     @Autowired
@@ -50,6 +52,8 @@ public class NeederTrackingRepositoryTest {
         user.setPhoneNumber(PHONE_NUMBER);
         user.setAddress(ADDRESS);
         user.setFamilySize(FAMILY_SIZE);
+        user.setStreet((STREET));
+
         needyRepository.save(user);
 
         // Arrange: Create a NeederTracking entity
@@ -171,6 +175,8 @@ public class NeederTrackingRepositoryTest {
             user.setPhoneNumber(PHONE_NUMBER);
             user.setAddress(ADDRESS);
             user.setFamilySize(FAMILY_SIZE);
+            user.setStreet((STREET));
+
             return user;
         }
 

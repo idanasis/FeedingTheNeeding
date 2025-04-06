@@ -10,6 +10,7 @@ import DrivingManager from "./Driving/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
 import DonorPendingTable  from "./User/components/DonorPending"
 import DonorTable from "./User/components/Donors"
+import NeederTable from "./User/components/Needers"
 import DriverConstraints from "./Driving/components/DriverConstraints";
 import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
@@ -194,6 +195,14 @@ const App = () => {
         element={
           <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN']}>
             <DonorTable />
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path='/needers'
+        element={
+          <ProtectedRoute role={role} allowedRoles={['STAFF', 'ADMIN']}>
+            <NeederTable />
           </ProtectedRoute>
         }
         />

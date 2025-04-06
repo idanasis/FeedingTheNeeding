@@ -1,3 +1,50 @@
+.register-container select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    direction: rtl;
+    text-align: right;
+    margin-bottom: 10px;
+    background-color: white;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M1 4l5 5 5-5z' fill='%23333'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left 10px center;
+    cursor: pointer;
+}
+
+.register-container select:focus {
+    border-color: #d32f2f;
+    outline: none;
+}
+
+.register-container select option {
+    direction: rtl;
+    text-align: right;
+}
+
+@media screen and (max-width: 768px) {
+    .register-container select {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .register-container select {
+        font-size: 12px;
+        padding: 6px;
+    }
+}
+
+/* Additional adjustments for the form group containing the select */
+.register-container .form-group select {
+    width: 100%;
+    flex: 1;
+}
+
 .register-page {
     background: url('../Images/background.png') no-repeat center center fixed;
     background-size: cover;

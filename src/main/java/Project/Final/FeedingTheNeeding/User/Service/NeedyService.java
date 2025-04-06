@@ -29,6 +29,9 @@ public class NeedyService {
     public List<Needy> getPendingNeedy() {
         return needyRepository.findByConfirmStatus(NeedyStatus.PENDING);
     }
+    public List<Needy> getApprovedNeedy() {
+        return needyRepository.findByConfirmStatus(NeedyStatus.APPROVED);
+    }
 
     // Create or Update a Needy user
     public Needy saveOrUpdateNeedy(Needy needy) {
