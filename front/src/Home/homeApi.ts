@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { Needy } from '../models/NeedyModel'; // Import the Needy interface
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const API_BASE_URL = 'http://localhost:8080/auth/register/needy';
+const API_BASE_URL = `${backendUrl}/auth/register/needy`;
 
 /**
  * Create or update a Needy.

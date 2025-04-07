@@ -1,7 +1,8 @@
 import { Needy } from "../models/NeedyModel";
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const apiUrl="http://localhost:8080/needer"
+const apiUrl=`${backendUrl}/needer`
 
 export const updateNeedy = async (needy: Needy): Promise<void> => {
     await axios.patch(apiUrl+"/"+needy.id,needy,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
