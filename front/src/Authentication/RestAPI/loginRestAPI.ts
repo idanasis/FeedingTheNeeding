@@ -1,6 +1,7 @@
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-export const API_BASE_URL = 'http://localhost:8080';
+export const API_BASE_URL = `${backendUrl}`;
 
 export interface LoginResponse {
     token: string;

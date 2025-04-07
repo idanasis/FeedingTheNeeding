@@ -1,7 +1,9 @@
 import { Donor } from "../models/DonorModel";
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const apiUrl="http://localhost:8080/user"
+
+const apiUrl=`${backendUrl}/user`
 export const getPendingDonors = async (): Promise<Donor[]> => {
     console.log('getPendingDonors')
     const response = await fetch(`${apiUrl}/donor/pending`,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});

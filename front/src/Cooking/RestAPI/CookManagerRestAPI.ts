@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { Donor } from "../../Driving/models/Donor";
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const API_BASE_URL = 'http://localhost:8080';
-const userUrl = "http://localhost:8080/user";
+const API_BASE_URL = `${backendUrl}`;
+const userUrl = `${backendUrl}/user`;
 
 export interface PendingCookDTO {
     constraintId: number;

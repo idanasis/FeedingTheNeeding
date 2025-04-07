@@ -1,6 +1,7 @@
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
-const API_BASE_URL = 'http://localhost:8080/auth';
+const API_BASE_URL = `${backendUrl}/auth`;
 
 
 

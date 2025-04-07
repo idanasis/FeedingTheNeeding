@@ -5,11 +5,12 @@ import { Visit } from "../Driving/models/Visit";
 import { NeederTrackingProjectionModel } from "../models/NeederTrackingProjectionModel";
 import { socialUrl } from "./socialRestapi";
 import axios from 'axios';
+const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 
-const drivingUrl="http://localhost:8080/driving"
-const userUrl="http://localhost:8080/user"
-const cookingUrl="http://localhost:8080/cooking"
+const drivingUrl=`${backendUrl}/driving`
+const userUrl=`${backendUrl}/user`
+const cookingUrl=`${backendUrl}/cooking`
 export const addRoute = async (date: Date) => {
     const response =  await axios.post(drivingUrl+"/routes/create"+"?date="+date.toISOString().split('T')[0],{},
     {headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
