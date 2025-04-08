@@ -94,14 +94,11 @@ const NeedyTable = () => {
     <>
       <DiveHeader />
       <div className="needy-table-container">
-
-
         <div className="table-actions">
           <button className="add-needy-button" onClick={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? "בטל הוספה" : "הוסף נזקק חדש"}
           </button>
         </div>
-
         {showAddForm && (
           <div className="add-needy-form-container">
             <h2>הוספת נזקק חדש</h2>
