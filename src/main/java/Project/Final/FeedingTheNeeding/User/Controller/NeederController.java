@@ -4,6 +4,7 @@ import Project.Final.FeedingTheNeeding.Authentication.DTO.NeedyRegistrationReque
 import Project.Final.FeedingTheNeeding.User.Model.Needy;
 import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Model.Street;
+import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -40,6 +39,8 @@ public class NeederController {
             needy.setStreet(needyRegistrationRequest.getStreet());
             needy.setConfirmStatus(NeedyStatus.PENDING);
             needy.setFamilySize(needyRegistrationRequest.getFamilySize());
+            needy.setRole(UserRole.NEEDY);
+            
 
             Needy savedNeedy = needyService.saveOrUpdateNeedy(needy);
             return ResponseEntity.ok(savedNeedy);
@@ -55,6 +56,8 @@ public class NeederController {
                 return ResponseEntity.notFound().build();
             }
             needy.setId(id);
+            Needy existing = needyOptional.get();
+            needy.setNeederTrackings(existing.getNeederTrackings());
             Needy updatedNeedy = needyService.saveOrUpdateNeedy(needy);
             return ResponseEntity.ok(updatedNeedy);
         } catch (Exception e) {
