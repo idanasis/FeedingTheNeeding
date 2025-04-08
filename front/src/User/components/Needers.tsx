@@ -94,7 +94,7 @@ const NeedyTable = () => {
     <>
       <DiveHeader />
       <div className="needy-table-container">
-        <img src={FeedingLogo} alt="Logo" className="logo" />
+
 
         <div className="table-actions">
           <button className="add-needy-button" onClick={() => setShowAddForm(!showAddForm)}>
@@ -159,8 +159,12 @@ const NeedyTable = () => {
                 <td><input type="text" value={needy.firstName} onChange={(e) => handleInputChange(e, needy.id, "firstName")} /></td>
                 <td><input type="text" value={needy.lastName} onChange={(e) => handleInputChange(e, needy.id, "lastName")} /></td>
                 <td><input type="text" value={needy.phoneNumber} onChange={(e) => handleInputChange(e, needy.id, "phoneNumber")} /></td>
-                <td>{needy.street}</td>
-                <td>{needy.address}</td>
+                <td><select name="street" value={needy.street} onChange={(e) => handleInputChange(e, needy.id, "street")}>
+                  {BEER_SHEVA_STREETS.map((street) => (
+                    <option key={street} value={street}>{street}</option>
+                  ))}
+                </select></td>
+                <td><input type="text" value={needy.address} onChange={(e) => handleInputChange(e, needy.id, "address")} /></td>
                 <td><input type="number" value={needy.familySize} onChange={(e) => handleInputChange(e, needy.id, "familySize")} /></td>
                 <td>{needy.confirmStatus}</td>
                 <td>
