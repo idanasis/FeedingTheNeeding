@@ -943,7 +943,8 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
             ))}
             
             <Fab color="primary" aria-label="add" onClick={handleAddRoute}>
-              <AddIcon />
+              הוסף
+              מסלול
             </Fab>
           </Box>
 

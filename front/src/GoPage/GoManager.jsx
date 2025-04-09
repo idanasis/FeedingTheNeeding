@@ -15,6 +15,7 @@ const GoManager = () => {
       post: "",
       image: cook,
       pages: [
+        { name: "בקשות חוסים", path: "/social" },
         { name: "ניהול בישולים", path: "/cookManager" },
       ]
     },
@@ -23,10 +24,10 @@ const GoManager = () => {
       post: "",
       image: GoSocial,
       pages: [
+        { name: "החוסים", path: "/needers" },
         { name: "חוסים ממתינים", path: "/neederPending" },
-        { name: "מעקב חוסים", path: "/social" },
-        { name: "מעקב מתנדבים ", path: "/donors" },
-        { name: "מתנדבים ממתינים", path: "/donorPending" }
+        { name: "המתנדבים", path: "/donors" },
+        { name: "מתנדבים ממתינים", path: "/donorPending" },
       ]
     },
     {
