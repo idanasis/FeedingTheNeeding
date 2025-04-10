@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "../styles/NeedyTable.css";
 import { Needy } from "../../models/NeedyModel";
-import { getNeedyList, updateNeedy, deleteNeedy, registerNeedy } from "../../Restapi/NeedyRestapi";
+import { getNeedyList, updateNeedy, deleteNeedy, registerNeedy, uploadNeedyExcel } from "../../Restapi/NeedyRestapi";
 import FeedingLogo from '../../Authentication/Images/logo.png';
 import DiveHeader from "../../GoPage/DiveHeader";
 
@@ -26,6 +26,8 @@ const NeedyTable = () => {
     confirmStatus: "PENDING",
     street: ""
   });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     fetchNeedy();
@@ -90,6 +92,31 @@ const NeedyTable = () => {
     }
   };
 
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  setIsUploading(true);
+  try {
+    const responseMessage = await uploadNeedyExcel(file);
+    alert(`${responseMessage}`); // the response message contains the count
+    fetchNeedy();
+  } catch (error: any) {
+    console.error("Error uploading Excel file:", error);
+    alert("שגיאה בהעלאת קובץ Excel: " + (error.response?.data || error.message));
+  } finally {
+    setIsUploading(false);
+    // Reset the file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }
+};
+
   return (
     <>
       <DiveHeader />
@@ -98,6 +125,23 @@ const NeedyTable = () => {
           <button className="add-needy-button" onClick={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? "בטל הוספה" : "הוסף נזקק חדש"}
           </button>
+{showAddForm && (
+            <><button  
+            className="add-needy-button" 
+            onClick={handleFileSelect}
+            disabled={isUploading}
+            style={{ marginRight: '10px' }}
+          >
+            {isUploading ? "מעלה..." : "העלה קובץ Excel"}
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".xlsx, .xls"
+            style={{ display: 'none' }}
+            onChange={handleFileChange}
+          />
+          </>)}
         </div>
         {showAddForm && (
           <div className="add-needy-form-container">

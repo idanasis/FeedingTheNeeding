@@ -6,10 +6,12 @@ import Project.Final.FeedingTheNeeding.User.Model.NeedyStatus;
 import Project.Final.FeedingTheNeeding.User.Model.Street;
 import Project.Final.FeedingTheNeeding.User.Model.UserRole;
 import Project.Final.FeedingTheNeeding.User.Service.NeedyService;
+import Project.Final.FeedingTheNeeding.User.utils.ExcelHelper;
 import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -158,6 +160,29 @@ public class NeederController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
 
+    }
+
+    @PostMapping("/uploadExcel")
+    public ResponseEntity<?> uploadNeedyExcel(@RequestParam("file") MultipartFile file) {
+        try {
+            List<NeedyRegistrationRequest> needies = ExcelHelper.parseExcel(file);
+            for (NeedyRegistrationRequest needyRequest : needies) {
+                Needy needy = new Needy();
+                needy.setFirstName(needyRequest.getFirstName());
+                needy.setLastName(needyRequest.getLastName());
+                needy.setPhoneNumber(needyRequest.getPhoneNumber());
+                needy.setAddress(needyRequest.getAddress());
+                needy.setStreet(needyRequest.getStreet());
+                needy.setConfirmStatus(NeedyStatus.APPROVED);
+                needy.setFamilySize(needyRequest.getFamilySize());
+                needy.setRole(UserRole.NEEDY);
+
+                needyService.saveOrUpdateNeedy(needy);
+            }
+            return ResponseEntity.ok("Uploaded " + needies.size() + " needy users successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Upload failed: " + e.getMessage());
+        }
     }
 
 
