@@ -9,12 +9,17 @@ import SayOnUs from '../Home/components/SayOnUs';
 import DonateUs from './components/DonateUs';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-
+import SEOHelmet from '../SEO/SEOHelmet';
 import '../Home/styles/home.css';
 
 const HomePage = () => {
     return (
         <>
+         <SEOHelmet 
+        title="להשביע את הלב" 
+        description="עזרה לאנשים נזקקים על ידי תרומת מזון, נסיעות או תרומה כספית דרך הפלטפורמה שלנו שמחברת בין תורמים לאנשים שזקוקים לעזרה."
+        keywords="להשביע את הלב, תרומות, עזרה, קהילה, תמיכה, מזון, מתנדבים"
+      />
         <Header/>
         <Introduce/>
         <About/>

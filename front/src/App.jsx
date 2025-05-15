@@ -16,6 +16,7 @@ import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
 import GoPage from "./GoPage/GoPage";
 import EditDonorDetails from "./Donors/Components/EditDonorDetails";
+import { HelmetProvider } from 'react-helmet-async';
 
 import PicturesPage from './Home/components/PicturesPage';
 import {getUserRoleFromJWT} from "./GoPage/goPageAPI";
@@ -100,6 +101,7 @@ const App = () => {
   }
 
   return (
+    <HelmetProvider>
     <Router>
       <Routes>
         {/* Public routes */}
@@ -225,6 +227,7 @@ const App = () => {
 
       </Routes>
     </Router>
+    </HelmetProvider>
   );
 };
 
