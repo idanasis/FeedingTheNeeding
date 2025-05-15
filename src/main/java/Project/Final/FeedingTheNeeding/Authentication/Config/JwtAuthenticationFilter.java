@@ -37,22 +37,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        final String authHeader = request.getHeader("Authorization");
-        if(authHeader == null || !authHeader.startsWith("Bearer ")) {
+        String path = request.getRequestURI();
+
+        // 🚨 Skip JWT processing for public endpoints
+        if (path.startsWith("/auth") || path.equals("/test/setup")) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        try{
+        final String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        try {
             final String token = authHeader.substring(7);
             final String phoneNumber = jwtTokenService.extractUsername(token);
 
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-            if(phoneNumber != null && authentication == null) {
+            if (phoneNumber != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(phoneNumber);
 
-                if(jwtTokenService.isTokenValid(token, userDetails)) {
+                if (jwtTokenService.isTokenValid(token, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
@@ -61,7 +69,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
             filterChain.doFilter(request, response);
-        }catch(Exception e){
+        } catch (Exception e) {
             handlerExceptionResolver.resolveException(request, response, null, e);
         }
     }
