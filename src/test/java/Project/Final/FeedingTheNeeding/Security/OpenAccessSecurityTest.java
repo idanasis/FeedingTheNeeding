@@ -45,8 +45,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
+@WebMvcTest(controllers = AuthController.class)
 @AutoConfigureMockMvc
+@TestPropertySource(locations = "classpath:application-test.properties")
 @Import({SecurityConfig.class})
 public class OpenAccessSecurityTest extends BaseSecurityTest{
 
