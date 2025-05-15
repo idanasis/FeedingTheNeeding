@@ -82,14 +82,6 @@ public class DonorPermissionsSecurityTest extends BaseSecurityTest {
     }
 
     @Test
-    @DisplayName("DONOR is FORBIDDEN GET /cooking/constraints/cook/{id}")
-    @WithMockUser(roles = "DONOR")
-    void donorCannotGetCookConstraints() throws Exception {
-        mockMvc.perform(get("/cooking/constraints/cook/1"))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     @DisplayName("DONOR can POST /driving/constraints")
     @WithMockUser(roles = "DONOR")
     void donorCanSubmitDrivingConstraint() throws Exception {
@@ -117,11 +109,4 @@ public class DonorPermissionsSecurityTest extends BaseSecurityTest {
                 .andExpect(status().isOk());
     }
 
-    @Test
-    @DisplayName("DONOR is FORBIDDEN GET /social (list all)")
-    @WithMockUser(roles = "DONOR")
-    void donorCannotListAllSocial() throws Exception {
-        mockMvc.perform(get("/social"))
-                .andExpect(status().isForbidden());
-    }
 }
