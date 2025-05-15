@@ -16,6 +16,9 @@ import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
 import Project.Final.FeedingTheNeeding.cook.DTO.Status;
 import Project.Final.FeedingTheNeeding.cook.Repository.CookConstraintsRepository;
 
+import Project.Final.FeedingTheNeeding.social.model.NeederTracking;
+import Project.Final.FeedingTheNeeding.social.model.WeekStatus;
+import Project.Final.FeedingTheNeeding.social.reposiotry.NeederTrackingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,12 +48,17 @@ public class setupDrivingTest {
     @Autowired
     private UserCredentialsRepository userCredentialsRepository;
 
+    @Autowired
+    private NeederTrackingRepository neederTrackingRepository;
+
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public setupDrivingTest(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
+
+    private final LocalDate friday = LocalDate.now().with(java.time.DayOfWeek.FRIDAY);
 
     @PostMapping
     public String insertTestData() {
@@ -59,23 +67,61 @@ public class setupDrivingTest {
         Needy needy = new Needy();
         needy.setFirstName("TestNeedy");
         needy.setLastName("User");
-        needy.setPhoneNumber("123456789");
+        needy.setPhoneNumber("0531234567");
         needy.setAddress("Needy Address");
         needy.setStreet("ה'");
         needy.setFamilySize(3);
+        needy.setRole(UserRole.NEEDY);
         needy.setConfirmStatus(NeedyStatus.APPROVED);
         needyRepository.save(needy);
 
+        Needy pendingNeedy = new Needy();
+        pendingNeedy.setFirstName("TestNeedy2");
+        pendingNeedy.setLastName("User2");
+        pendingNeedy.setPhoneNumber("0531234568");
+        pendingNeedy.setAddress("Needy Address2");
+        pendingNeedy.setStreet("ד'");
+        pendingNeedy.setRole(UserRole.NEEDY);
+        pendingNeedy.setFamilySize(4);
+        pendingNeedy.setConfirmStatus(NeedyStatus.PENDING);
+        needyRepository.save(pendingNeedy);
+
         // 2. Donor
-        Donor donor = new Donor();
-        donor.setFirstName("TestDonor");
-        donor.setLastName("User");
-        donor.setPhoneNumber("0531223421");
-        donor.setEmail("donor@example.com");
-        donor.setAddress("Donor Address");
-        donor.setStreet("ד'");
-        donor.setStatus(RegistrationStatus.AVAILABLE);
-        donorRepository.save(donor);
+        Donor driver = new Donor();
+        driver.setFirstName("TestDonor");
+        driver.setLastName("User");
+        driver.setPhoneNumber("0531223421");
+        driver.setEmail("donor@example.com");
+        driver.setAddress("Donor Address");
+        driver.setStreet("ד'");
+        driver.setRole(UserRole.DONOR);
+        driver.setStatus(RegistrationStatus.AVAILABLE);
+
+        // Create UserCredentials for admin
+        UserCredentials DonorCredentials = new UserCredentials();
+        DonorCredentials.setPhoneNumber(driver.getPhoneNumber());
+
+        // Encode the password before saving
+        String rawPassword = "donorPassword123";  // Example raw password
+        String hashedPassword = passwordEncoder.encode(rawPassword);  // Hash the password
+        DonorCredentials.setPasswordHash(hashedPassword);  // Set the hashed password
+
+        DonorCredentials.setDonor(driver);
+
+        userCredentialsRepository.save(DonorCredentials);
+        donorRepository.save(driver);  // Save donor after setting UserCredentials
+
+        // 2. Donor2
+        Donor cheff = new Donor();
+        cheff.setFirstName("TestDonor2");
+        cheff.setLastName("User2");
+        cheff.setPhoneNumber("0531223422");
+        cheff.setEmail("donor2@example.com");
+        cheff.setAddress("Donor2 Address");
+        cheff.setStreet("ד'");
+        cheff.setRole(UserRole.DONOR);
+        cheff.setStatus(RegistrationStatus.AVAILABLE);
+        donorRepository.save(cheff);
 
         // 3. Admin with UserCredentials
         Donor admin = new Donor();
@@ -93,9 +139,9 @@ public class setupDrivingTest {
         adminCredentials.setPhoneNumber(admin.getPhoneNumber());
 
         // Encode the password before saving
-        String rawPassword = "adminPassword123";  // Example raw password
-        String hashedPassword = passwordEncoder.encode(rawPassword);  // Hash the password
-        adminCredentials.setPasswordHash(hashedPassword);  // Set the hashed password
+        String rawPassword2 = "adminPassword123";  // Example raw password
+        String hashedPassword2 = passwordEncoder.encode(rawPassword2);  // Hash the password
+        adminCredentials.setPasswordHash(hashedPassword2);  // Set the hashed password
 
         adminCredentials.setDonor(admin);
 
@@ -104,8 +150,8 @@ public class setupDrivingTest {
 
         // 4. Driving Constraint
         DriverConstraint constraint = new DriverConstraint();
-        constraint.setDriverId(donor.getId());
-        constraint.setDate(LocalDate.now().with(java.time.DayOfWeek.FRIDAY));
+        constraint.setDriverId(driver.getId());
+        constraint.setDate(friday);
         constraint.setStartHour("10:00");
         constraint.setEndHour("17:00");
         constraint.setStartLocation("Tel Aviv");
@@ -118,15 +164,26 @@ public class setupDrivingTest {
         cookPrefs.put("noSugar", 1);
 
         CookConstraints cookConstraint = new CookConstraints();
-        cookConstraint.setCookId(donor.getId());
-        cookConstraint.setDate(LocalDate.now());
+        cookConstraint.setCookId(cheff.getId());
+        cookConstraint.setDate(friday);
         cookConstraint.setStartTime("08:00");
         cookConstraint.setEndTime("13:00");
         cookConstraint.setConstraints(cookPrefs);
         cookConstraint.setLocation("Jerusalem");
         cookConstraint.setStreet("ג'");
-        cookConstraint.setStatus(Status.Pending);
+        cookConstraint.setStatus(Status.Accepted);
         cookConstraintRepository.save(cookConstraint);
+
+
+        NeederTracking neederTracking = new NeederTracking();
+        neederTracking.setNeedy(needy);
+        neederTracking.setWeekStatus(WeekStatus.Here);
+        neederTracking.setDietaryPreferences("Vegan");
+        neederTracking.setAdditionalNotes("No nuts");
+        neederTracking.setDate(friday);
+        neederTrackingRepository.save(neederTracking);
+
+
 
         return "Test data inserted ✅";
     }
