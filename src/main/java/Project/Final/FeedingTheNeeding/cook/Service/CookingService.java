@@ -64,7 +64,7 @@ public class CookingService {
         return submitConstraints(constraints);
     }
 
-    public CookConstraints submitConstraints(CookConstraints constraints){
+    public synchronized CookConstraints submitConstraints(CookConstraints constraints){
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
     }
