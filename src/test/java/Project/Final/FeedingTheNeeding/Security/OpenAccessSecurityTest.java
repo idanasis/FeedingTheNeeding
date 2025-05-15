@@ -11,6 +11,10 @@ import Project.Final.FeedingTheNeeding.Authentication.Service.JwtTokenService;
 import Project.Final.FeedingTheNeeding.TestConfig.TestSecurityConfig;
 import Project.Final.FeedingTheNeeding.User.Model.Donor;
 import Project.Final.FeedingTheNeeding.User.Model.UserRole;
+import Project.Final.FeedingTheNeeding.cook.Controller.ConstraintMapper;
+import Project.Final.FeedingTheNeeding.cook.Controller.CookController;
+import Project.Final.FeedingTheNeeding.cook.Model.CookConstraints;
+import Project.Final.FeedingTheNeeding.cook.Service.CookingService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +23,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
@@ -39,11 +45,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(AuthController.class)
-@TestPropertySource(locations = "classpath:application-test.properties")
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(SecurityConfig.class)
-@DisplayName("Open Access Endpoints Security Tests")
+@SpringBootTest
+@AutoConfigureMockMvc
+@Import(TestSecurityConfig.class)
 public class OpenAccessSecurityTest extends BaseSecurityTest{
 
     @Autowired
@@ -66,6 +70,11 @@ public class OpenAccessSecurityTest extends BaseSecurityTest{
     AuthenticationRequest authRequest;
     RegistrationRequest registrationRequest;
     NeedyRegistrationRequest needyRegistrationRequest;
+
+    @MockBean
+    CookingService cookingService;
+    @MockBean
+    ConstraintMapper constraintMapper;
 
     @BeforeEach
     void setup() {
@@ -108,7 +117,7 @@ public class OpenAccessSecurityTest extends BaseSecurityTest{
                 "/auth/request-reset-password",
                 "/auth/confirm-reset-password",
                 "/auth/resend-email"
-        );
+                );
     }
 
     @ParameterizedTest(name = "Accessing {0} should be permitted without authentication")
