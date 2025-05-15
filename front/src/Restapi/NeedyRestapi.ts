@@ -20,3 +20,18 @@ export const deleteNeedy = async (needy: Needy): Promise<void> => {
 export const registerNeedy = async (needy: Needy): Promise<void> => {
     await axios.post(apiUrl,needy,{headers: { 'Content-Type': 'application/json',Authorization: 'Bearer ' + localStorage.getItem('token')}});
 }
+
+export const uploadNeedyExcel = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await axios.post(`${apiUrl}/uploadExcel`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: 'Bearer ' + localStorage.getItem('token')
+        }
+    });
+
+    return response.data as string; 
+}
+
