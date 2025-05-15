@@ -23,33 +23,44 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@Profile("!test")
-public class SecurityConfig {
+@Profile("test")
+public class SecurityConfigTests {
 
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    public SecurityConfig(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfigTests(AuthenticationProvider authenticationProvider, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.authenticationProvider = authenticationProvider;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
+        // http
+        //         .csrf(csrf -> csrf.disable())
+        //         .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Attach the CORS configuration here
+        //         .authorizeHttpRequests(authorizeRequests -> authorizeRequests
+        //                 .requestMatchers("/auth/**","/test/setup").permitAll()
+        //                 .requestMatchers("/cooking/**", "/driving/**", "/social/**", "/user/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
+        //                 .requestMatchers("/needer/**").hasAnyRole("ADMIN","STAFF")
+        //                 .anyRequest().hasRole("ADMIN")
+        //         )
+        //         .sessionManagement(session -> session
+        //                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        //         .authenticationProvider(authenticationProvider)
+        //         .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // return http.build();
+                http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Attach the CORS configuration here
-                .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**","/test/setup").permitAll()
-                        .requestMatchers("/cooking/**", "/driving/**", "/social/**", "/user/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
-                        .requestMatchers("/needer/**").hasAnyRole("ADMIN","STAFF")
-                        .anyRequest().hasRole("ADMIN")
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(authz -> authz
+                        .anyRequest().permitAll()
                 )
-                .sessionManagement(session -> session
+                                .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 
