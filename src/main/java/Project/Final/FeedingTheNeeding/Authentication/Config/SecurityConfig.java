@@ -38,7 +38,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Attach the CORS configuration here
                 .authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/**","/test/setup").permitAll()
                         .requestMatchers("/cooking/**", "/driving/**", "/social/**", "/user/**").hasAnyRole("ADMIN", "STAFF", "DONOR")
                         .requestMatchers("/needer/**").hasAnyRole("ADMIN","STAFF")
                         .anyRequest().hasRole("ADMIN")
