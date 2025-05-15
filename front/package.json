@@ -19,6 +19,7 @@
     "@mui/material": "^6.2.0",
     "@mui/x-date-pickers": "^7.23.1",
     "axios": "^1.7.9",
+    "crypto": "^1.0.1",
     "dayjs": "^1.11.13",
     "framer-motion": "^11.4.0",
     "project": "file:",
