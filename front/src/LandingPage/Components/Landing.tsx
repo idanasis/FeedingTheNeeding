@@ -1,23 +1,8 @@
-// Landing.tsx
 import React, { useState, useEffect } from 'react';
-import {
-    ChevronDown,
-    Users,
-    Shield, // Re-using existing icons, or you can add Heart, Gift, MessageSquare
-    Cloud,
-    Star,    // Will change how this is used or remove
-    ArrowRight,
-    Heart,   // Assuming Heart is available or added
-    Gift,    // Assuming Gift is available or added
-    MessageSquare // Assuming MessageSquare is available or added
-} from 'lucide-react'; // Make sure these icons are available in your lucide-react version
-import '../Styles/Landing.css';
-
-interface Feature {
-    icon: React.ReactNode;
-    title: string;
-    description: string;
-}
+// Using ChevronDown for dropdowns, and other icons as needed
+import { Users, Heart, DollarSign, Info, ArrowRight, GitBranch, ChevronDown, FileText, BookOpen } from 'lucide-react';
+import '../Styles/Landing.css'; // Assuming styles are already set up
+import Logo from '../Images/logo.png';
 
 const Landing: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -35,272 +20,180 @@ const Landing: React.FC = () => {
         setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
     };
 
-    const features: Feature[] = [
-        {
-            icon: <Users className="feature-icon" />,
-            title: "Community Support",
-            description: "Access resources and connect with support networks in our community."
-        },
-        {
-            icon: <Gift className="feature-icon" />, // Or another relevant icon like Users
-            title: "Volunteer Opportunities",
-            description: "Find meaningful ways to give back and help those in need."
-        },
-        {
-            icon: <MessageSquare className="feature-icon" />, // Or another relevant icon like Shield
-            title: "Direct Assistance Programs",
-            description: "Get connected to programs offering help with essential needs and services."
-        },
-        {
-            icon: <Heart className="feature-icon" />, // Or Cloud
-            title: "Donate & Contribute",
-            description: "Support our mission to nourish the heart of the community through your generosity."
-        }
-    ];
-
     return (
-        <div className="landing-container">
-            {/* Navigation */}
+        <div className="landing-container" dir="ltr">
             <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}>
                 <div className="navbar-content">
                     <div className="navbar-inner">
-                        <div className="navbar-brand">
-                            <span className="brand-text">Feeding The Needing</span>
+                        {/* Spacer on the left to push content to the right */}
+                        <div className="navbar-spacer-left"></div>
+
+                        {/* Navigation links container */}
+                        <div className="navbar-links-container">
+                            <a
+                                href="https://github.com/idanasis/FeedingTheNeeding"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="nav-link"
+                            >
+                                <GitBranch className="nav-icon-inline"/> GitHub
+                            </a>
+
+                            <div className="dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('manuals')}
+                                    className="dropdown-button"
+                                >
+                                    Manuals
+                                    <ChevronDown className="dropdown-icon"/>
+                                </button>
+                                {activeDropdown === 'manuals' && (
+                                    <div className="dropdown-menu">
+                                        <a href="#user-manual" className="dropdown-item">User Manual</a>
+                                        <a href="#maintenance-manual" className="dropdown-item">Maintenance Manual</a>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="dropdown">
+                                <button
+                                    onClick={() => toggleDropdown('docs')}
+                                    className="dropdown-button"
+                                >
+                                    Documents
+                                    <ChevronDown className="dropdown-icon"/>
+                                </button>
+                                {activeDropdown === 'docs' && (
+                                    <div className="dropdown-menu">
+                                        <a href="#ard-document" className="dropdown-item">ARD</a>
+                                        <a href="#add-document" className="dropdown-item">ADD</a>
+                                        <a href="#testing-document" className="dropdown-item">Testing Document</a>
+                                    </div>
+                                )}
+                            </div>
+
+                            <a href="#involve" className="nav-link">Get Involved</a>
+                            <a href="#impact" className="nav-link">Our Impact</a>
+                            <a href="#mission" className="nav-link">Our Mission</a>
+                            <a href="#home" className="nav-link">Home</a>
+
                         </div>
 
-                        <div className="navbar-menu">
-                            <div className="navbar-links">
-                                <a href="#home" className="nav-link">Home</a>
-                                <a href="#about" className="nav-link">About</a>
-                                <a href="#features" className="nav-link">Our Work</a>
-
-                                <div className="dropdown">
-                                    <button
-                                        onClick={() => toggleDropdown('docs')}
-                                        className="dropdown-button"
-                                    >
-                                        Resources
-                                        <ChevronDown className="dropdown-icon" />
-                                    </button>
-                                    {activeDropdown === 'docs' && (
-                                        <div className="dropdown-menu">
-                                            <a href="#ard" className="dropdown-item">Impact Reports</a>
-                                            <a href="#add" className="dropdown-item">Get Help Docs</a>
-                                            <a href="#testing" className="dropdown-item">Volunteer Guides</a>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <div className="dropdown">
-                                    <button
-                                        onClick={() => toggleDropdown('manuals')}
-                                        className="dropdown-button"
-                                    >
-                                        Initiatives
-                                        <ChevronDown className="dropdown-icon" />
-                                    </button>
-                                    {activeDropdown === 'manuals' && (
-                                        <div className="dropdown-menu">
-                                            <a href="#user-manual" className="dropdown-item">Food Programs</a>
-                                            <a href="#maintenance-manual" className="dropdown-item">Shelter Assistance</a>
-                                        </div>
-                                    )}
-                                </div>
-
-                                <a
-                                    href="https://github.com/idanasis/FeedingTheNeeding"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="nav-link"
-                                >
-                                    GitHub
-                                </a>
-                                <a href="#forum" className="nav-link">Community</a>
-                                <a href="#contact" className="nav-link">Contact</a>
-                            </div>
+                        {/* Brand name now on the right */}
+                        <div className="navbar-brand">
+                            <a href="#home" className="brand-text-link">
+                                <span className="brand-text">Feeding the Needing</span>
+                            </a>
                         </div>
                     </div>
                 </div>
             </nav>
 
-            {/* Hero Section */}
+            {/* Hero Section - With prominent logo */}
             <section id="home" className="hero-section">
                 <div className="hero-background"></div>
                 <div className="hero-content">
-                    <div className="hero-text">
-                        <h1 className="hero-title">
-                            Feeding <span className="hero-title-accent">The Needing</span>
-                        </h1>
-                        <p className="hero-description">
-                            A project by the "feed the heart" association, dedicated to connecting and supporting our community.
+                    <img src={Logo} alt="Feeding the Needing" className="hero-main-logo"/>
+                    <div className="hero-text" style={{marginTop: '1rem'}}>
+                        <h1 className="hero-title">Feeding the Needing</h1>
+                        <p className="hero-description" style={{fontSize: '1.5rem', marginBottom: '2rem'}}>
+                        Nourishing communities, one meal at a time.
+                        </p>
+                        <p className="hero-description" style={{fontSize: '1.15rem', maxWidth: '45rem'}}>
+                            We provide essential food support and compassionate care to individuals and families facing
+                            hardship. Join us in making a difference.
                         </p>
                     </div>
-
                     <div className="hero-buttons">
-                        <a
-                            href="https://singsync-447497864f8f.herokuapp.com" // Consider updating this URL
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn-primary"
-                        >
-                            <Heart className="btn-icon" /> {/* Changed Icon */}
-                            Get Involved
+                        <a href="#involve" className="btn-primary">
+                            Get Involved <Users className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
                         </a>
-                        <button className="btn-secondary">
-                            Learn More
-                            <ArrowRight className="btn-icon" />
-                        </button>
-                    </div>
-
-                    <div className="hero-rating">
-                        {/* Optional: Replace stars with something else or remove */}
-                        {[1, 2, 3, 4, 5].map((star) => (
-                            <Star key={star} className="star-icon" style={{color: "#2563eb"}} /> // Changed star color for a different feel
-                        ))}
-                        <span className="rating-text">Supported by our generous community</span>
+                        <a href="#mission" className="btn-secondary">
+                            Learn More <Info className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
+                        </a>
                     </div>
                 </div>
-
-                {/* Floating elements */}
                 <div className="floating-element floating-element-1"></div>
                 <div className="floating-element floating-element-2"></div>
-                <div className="floating-element floating-element-3"></div>
             </section>
 
-            {/* Description Section */}
-            <section className="description-section">
+            {/* Our Mission Section */}
+            <section id="mission" className="description-section">
                 <div className="section-content">
-                    <h2 className="section-title">What We Do</h2>
-                    <p className="description-text">
-                        "Feeding The Needing" is a web platform by the "feed the heart" association.
-                        Our mission is to provide resources, support, and a space for connection
-                        to those in need within our community. Discover how we make a difference together.
+                    <h2 className="section-title">Our Mission</h2>
+                    <p className="description-text" style={{ maxWidth: '50rem', lineHeight: '1.7' }}>
+                        Feeding the Needing is a non-profit organization committed to alleviating hunger and providing vital support to vulnerable members of our community. Since 2015, we've been delivering hot meals, food packages, and a helping hand to families, the elderly, and those in crisis. We believe in the power of community and compassion to create positive change.
                     </p>
                 </div>
             </section>
 
-            {/* Features Section */}
-            <section id="features" className="features-section">
+            {/* Our Impact Section */}
+            <section id="impact" className="features-section" style={{paddingBottom: '3rem'}}>
                 <div className="features-container">
-                    <div className="features-header">
-                        <h2 className="section-title">Our Core Programs</h2>
-                        <p className="section-subtitle">
-                            Dedicated initiatives to support and uplift our community members.
-                        </p>
+                    <div className="features-header" style={{marginBottom: '3rem'}}>
+                        <h2 className="section-title">Our Impact</h2>
+                        <p className="section-subtitle">Dedicated to making a tangible difference every day.</p>
                     </div>
-
-                    <div className="features-grid">
-                        {features.map((feature, index) => (
-                            <div key={index} className="feature-card">
-                                <div className="feature-icon-container">
-                                    {feature.icon}
-                                </div>
-                                <h3 className="feature-title">{feature.title}</h3>
-                                <p className="feature-description">{feature.description}</p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* About Section */}
-            <section id="about" className="about-section">
-                <div className="section-content">
-                    <div className="about-content">
-                        <h2 className="section-title">About "feed the heart"</h2>
-                        <p className="about-text">
-                            "Feeding The Needing" is a key initiative of the "feed the heart" association.
-                            Leveraging technology (React, Spring Boot, and PostgreSQL), we aim to create a seamless platform
-                            that supports and connects our community. Our mission is to make a tangible,
-                            positive impact on people's lives by addressing essential needs and fostering connection.
-                        </p>
-
-                        <div className="stats-grid">
-                            <div className="stat-item">
-                                <div className="stat-number">1000+</div>
-                                <div className="stat-label">Individuals Helped</div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-number">500+</div>
-                                <div className="stat-label">Volunteers Engaged</div>
-                            </div>
-                            <div className="stat-item">
-                                <div className="stat-number">50+</div>
-                                <div className="stat-label">Community Partners</div>
-                            </div>
+                    <div className="features-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+                        <div className="feature-card" style={{padding: '1.5rem'}}>
+                            <div className="feature-icon-container" style={{marginBottom: '1rem'}}><Heart size={40}/></div>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Nutritious Meals</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Delivering hot food and essential grocery packages.</p>
+                        </div>
+                        <div className="feature-card" style={{padding: '1.5rem'}}>
+                            <div className="feature-icon-container" style={{marginBottom: '1rem'}}><Users size={40}/></div>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Community Support</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Offering a listening ear and guidance to those in need.</p>
+                        </div>
+                        <div className="feature-card" style={{padding: '1.5rem'}}>
+                            <div className="feature-icon-container" style={{marginBottom: '1rem'}}><DollarSign size={40}/></div>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Volunteer Driven</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Powered by the generosity and dedication of our volunteers.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* CTA Section */}
-            <section className="cta-section">
+            {/* Get Involved Section */}
+            <section id="involve" className="about-section" style={{ backgroundColor: '#f9fafb', paddingTop: '4rem', paddingBottom: '4rem' }}>
                 <div className="section-content">
-                    <h2 className="cta-title">Ready to Make a Difference?</h2>
-                    <p className="cta-description">
-                        Join "Feeding The Needing" and the "feed the heart" association to support our community.
+                    <h2 className="section-title">Make a Difference</h2>
+                    <p className="about-text" style={{ maxWidth: '45rem', marginBottom: '2.5rem' }}>
+                        Your support is crucial to our mission. Whether you can volunteer your time or simply help spread the word, every action counts.
                     </p>
-                    <a
-                        href="https://singsync-447497864f8f.herokuapp.com" // Consider updating this URL
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn-cta"
-                    >
-                        Join Our Mission
-                        <ArrowRight className="btn-icon" />
-                    </a>
+                    <div className="hero-buttons">
+                        <a href="#volunteer-details" className="btn-primary">
+                            Volunteer Opportunities <ArrowRight className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
+                        </a>
+                        <a href="#request-help-form" className="btn-secondary">
+                            Request Assistance <Info className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }} />
+                        </a>
+                    </div>
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="footer">
+            <footer id="footer-contact" className="footer">
                 <div className="footer-content">
-                    <div className="footer-grid">
-                        <div className="footer-brand">
-                            <div className="footer-logo">Feeding The Needing</div>
-                            <p className="footer-description">
-                                A project by the "feed the heart" association. Supporting our community, together.
+                    <div className="footer-grid" style={{textAlign: 'center'}}>
+                        <div className="footer-brand" style={{gridColumn: '1 / -1', marginBottom: '1rem'}}>
+                            <img src={Logo} alt="Feeding the Needing Logo" className="footer-logo-img" />
+                            <p className="footer-description" style={{fontSize: '1rem', marginTop: '0.5rem'}}>
+                                For inquiries, please email: <a href="mailto:info@feedingtheneeding.org" className="footer-link">info@feedingtheneeding.org</a>
                             </p>
-                            <div className="social-links">
-                                <a href="#" className="social-link">
-                                    <span className="sr-only">Facebook</span>
-                                    <div className="social-icon"></div> {/* Replace with actual icon if desired */}
-                                </a>
-                                <a href="#" className="social-link">
-                                    <span className="sr-only">Twitter</span>
-                                    <div className="social-icon"></div> {/* Replace with actual icon if desired */}
-                                </a>
-                                <a href="https://github.com/idanasis/FeedingTheNeeding" className="social-link" target="_blank" rel="noopener noreferrer">
-                                    <span className="sr-only">GitHub</span>
-                                    <div className="social-icon"></div> {/* Replace with actual icon if desired */}
-                                </a>
-                            </div>
                         </div>
-
-                        <div className="footer-section">
-                            <h3 className="footer-title">Resources</h3>
-                            <ul className="footer-links">
-                                <li><a href="#" className="footer-link">Impact Reports</a></li>
-                                <li><a href="#" className="footer-link">Get Help</a></li>
-                                <li><a href="#" className="footer-link">Volunteer</a></li>
-                                <li><a href="#" className="footer-link">FAQs</a></li>
-                            </ul>
-                        </div>
-
-                        <div className="footer-section">
-                            <h3 className="footer-title">Association</h3>
-                            <ul className="footer-links">
-                                <li><a href="#about" className="footer-link">About "feed the heart"</a></li>
-                                <li><a href="#" className="footer-link">Blog/News</a></li>
-                                <li><a href="#" className="footer-link">Events</a></li>
-                                <li><a href="#contact" className="footer-link">Contact Us</a></li>
+                        <div className="footer-section" style={{gridColumn: '1 / -1', textAlign: 'center', marginTop: '1rem'}}>
+                            <ul className="footer-links" style={{flexDirection: 'row', justifyContent: 'center', gap: '1.5rem'}}>
+                                <li><a href="#mission" className="footer-link">Our Mission</a></li>
+                                <li><a href="#impact" className="footer-link">Our Impact</a></li>
+                                <li><a href="#involve" className="footer-link">Get Involved</a></li>
+                                <li><a href="#documents-landing" className="footer-link">Documents</a></li>
+                                <li><a href="#manuals-landing" className="footer-link">Manuals</a></li>
                             </ul>
                         </div>
                     </div>
-
                     <div className="footer-bottom">
                         <p className="footer-copyright">
-                            © 2025 Feeding The Needing by feed the heart. All rights reserved. Built with passion for our community.
+                            © {new Date().getFullYear()} Shavit & Idan & Daniel & Eden. All Rights Reserved.
                         </p>
                     </div>
                 </div>
