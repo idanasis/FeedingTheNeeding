@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 // Using ChevronDown for dropdowns, and other icons as needed
-import { Users, Heart, DollarSign, Info, ArrowRight, GitBranch, ChevronDown, FileText, BookOpen } from 'lucide-react';
+import { Users, Heart, DollarSign, Info, ArrowRight, GitBranch, ChevronDown, Clock, CreditCard } from 'lucide-react';
 import '../Styles/Landing.css'; // Assuming styles are already set up
 import Logo from '../Images/logo.png';
+import WebsiteMockupImage from '../Images/screen.png'; // IMPORT THE NEW IMAGE
 
 const Landing: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -39,6 +40,8 @@ const Landing: React.FC = () => {
                                 <GitBranch className="nav-icon-inline"/> GitHub
                             </a>
 
+                            <a href="#video" className="nav-link">Video</a>
+
                             <div className="dropdown">
                                 <button
                                     onClick={() => toggleDropdown('manuals')}
@@ -74,7 +77,7 @@ const Landing: React.FC = () => {
 
                             <a href="#involve" className="nav-link">Get Involved</a>
                             <a href="#impact" className="nav-link">Our Impact</a>
-                            <a href="#mission" className="nav-link">Our Mission</a>
+                            <a href="#mission" className="nav-link">About The Association</a>
                             <a href="#home" className="nav-link">Home</a>
 
                         </div>
@@ -89,40 +92,56 @@ const Landing: React.FC = () => {
                 </div>
             </nav>
 
-            {/* Hero Section - With prominent logo */}
+            {/* Hero Section */}
             <section id="home" className="hero-section">
                 <div className="hero-background"></div>
                 <div className="hero-content">
-                    <img src={Logo} alt="Feeding the Needing" className="hero-main-logo"/>
-                    <div className="hero-text" style={{marginTop: '1rem'}}>
-                        <h1 className="hero-title">Feeding the Needing</h1>
-                        <p className="hero-description" style={{fontSize: '1.5rem', marginBottom: '2rem'}}>
-                        Nourishing communities, one meal at a time.
-                        </p>
-                        <p className="hero-description" style={{fontSize: '1.15rem', maxWidth: '45rem'}}>
-                            We provide essential food support and compassionate care to individuals and families facing
-                            hardship. Join us in making a difference.
-                        </p>
+
+                    {/* Right Column for the Website Mockup Image */}
+                    <div className="hero-right-column">
+                        <img
+                            src={WebsiteMockupImage}
+                            alt="Feeding the Needing Website on Desktop"
+                            className="hero-website-mockup"
+                        />
                     </div>
-                    <div className="hero-buttons">
-                        <a href="#involve" className="btn-primary">
-                            Get Involved <Users className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
-                        </a>
-                        <a href="#mission" className="btn-secondary">
-                            Learn More <Info className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
-                        </a>
+
+                    {/* Left Column for Text and Logo */}
+                    <div className="hero-left-column">
+                        <img src={Logo} alt="Feeding the Needing Logo" className="hero-main-logo"/>
+                        <div className="hero-text">
+                            <h1 className="hero-title">Feeding the Needing</h1>
+                            {/*<p className="hero-description" style={{fontSize: '1.5rem', marginBottom: '1.5rem'}}>*/}
+                            {/*    Nourishing communities, one meal at a time.*/}
+                            {/*</p>*/}
+                            <p className="hero-description" style={{fontSize: '1.25rem', maxWidth: '40rem'}}>
+                                We provide a comprehensive web-based system for volunteer management, task coordination,
+                                and donations on behalf of the “Feed the Heart” association,
+                                which delivers food and support to those in need in Be’er Sheva
+                            </p>
+                        </div>
+                        <div className="hero-buttons">
+                            <a href="#involve" className="btn-primary">
+                                Get Involved <Users className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}/>
+                            </a>
+                            <a href="#mission" className="btn-secondary">
+                                Learn More <Info className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}/>
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div className="floating-element floating-element-1"></div>
                 <div className="floating-element floating-element-2"></div>
             </section>
 
-            {/* Our Mission Section */}
+            {/* About The Association Section */}
             <section id="mission" className="description-section">
                 <div className="section-content">
-                    <h2 className="section-title">Our Mission</h2>
-                    <p className="description-text" style={{ maxWidth: '50rem', lineHeight: '1.7' }}>
-                        Feeding the Needing is a non-profit organization committed to alleviating hunger and providing vital support to vulnerable members of our community. Since 2015, we've been delivering hot meals, food packages, and a helping hand to families, the elderly, and those in crisis. We believe in the power of community and compassion to create positive change.
+                    <h2 className="section-title">About The Association</h2>
+                    <p className="description-text" style={{ maxWidth: '50rem', lineHeight: '2' }}>
+                        Since its founding in 2015, “Feed the Heart” has distributed hot meals and ready-to-eat food packages to families in need in Be’er Sheva.
+                        These efforts were supported by collecting monetary donations and organizing manual deliveries.
+                        Over the years, all processes were managed through manual record-keeping, telephone coordination, and delivery routes defined manually via WhatsApp by the coordination team and the association’s leadership
                     </p>
                 </div>
             </section>
@@ -132,23 +151,27 @@ const Landing: React.FC = () => {
                 <div className="features-container">
                     <div className="features-header" style={{marginBottom: '3rem'}}>
                         <h2 className="section-title">Our Impact</h2>
-                        <p className="section-subtitle">Dedicated to making a tangible difference every day.</p>
+                        <p className="section-subtitle">.Our web platform simplifies volunteer coordination and food delivery, making processes more efficient, transparent, and reliable</p>
                     </div>
                     <div className="features-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
                         <div className="feature-card" style={{padding: '1.5rem'}}>
-                            <div className="feature-icon-container" style={{marginBottom: '1rem'}}><Heart size={40}/></div>
-                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Nutritious Meals</h3>
-                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Delivering hot food and essential grocery packages.</p>
+                            <div className="feature-icon-container" style={{marginBottom: '1rem'}}><Clock size={40}/></div>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Faster Response</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}> By automating the documentation of every step and reducing response times, we improved
+                                transparency, streamlined management, and saved dozens of hours of manual work each month</p>
                         </div>
                         <div className="feature-card" style={{padding: '1.5rem'}}>
                             <div className="feature-icon-container" style={{marginBottom: '1rem'}}><Users size={40}/></div>
-                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Community Support</h3>
-                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Offering a listening ear and guidance to those in need.</p>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Centralized Platform</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}> Volunteers register,
+                                report availability, and view tasks in real time<br/>
+                                while those in need submit requests with just a few clicks</p>
                         </div>
                         <div className="feature-card" style={{padding: '1.5rem'}}>
                             <div className="feature-icon-container" style={{marginBottom: '1rem'}}><DollarSign size={40}/></div>
-                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Volunteer Driven</h3>
-                            <p className="feature-description" style={{fontSize: '0.95rem'}}>Powered by the generosity and dedication of our volunteers.</p>
+                            <h3 className="feature-title" style={{fontSize: '1.2rem'}}>Online Donations</h3>
+                            <p className="feature-description" style={{fontSize: '0.95rem'}}>,QR codes and short URLs simplify giving <br/>
+                                .making it fast and secure to support our cause</p>
                         </div>
                     </div>
                 </div>
@@ -158,15 +181,13 @@ const Landing: React.FC = () => {
             <section id="involve" className="about-section" style={{ backgroundColor: '#f9fafb', paddingTop: '4rem', paddingBottom: '4rem' }}>
                 <div className="section-content">
                     <h2 className="section-title">Make a Difference</h2>
-                    <p className="about-text" style={{ maxWidth: '45rem', marginBottom: '2.5rem' }}>
-                        Your support is crucial to our mission. Whether you can volunteer your time or simply help spread the word, every action counts.
+                    <p className="about-text" style={{maxWidth: '45rem', marginBottom: '1.5rem'}}>
+                        .Your support is crucial to our mission<br/>
+                        .Whether you can volunteer your time or simply help spread the word, every action counts
                     </p>
-                    <div className="hero-buttons">
+                    <div className="hero-down-buttons"> {/* Note: Re-using hero-buttons class here, might want a more generic name if styles differ */}
                         <a href="#volunteer-details" className="btn-primary">
-                            Volunteer Opportunities <ArrowRight className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }}/>
-                        </a>
-                        <a href="#request-help-form" className="btn-secondary">
-                            Request Assistance <Info className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0' }} />
+                            To Our Website <ArrowRight className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}/>
                         </a>
                     </div>
                 </div>
@@ -177,13 +198,10 @@ const Landing: React.FC = () => {
                     <div className="footer-grid" style={{textAlign: 'center'}}>
                         <div className="footer-brand" style={{gridColumn: '1 / -1', marginBottom: '1rem'}}>
                             <img src={Logo} alt="Feeding the Needing Logo" className="footer-logo-img" />
-                            <p className="footer-description" style={{fontSize: '1rem', marginTop: '0.5rem'}}>
-                                For inquiries, please email: <a href="mailto:info@feedingtheneeding.org" className="footer-link">info@feedingtheneeding.org</a>
-                            </p>
                         </div>
                         <div className="footer-section" style={{gridColumn: '1 / -1', textAlign: 'center', marginTop: '1rem'}}>
                             <ul className="footer-links" style={{flexDirection: 'row', justifyContent: 'center', gap: '1.5rem'}}>
-                                <li><a href="#mission" className="footer-link">Our Mission</a></li>
+                                <li><a href="#mission" className="footer-link">About The Association</a></li>
                                 <li><a href="#impact" className="footer-link">Our Impact</a></li>
                                 <li><a href="#involve" className="footer-link">Get Involved</a></li>
                                 <li><a href="#documents-landing" className="footer-link">Documents</a></li>
@@ -193,7 +211,7 @@ const Landing: React.FC = () => {
                     </div>
                     <div className="footer-bottom">
                         <p className="footer-copyright">
-                            © {new Date().getFullYear()} Shavit & Idan & Daniel & Eden. All Rights Reserved.
+                            © {new Date().getFullYear()} Eden & Idan & Daniel & Shavit. All Rights Reserved
                         </p>
                     </div>
                 </div>
