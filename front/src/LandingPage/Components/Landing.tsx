@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-// Using ChevronDown for dropdowns, and other icons as needed
 import { Users, Heart, DollarSign, Info, ArrowRight, GitBranch, ChevronDown, Clock, CreditCard } from 'lucide-react';
-import '../Styles/Landing.css'; // Assuming styles are already set up
+import { useNavigate } from 'react-router-dom';
+import '../Styles/Landing.css';
 import Logo from '../Images/logo.png';
-import WebsiteMockupImage from '../Images/screen.png'; // IMPORT THE NEW IMAGE
+import WebsiteMockupImage from '../Images/screen.png';
 
 const Landing: React.FC = () => {
     const [isScrolled, setIsScrolled] = useState<boolean>(false);
@@ -21,15 +21,15 @@ const Landing: React.FC = () => {
         setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
     };
 
+    const navigate = useNavigate();
+
     return (
         <div className="landing-container" dir="ltr">
             <nav className={`navbar ${isScrolled ? 'navbar-scrolled' : 'navbar-transparent'}`}>
                 <div className="navbar-content">
                     <div className="navbar-inner">
-                        {/* Spacer on the left to push content to the right */}
                         <div className="navbar-spacer-left"></div>
 
-                        {/* Navigation links container */}
                         <div className="navbar-links-container">
                             <a
                                 href="https://github.com/idanasis/FeedingTheNeeding"
@@ -40,7 +40,13 @@ const Landing: React.FC = () => {
                                 <GitBranch className="nav-icon-inline"/> GitHub
                             </a>
 
-                            <a href="#video" className="nav-link">Video</a>
+                            <a
+                                className="nav-link"
+                                onClick={() => navigate('/video')}
+                                style={{ cursor: 'pointer' }}
+                            >
+                                Video
+                            </a>
 
                             <div className="dropdown">
                                 <button
@@ -53,7 +59,7 @@ const Landing: React.FC = () => {
                                 {activeDropdown === 'manuals' && (
                                     <div className="dropdown-menu">
                                         <a
-                                            href="../../../public/Documents/UserManuel.pdf"
+                                            href="/Documents/user_manual.pdf"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="dropdown-item"
@@ -61,7 +67,7 @@ const Landing: React.FC = () => {
                                             User Manual
                                         </a>
                                         <a
-                                            href="../../../public/Documents/MaintenanceManual.pdf"
+                                            href="/Documents/maintenance_manual.pdf"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="dropdown-item"
@@ -83,7 +89,7 @@ const Landing: React.FC = () => {
                                 {activeDropdown === 'docs' && (
                                     <div className="dropdown-menu">
                                         <a
-                                            href="../../../public/Documents/ARD.pdf"
+                                            href="/Documents/ARD.pdf"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="dropdown-item"
@@ -91,7 +97,7 @@ const Landing: React.FC = () => {
                                             ARD
                                         </a>
                                         <a
-                                            href="../../../public/Documents/ADD.pdf"
+                                            href="/Documents/ADD.pdf"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="dropdown-item"
@@ -99,7 +105,7 @@ const Landing: React.FC = () => {
                                             ADD
                                         </a>
                                         <a
-                                            href="../../../public/Documents/testing.pdf"
+                                            href="/Documents/testing.pdf"
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="dropdown-item"
@@ -117,7 +123,6 @@ const Landing: React.FC = () => {
 
                         </div>
 
-                        {/* Brand name now on the right */}
                         <div className="navbar-brand">
                             <a href="#home" className="brand-text-link">
                                 <span className="brand-text">Feeding the Needing</span>
@@ -132,7 +137,6 @@ const Landing: React.FC = () => {
                 <div className="hero-background"></div>
                 <div className="hero-content">
 
-                    {/* Right Column for the Website Mockup Image */}
                     <div className="hero-right-column">
                         <img
                             src={WebsiteMockupImage}
@@ -141,7 +145,6 @@ const Landing: React.FC = () => {
                         />
                     </div>
 
-                    {/* Left Column for Text and Logo */}
                     <div className="hero-left-column">
                         <img src={Logo} alt="Feeding the Needing Logo" className="hero-main-logo"/>
                         <div className="hero-text">
@@ -220,9 +223,16 @@ const Landing: React.FC = () => {
                         .Your support is crucial to our mission<br/>
                         .Whether you can volunteer your time or simply help spread the word, every action counts
                     </p>
-                    <div className="hero-down-buttons"> {/* Note: Re-using hero-buttons class here, might want a more generic name if styles differ */}
-                        <a href="#volunteer-details" className="btn-primary">
-                            To Our Website <ArrowRight className="btn-icon" style={{ marginLeft: '0.5rem', marginRight: '0.5rem' }}/>
+                    <div
+                        className="hero-down-buttons">
+                        <a
+                            href="https://feed-the-heart.com"
+                            className="btn-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            To Our Website <ArrowRight className="btn-icon"
+                                                       style={{marginLeft: '0.5rem', marginRight: '0.5rem'}}/>
                         </a>
                     </div>
                 </div>
@@ -232,7 +242,7 @@ const Landing: React.FC = () => {
                 <div className="footer-content">
                     <div className="footer-grid" style={{textAlign: 'center'}}>
                         <div className="footer-brand" style={{gridColumn: '1 / -1', marginBottom: '1rem'}}>
-                            <img src={Logo} alt="Feeding the Needing Logo" className="footer-logo-img" />
+                            <img src={Logo} alt="Feeding the Needing Logo" className="footer-logo-img"/>
                         </div>
                         <div className="footer-section" style={{gridColumn: '1 / -1', textAlign: 'center', marginTop: '1rem'}}>
                             <ul className="footer-links" style={{flexDirection: 'row', justifyContent: 'center', gap: '1.5rem'}}>
