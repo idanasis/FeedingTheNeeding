@@ -52,8 +52,22 @@ const Landing: React.FC = () => {
                                 </button>
                                 {activeDropdown === 'manuals' && (
                                     <div className="dropdown-menu">
-                                        <a href="#user-manual" className="dropdown-item">User Manual</a>
-                                        <a href="#maintenance-manual" className="dropdown-item">Maintenance Manual</a>
+                                        <a
+                                            href="../../../public/Documents/UserManuel.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="dropdown-item"
+                                        >
+                                            User Manual
+                                        </a>
+                                        <a
+                                            href="../../../public/Documents/MaintenanceManual.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="dropdown-item"
+                                        >
+                                            Maintenance Manual
+                                        </a>
                                     </div>
                                 )}
                             </div>
@@ -68,9 +82,30 @@ const Landing: React.FC = () => {
                                 </button>
                                 {activeDropdown === 'docs' && (
                                     <div className="dropdown-menu">
-                                        <a href="#ard-document" className="dropdown-item">ARD</a>
-                                        <a href="#add-document" className="dropdown-item">ADD</a>
-                                        <a href="#testing-document" className="dropdown-item">Testing Document</a>
+                                        <a
+                                            href="../../../public/Documents/ARD.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="dropdown-item"
+                                        >
+                                            ARD
+                                        </a>
+                                        <a
+                                            href="../../../public/Documents/ADD.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="dropdown-item"
+                                        >
+                                            ADD
+                                        </a>
+                                        <a
+                                            href="../../../public/Documents/testing.pdf"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="dropdown-item"
+                                        >
+                                            Testing Document
+                                        </a>
                                     </div>
                                 )}
                             </div>
@@ -112,7 +147,7 @@ const Landing: React.FC = () => {
                         <div className="hero-text">
                             <h1 className="hero-title">Feeding the Needing</h1>
                             {/*<p className="hero-description" style={{fontSize: '1.5rem', marginBottom: '1.5rem'}}>*/}
-                            {/*    Nourishing communities, one meal at a time.*/}
+                            {/* Nourishing communities, one meal at a time.*/}
                             {/*</p>*/}
                             <p className="hero-description" style={{fontSize: '1.25rem', maxWidth: '40rem'}}>
                                 We provide a comprehensive web-based system for volunteer management, task coordination,
