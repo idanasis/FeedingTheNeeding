@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
 
 public class ParallelismTests {
 
-    private static final int NUMBER_OF_DONORS = 20;
+    private static final int NUMBER_OF_DONORS = 50;
     private static final int THREAD_POOL_SIZE = 50;
     private static final int TIMEOUT_SECONDS = 30;
     private static final String PASSWORD = "password123";

@@ -49,7 +49,7 @@ public class CookingService {
         return donorRepository.findById(id).orElseThrow(() -> new UserDoesntExistsException("User not found"));
     }
 
-    public CookConstraints submitConstraints(CookConstraints constraints, String token) {
+    public synchronized CookConstraints submitConstraints(CookConstraints constraints, String token) {
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         System.out.println("Received constraints: " + constraints);
 
@@ -64,7 +64,7 @@ public class CookingService {
         return submitConstraints(constraints);
     }
 
-    public synchronized CookConstraints submitConstraints(CookConstraints constraints){
+    public  CookConstraints submitConstraints(CookConstraints constraints){
         logger.info("Submit constraint of cook {} to date {}", constraints.getConstraintId(), constraints.getDate());
         return ccr.save(constraints);
     }
