@@ -52,6 +52,10 @@ export interface Data {
   pickup: Visit[],
   drop: Visit[]
 }
+
+
+
+
 const Draggable = ({ id, children }: { id: string; children: React.ReactNode }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
   
@@ -123,6 +127,10 @@ const DrivingManager = () => {
   const [recipientSearchQuery, setRecipientSearchQuery] = useState<string>('');
   const [areAllRoutesMinimized, setAreAllRoutesMinimized] = useState<boolean>(true);
   const [selectedRecipientStreet, setSelectedRecipientStreet] = useState<string>('');
+  const [showChefModal, setShowChefModal] = useState<boolean>(false);
+const [showRecipientModal, setShowRecipientModal] = useState<boolean>(false);
+const [selectedRouteIndex, setSelectedRouteIndex] = useState<number>(-1);
+
 
   const BEER_SHEVA_STREETS = [
   'העיר העתיקה', 'נווה עופר', 'המרכז האזרחי', 'א\'', 'ב\'', 'ג\'', 'ד\'', 
@@ -670,6 +678,151 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
   return filtered;
 };
 
+const handleAddChefToRoute = async (routeIndex: number, chefIndex: number) => {
+  try {
+    const updatedPickup = [...data.pickup];
+    const movedItem = updatedPickup.splice(chefIndex, 1)[0];
+    
+    const updatedRoutes = [...data.routes];
+    const route = updatedRoutes[routeIndex];
+    movedItem.priority = route.driverId === 0 ? route.visit.length + 1 : route.visit.length;
+    movedItem.note = movedItem.notes;
+    route.visit.push(movedItem as Visit);
+    
+    await updateRoute(route);
+    setData({
+      ...data,
+      pickup: updatedPickup,
+      routes: updatedRoutes,
+    });
+    
+    setShowChefModal(false);
+  } catch (err) {
+    alert('תקלה בהוספת הטבח למסלול');
+  }
+};
+
+const handleAddRecipientToRoute = async (routeIndex: number, recipientIndex: number) => {
+  try {
+    const updatedDrop = [...data.drop];
+    const movedItem = updatedDrop.splice(recipientIndex, 1)[0];
+    
+    const updatedRoutes = [...data.routes];
+    const route = updatedRoutes[routeIndex];
+    movedItem.priority = route.driverId === 0 ? route.visit.length + 1 : route.visit.length;
+    movedItem.note = movedItem.notes;
+    route.visit.push(movedItem as Visit);
+    
+    await updateRoute(route);
+    setData({
+      ...data,
+      drop: updatedDrop,
+      routes: updatedRoutes,
+    });
+    
+    setShowRecipientModal(false);
+  } catch (err) {
+    alert('תקלה בהוספת הנזקק למסלול');
+  }
+};
+
+// 3. Add Modal components (place these before the return statement)
+const ChefSelectionModal = () => (
+  showChefModal && (
+    <Box sx={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
+    }}>
+      <Card sx={{ 
+        width: '80%', 
+        maxWidth: '600px', 
+        maxHeight: '80%', 
+        overflow: 'auto',
+        padding: 2 
+      }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">בחר טבח להוספה</Typography>
+          <IconButton onClick={() => setShowChefModal(false)}>
+            <ClearIcon />
+          </IconButton>
+        </Box>
+        {filterVisits(data.pickup, chefSearchQuery, selectedStreet).map((visit, idx) => {
+          const originalIndex = data.pickup.findIndex(v => v === visit);
+          return (
+            <Card key={idx} sx={{ mb: 1, cursor: 'pointer' }} 
+                  onClick={() => handleAddChefToRoute(selectedRouteIndex, originalIndex)}>
+              <CardContent>
+                <Typography variant="h6" fontSize={16}>
+                  {visit.firstName} {visit.lastName}
+                </Typography>
+                <Typography variant="body2" fontSize={11}>{visit.street}</Typography>
+                <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
+                <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Card>
+    </Box>
+  )
+);
+
+const RecipientSelectionModal = () => (
+  showRecipientModal && (
+    <Box sx={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000
+    }}>
+      <Card sx={{ 
+        width: '80%', 
+        maxWidth: '600px', 
+        maxHeight: '80%', 
+        overflow: 'auto',
+        padding: 2 
+      }}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+          <Typography variant="h6">בחר נזקק להוספה</Typography>
+          <IconButton onClick={() => setShowRecipientModal(false)}>
+            <ClearIcon />
+          </IconButton>
+        </Box>
+        {filterVisits(data.drop, recipientSearchQuery, selectedRecipientStreet).map((visit, idx) => {
+          const originalIndex = data.drop.findIndex(v => v === visit);
+          return (
+            <Card key={idx} sx={{ mb: 1, cursor: 'pointer' }} 
+                  onClick={() => handleAddRecipientToRoute(selectedRouteIndex, originalIndex)}>
+              <CardContent>
+                <Typography variant="h6" fontSize={16}>
+                  {visit.firstName} {visit.lastName}
+                </Typography>
+                <Typography variant="body2" fontSize={11}>{visit.street}</Typography>
+                <Typography variant="body2" fontSize={11}>{visit.address}</Typography>
+                <Typography variant="body2" fontSize={11}>{visit.phoneNumber}</Typography>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </Card>
+    </Box>
+  )
+);
+
  return (
   <div style={{backgroundColor: "snow", height: '100vh', display: 'flex', flexDirection: 'column'}}>
     <DiveHeader/>
@@ -883,43 +1036,67 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
                           {route.submitted === true ? "פורסם" : "טרם פורסם"}
                         </Typography>
 
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                        <Button 
-                          variant="contained" 
-                          color="error" 
-                          onClick={() => removeRoute(index)}
-                        >
-                          מחק
-                        </Button>
+                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
+                      <Button 
+                        variant="contained" 
+                        color="success" 
+                        onClick={() => {
+                          setSelectedRouteIndex(index);
+                          setShowChefModal(true);
+                        }}
+                        data-no-drag
+                      >
+                        הוסף טבח
+                      </Button>
+                      
+                      <Button 
+                        variant="contained" 
+                        color="error" 
+                        onClick={() => {
+                          setSelectedRouteIndex(index);
+                          setShowRecipientModal(true);
+                        }}
+                        data-no-drag
+                      >
+                        הוסף נזקק
+                      </Button>
 
-                        {route.submitted ? (
-                          <Box sx={{ display: 'flex', gap: 1 }}>
-                            <Button 
-                              variant="contained" 
-                              color="secondary" 
-                              onClick={() => handleCopyRoute(route)}
-                              data-no-drag
-                            >
-                              העתק מסלול
-                            </Button>
-                            <IconButton 
-                              color="success" 
-                              onClick={() => handleWhatsAppShare(route)}
-                              data-no-drag
-                            >
-                              <WhatsAppIcon />
-                            </IconButton>
-                          </Box>
-                        ) : (
+                      <Button 
+                        variant="contained" 
+                        color="error" 
+                        onClick={() => removeRoute(index)}
+                      >
+                        מחק
+                      </Button>
+
+                      {route.submitted ? (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
                           <Button 
                             variant="contained" 
-                            color="primary" 
-                            onClick={() => handlePublish(index)}
+                            color="secondary" 
+                            onClick={() => handleCopyRoute(route)}
+                            data-no-drag
                           >
-                            פרסם
+                            העתק מסלול
                           </Button>
-                        )}
-                      </Box>
+                          <IconButton 
+                            color="success" 
+                            onClick={() => handleWhatsAppShare(route)}
+                            data-no-drag
+                          >
+                            <WhatsAppIcon />
+                          </IconButton>
+                        </Box>
+                      ) : (
+                        <Button 
+                          variant="contained" 
+                          color="primary" 
+                          onClick={() => handlePublish(index)}
+                        >
+                          פרסם
+                        </Button>
+                      )}
+                    </Box>
 
                       <SortableContext
                         items={route.visit.map((_, idx) => `route-${index}-visit-${idx}`)}
@@ -1026,6 +1203,8 @@ const filterVisits = (visits: Visit[], searchQuery: string, streetFilter: string
         </Box>
       </Container>
     </DndContext>
+    <ChefSelectionModal />
+    <RecipientSelectionModal/>
   </div>
 );
 };
