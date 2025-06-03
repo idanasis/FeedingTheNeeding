@@ -3,7 +3,7 @@ import "../Styles/DonorTable.css";
 import dayjs from "dayjs";
 import { Donor } from "../../commons/models/DonorModel";
 import { deleteDonor, getDonorApproved, updateDonor } from "../../commons/Restapi/DonorRestapi";
-import FeedingLogo from '../../Home/Images/FeedingLogo.png';
+import FeedingLogo from '../../Home/images/FeedingLogo.png';
 import DiveHeader from "../../GoPage/DiveHeader";
 import {registerDonor} from '../../DonorRegister/RestAPI/donorRegRestAPI';
 import {getPendingDonors} from '../../commons/Restapi/DonorRestapi';
