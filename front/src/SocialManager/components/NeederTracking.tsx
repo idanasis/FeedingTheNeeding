@@ -1,5 +1,5 @@
 import React,{useEffect, useState} from 'react';
-import '../styles/NeedTracking.css';
+import '../Styles/NeedTracking.css';
 import CollapsibleTable from './CollapsibleTable';
 import { NeederTrackingModel } from '@/src/commons/models/NeederTrackingModel';
 import ResponsiveDatePickers from './ResponsiveDatePickers';
