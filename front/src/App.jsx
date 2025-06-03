@@ -16,6 +16,8 @@ import ConstraintsView from "./Donor/Components/constraintsView";
 import CookManager from "./Cooking/Components/CookManager";
 import GoPage from "./GoPage/GoPage";
 import EditDonorDetails from "./Donors/Components/EditDonorDetails";
+import Landing from "./LandingPage/Components/Landing";
+import Video from "./LandingPage/Components/VideoPage";
 import { HelmetProvider } from 'react-helmet-async';
 
 import PicturesPage from './Home/components/PicturesPage';
@@ -104,6 +106,8 @@ const App = () => {
     <HelmetProvider>
     <Router>
       <Routes>
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/video" element={<Video />} />
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
           <Route

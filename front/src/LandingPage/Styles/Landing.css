@@ -1,0 +1,629 @@
+/* Landing Page Styles */
+
+/* Base Container */
+.landing-container {
+    min-height: 100vh;
+    background: linear-gradient(to bottom right, #fef3f2, #fff1f2);
+    font-family: 'Arial', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+/* Navigation Styles */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 50;
+    transition: all 0.3s ease;
+}
+
+.navbar-transparent {
+    background: transparent;
+}
+
+.navbar-scrolled {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+.navbar-content {
+    max-width: 110rem; /* Or 100% if you want full width for the inner content to space out */
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .navbar-content {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .navbar-content {
+        padding: 0 2rem;
+    }
+}
+
+.navbar-inner {
+    display: flex;
+    justify-content: space-between; /* This will push brand to left, links container to middle-ish, and spacer to right */
+    align-items: center;
+    height: 4.5rem;
+    width: 100%; /* Ensure navbar-inner takes full width of navbar-content */
+}
+
+.navbar-brand {
+    /* This will be on the left due to justify-content: space-between on parent */
+    flex-shrink: 0; /* Prevent brand from shrinking */
+}
+
+/* Container for the navigation links, to be centered */
+.navbar-links-container {
+    display: flex;
+    justify-content: center; /* Center the links within this container */
+    align-items: baseline; /* Or center if preferred */
+    gap: 1rem; /* Adjust gap between links as needed */
+}
+
+.navbar-spacer-left { /* Was .navbar-spacer, renamed for clarity with current layout */
+    flex-shrink: 0;
+}
+
+
+.brand-text {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #c53030;
+    text-decoration: none;
+}
+.brand-text-link {
+    text-decoration: none;
+}
+
+.nav-link, .dropdown {
+    /* display: inline-block; */
+}
+
+.nav-link {
+    color: #374151;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: #dc2626;
+}
+
+.nav-icon-inline {
+    margin-left: 0.3rem;
+    height: 1em;
+    width: 1em;
+    vertical-align: middle;
+}
+
+/* Dropdown Styles */
+.dropdown {
+    position: relative;
+    display: flex;
+    align-items: baseline;
+}
+
+.dropdown-button {
+    color: #374151;
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.dropdown-button:hover {
+    color: #dc2626;
+}
+
+.dropdown-icon {
+    margin-left: 0.25rem;
+    height: 1rem;
+    width: 1rem;
+}
+
+.dropdown-menu {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 100%;
+    margin-top: 0.5rem;
+    width: max-content;
+    min-width: 12rem;
+    background: white;
+    border-radius: 0.375rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    padding: 0.25rem 0;
+    z-index: 50;
+}
+
+.dropdown-item {
+    display: block;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    color: #374151;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    white-space: nowrap;
+}
+
+.dropdown-item:hover {
+    background-color: #f3f4f6;
+}
+
+
+/* Hero Section */
+.hero-section {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+}
+
+.hero-background {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, rgba(220, 38, 38, 0.05), rgba(197, 48, 48, 0.15));
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 115rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0;
+}
+
+/* Two-column layout */
+@media (min-width: 768px) {
+    .hero-content {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+    }
+}
+
+.hero-left-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem;
+    z-index: 10;
+    margin-right: 7rem;
+}
+
+.hero-right-column {
+    flex: 2;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-right: -2rem; /* Make image flush with right edge */
+    overflow: hidden;
+}
+
+.hero-main-logo {
+    width: 220px;
+    margin-right: 13rem;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.hero-text {
+    margin-bottom: 2.5rem;
+    text-align: left;
+}
+
+.hero-title {
+    font-size: 3.2rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    line-height: 1.1;
+}
+
+.hero-description {
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.hero-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    margin-right: 5rem;
+}
+
+.hero-down-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 35%;
+    margin-right: 22rem;
+}
+
+@media (min-width: 640px) {
+    .hero-buttons {
+        flex-direction: row;
+        width: auto;
+    }
+    .hero-down-buttons {
+        flex-direction: row;
+        width: auto;
+    }
+}
+
+.hero-website-mockup {
+    width: 110%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(to right, #c53030, #e53e3e);
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(to right, #b91c1c, #dc2626);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 1rem 2.5rem;
+    border: 2px solid #d1d5db;
+    color: #374151;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 8px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-secondary:hover {
+    border-color: #c53030;
+    color: #c53030;
+    background: #fef3f2;
+}
+
+.btn-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+.hero-website-mockup {
+    display: block;
+    width: 100%; /* Fill the container width */
+    height: 100%; /* Fill the container height */
+    object-fit: cover; /* Cover the area, may crop */
+}
+
+
+/* Section Styles */
+.section-content {
+    max-width: 64rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+    text-align: center;
+}
+
+@media (min-width: 640px) {
+    .section-content {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .section-content {
+        padding: 0 2rem;
+    }
+}
+
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #1a202c;
+    margin-bottom: 1.5rem;
+}
+
+.section-subtitle {
+    font-size: 1.2rem;
+    color: #4a5568;
+    margin-bottom: 3rem;
+}
+
+/* Description Section */
+.description-section {
+    padding: 5rem 0;
+    background: white;
+}
+
+.description-text {
+    color: #4a5568;
+    margin: 0 auto;
+    /* font-size, line-height, max-width handled by inline styles in TSX */
+}
+
+/* Features Section */
+.features-section {
+    padding: 5rem 0;
+    background: #f9fafb;
+}
+
+.features-container {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .features-container {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .features-container {
+        padding: 0 2rem;
+    }
+}
+
+.features-header {
+    text-align: center;
+    /* margin-bottom is inline */
+}
+
+.features-grid {
+    display: grid;
+    /* grid-template-columns, gap are inline */
+}
+
+.feature-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    text-align: center;
+    /* padding is inline */
+}
+
+.feature-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-5px);
+}
+
+.feature-icon-container {
+    color: #c53030;
+    display: inline-block;
+    /* margin-bottom is inline */
+}
+
+.feature-icon { /* This class was missing but implied by feature-icon-container */
+    width: 3rem;
+    height: 3rem;
+}
+
+.feature-title {
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 0.75rem;
+    /* font-size is inline */
+}
+
+.feature-description {
+    color: #4a5568;
+    line-height: 1.6;
+    /* font-size is inline */
+}
+
+/* About Section */
+.about-section {
+    /* padding, background-color are inline */
+}
+
+.about-text {
+    color: #4b5563;
+    line-height: 1.8;
+    margin: 0 auto 2rem;
+    /* font-size, max-width, margin-bottom are inline, so this margin-bottom might be overridden */
+}
+
+/* Footer */
+.footer {
+    background: #1a202c;
+    color: #e2e8f0;
+    padding: 4rem 0;
+}
+
+.footer-content {
+    max-width: 80rem;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (min-width: 640px) {
+    .footer-content {
+        padding: 0 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .footer-content {
+        padding: 0 2rem;
+    }
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    /* text-align is inline */
+}
+
+.footer-brand {
+    /* grid-column, margin-bottom are inline */
+}
+
+.footer-logo-img {
+    height: 120px;
+    display: block;
+    margin: 0 auto;
+}
+
+.footer-description {
+    color: #a0aec0;
+    line-height: 1.6;
+    /* font-size, margin-top, margin-bottom are inline */
+}
+
+.footer-section {
+    /* grid-column, text-align, margin-top are inline */
+}
+
+.footer-title { /* This was display: none in original CSS, kept it */
+    font-size: 1rem;
+    font-weight: 600;
+    color: #cbd5e0;
+    text-transform: none;
+    letter-spacing: normal;
+    margin-bottom: 1.2rem;
+    display: none;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    /* flex-direction, justify-content, gap are inline */
+}
+
+.footer-link {
+    color: #a0aec0;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.footer-link:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+.footer-bottom {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #4a5568;
+    text-align: center;
+}
+
+.footer-copyright {
+    color: #a0aec0;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Floating Elements */
+.floating-element {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    z-index: 1; /* ensure they are behind content if overlapping */
+}
+
+.floating-element-1 {
+    top: 5rem;
+    left: 2.5rem;
+    width: 5rem;
+    height: 5rem;
+    background-color: #fecaca;
+    animation: bounce 8s infinite alternate;
+}
+
+.floating-element-2 {
+    bottom: 5rem;
+    right: 2.5rem;
+    width: 8rem;
+    height: 8rem;
+    background-color: #fed7aa;
+    animation: pulse 6s cubic-bezier(0.4, 0, 0.6, 1) infinite alternate;
+}
+
+@keyframes bounce {
+    0% {
+        transform: translateY(-10px) scale(1);
+    }
+    100% {
+        transform: translateY(10px) scale(1.05);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.05;
+        transform: scale(0.95);
+    }
+    50% {
+        opacity: 0.15;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 0.05;
+        transform: scale(0.95);
+    }
+}
+
+/* Screen Reader Only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
