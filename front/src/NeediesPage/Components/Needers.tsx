@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import "../styles/NeedyTable.css";
+import "../Styles/NeedyTable.css";
 import { Needy } from "../../commons/models/NeedyModel";
 import { getNeedyList, updateNeedy, deleteNeedy, registerNeedy, uploadNeedyExcel } from "../../commons/Restapi/NeedyRestapi";
 import FeedingLogo from '../../DonorRegister/Images/logo.png';
