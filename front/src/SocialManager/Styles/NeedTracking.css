@@ -1,0 +1,12 @@
+.social-need-tracking {
+    background: url('../../Login/Images/background.png') no-repeat center center fixed;
+    background-size: cover;
+    
+}
+
+.logo-image {
+    width: 150px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}

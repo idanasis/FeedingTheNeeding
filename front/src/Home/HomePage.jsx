@@ -9,7 +9,7 @@ import SayOnUs from '../Home/components/SayOnUs';
 import DonateUs from './components/DonateUs';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-import SEOHelmet from '../SEO/SEOHelmet';
+import SEOHelmet from '../SEO/Components/SEOHelmet';
 import '../Home/styles/home.css';
 
 const HomePage = () => {
