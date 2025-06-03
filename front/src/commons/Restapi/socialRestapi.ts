@@ -28,7 +28,6 @@ export const getNeedyPending= async () => {
 }
 
 export const updateNeedy= async (needy:Needy) => {
-   // console.log(needy);
     await axios.post(neederUrl,needy,
     {headers: { 'Content-Type': 'application/json',Authorization:'Bearer ' + localStorage.getItem('token')}});
 }
