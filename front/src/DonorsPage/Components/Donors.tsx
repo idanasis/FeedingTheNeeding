@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/DonorTable.css";
+import "../Styles/DonorTable.css";
 import dayjs from "dayjs";
 import { Donor } from "../../commons/models/DonorModel";
 import { deleteDonor, getDonorApproved, updateDonor } from "../../commons/Restapi/DonorRestapi";

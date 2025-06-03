@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { submitDriverConstraints, DriverConstraintsData } from '../Restapi/DriverConstraintsRestAPI';
 import DiveHeader from '../../GoPage/DiveHeader';
-import '../styles/constraints.css'
+import '../Styles/constraints.css'
 
 interface TimeSlot {
   start: string;  // Changed to number
