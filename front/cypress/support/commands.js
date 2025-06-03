@@ -41,3 +41,29 @@ Cypress.Commands.add('visitWithRetry', (url, options = {}) => {
 
     attempt();
 });
+
+
+// Add the visitWithRetry command to handle potential page load issues
+Cypress.Commands.add('visitWithRetry', (url, options) => {
+    const maxAttempts = 3;
+    let attempts = 0;
+
+    function attemptVisit() {
+        attempts++;
+        cy.visit(url, options).then(() => {
+            // If the visit succeeds, we're done
+        }).catch((error) => {
+            if (attempts < maxAttempts) {
+                // If the visit fails and we haven't reached max attempts, try again
+                cy.wait(1000); // Wait before retrying
+                attemptVisit();
+            } else {
+                // If we've reached max attempts, fail the test
+                throw error;
+            }
+        });
+    }
+
+    attemptVisit();
+});
+
