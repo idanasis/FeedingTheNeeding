@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import HomePage from './Home/HomePage';
-import NeederTracking from './Social/components/NeederTracking';
-import NeedyPendingTable from './Social/components/needyPending';
+import NeederTracking from './SocialManager/components/NeederTracking';
+import NeedyPendingTable from './NeedyPending/Components/needyPending';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import Login from "./Authentication/Components/Login";
-import DonorRegister from "./Authentication/Components/DonorRegister";
-import UploadConstraints from "./Cooking/Components/UploadConstraints";
-import DrivingManager from "./Driving/components/DrivingManagement";
+import Login from "./Login/Components/Login";
+import DonorRegister from "./DonorRegister/Components/DonorRegister";
+import UploadConstraints from "./CookConstraints/Components/UploadConstraints";
+import DrivingManager from "./DrivingManager/components/DrivingManagement";
 import Donation from "./Donations/Components/Donation";
-import DonorPendingTable  from "./User/components/DonorPending"
-import DonorTable from "./User/components/Donors"
-import NeederTable from "./User/components/Needers"
-import DriverConstraints from "./Driving/components/DriverConstraints";
-import ConstraintsView from "./Donor/Components/constraintsView";
-import CookManager from "./Cooking/Components/CookManager";
+import DonorPendingTable  from "./DonorPending/Components/DonorPending"
+import DonorTable from "./DonorsPage/Components/Donors"
+import NeederTable from "./NeediesPage/Components/Needers"
+import DriverConstraints from "./DrivingConstraints/Components/DriverConstraints";
+import ConstraintsView from "./DonorsAssignments/Components/constraintsView";
+import CookManager from "./CookingManager/Components/CookManager";
 import GoPage from "./GoPage/GoPage";
-import EditDonorDetails from "./Donors/Components/EditDonorDetails";
+import EditDonorDetails from "./EditDonor/Components/EditDonorDetails";
 import Landing from "./LandingPage/Components/Landing";
 import Video from "./LandingPage/Components/VideoPage";
 import { HelmetProvider } from 'react-helmet-async';
